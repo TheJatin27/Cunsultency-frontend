@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 
 import Home from "../pages/Home";
@@ -10,7 +10,7 @@ import Contact from "../pages/Contact";
 
 const AppRoutes = () => {
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         <Route element={<MainLayout />}>
           <Route path="/" element={<Home />} />
