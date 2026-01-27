@@ -1,6 +1,6 @@
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
-
+import Login from "../pages/login";
 import Home from "../pages/Home";
 import About from "../pages/About";
 import Services from "../pages/Services";
@@ -19,6 +19,8 @@ const AppRoutes = () => {
           <Route path="/gst-quotation" element={<GstQuotation />} />
           <Route path="/knowledge" element={<Knowledge />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+
         </Route>
       </Routes>
     </Router>

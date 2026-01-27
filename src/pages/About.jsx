@@ -1,37 +1,135 @@
 import { motion } from "framer-motion";
+import { Target, Eye, Award, CheckCircle2, History, ShieldCheck } from "lucide-react";
 
 export default function About() {
+  const values = [
+    { title: "Integrity", desc: "Honest advisory even when it's tough.", icon: <ShieldCheck className="text-blue-400" /> },
+    { title: "Precision", desc: "Zero-error filings for peace of mind.", icon: <Target className="text-emerald-400" /> },
+    { title: "Authority", desc: "12+ years of regulatory expertise.", icon: <Award className="text-purple-400" /> },
+  ];
+
   return (
-    <div className="bg-slate-950 text-white min-h-screen py-20 px-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          <motion.div initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}>
-            <h2 className="text-blue-400 font-bold uppercase tracking-[0.2em] text-sm mb-4">Our Legacy</h2>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Over a Decade of <br/><span className="text-emerald-400">Compliance Mastery.</span>
-            </h1>
-            <p className="text-slate-400 text-lg leading-relaxed mb-8">
-              Founded by an expert with 12 years of specialized experience in Labour Compliance, Payroll, and GST. 
-              We don't just file returns; we provide strategic advisory to shield your business from penalties.
-            </p>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800">
-                <p className="text-3xl font-bold text-blue-500">12+</p>
-                <p className="text-slate-500 text-sm">Years Experience</p>
+    <div className="bg-slate-950 text-white min-h-screen">
+      {/* Hero Section */}
+      <section className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }} 
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-blue-400 font-bold uppercase tracking-[0.2em] text-sm mb-4">Our Legacy</h2>
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+                Over a Decade of <br/><span className="text-emerald-400">Compliance Mastery.</span>
+              </h1>
+              <p className="text-slate-400 text-lg leading-relaxed mb-8">
+                Founded by an expert with 12 years of specialized experience in Labour Compliance, Payroll, and GST. 
+                We don't just file returns; we provide strategic advisory to shield your business from penalties.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-6 mb-8">
+                <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl">
+                  <p className="text-4xl font-black text-blue-500">12+</p>
+                  <p className="text-slate-500 font-medium">Years Experience</p>
+                </div>
+                <div className="bg-slate-900 p-6 rounded-3xl border border-slate-800 shadow-xl">
+                  <p className="text-4xl font-black text-emerald-500">500+</p>
+                  <p className="text-slate-500 font-medium">Clients Managed</p>
+                </div>
               </div>
-              <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800">
-                <p className="text-3xl font-bold text-emerald-500">500+</p>
-                <p className="text-slate-500 text-sm">Clients Managed</p>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <div className="w-full h-[550px] bg-slate-800 rounded-[3rem] border border-slate-700 flex items-center justify-center overflow-hidden shadow-2xl">
+                {/* Decorative overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                <span className="text-slate-600 text-lg font-medium italic relative z-10">Founder / Expert Portrait Image</span>
               </div>
-            </div>
-          </motion.div>
-          <div className="relative">
-             <div className="w-full h-[500px] bg-slate-800 rounded-3xl border border-slate-700 flex items-center justify-center overflow-hidden">
-                <span className="text-slate-600 italic">Founder / Expert Professional Imagery</span>
-             </div>
+              {/* Floating Badge */}
+              <div className="absolute -bottom-6 -left-6 bg-blue-600 p-6 rounded-2xl shadow-2xl border border-blue-400/30">
+                <CheckCircle2 size={32} className="mb-2 text-white" />
+                <p className="text-xs uppercase tracking-widest font-bold text-blue-100">Certified Partner</p>
+              </div>
+            </motion.div>
           </div>
         </div>
-      </div>
+      </section>
+
+      {/* Mission & Vision Section */}
+      
+      <section className="py-20 bg-slate-900/50 border-y border-white/5">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10">
+          <div className="bg-slate-800/40 p-10 rounded-[2.5rem] border border-slate-700 hover:border-emerald-500/50 transition-all group">
+            <div className="w-14 h-14 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 mb-6 group-hover:scale-110 transition-transform">
+              <Target size={30} />
+            </div>
+            <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
+            <p className="text-slate-400 leading-relaxed">
+              To simplify complex legal compliance through technology and expert advisory, 
+              enabling business owners to focus purely on growth without the fear of statutory penalties.
+            </p>
+          </div>
+
+          <div className="bg-slate-800/40 p-10 rounded-[2.5rem] border border-slate-700 hover:border-blue-500/50 transition-all group">
+            <div className="w-14 h-14 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 mb-6 group-hover:scale-110 transition-transform">
+              <Eye size={30} />
+            </div>
+            <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
+            <p className="text-slate-400 leading-relaxed">
+              To become the most trusted compliance partner in the country, known for 
+              unmatched precision, proactive advisory, and a zero-penalty track record.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Values Grid */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold">The <span className="text-emerald-400">Values</span> That Drive Us</h2>
+          <div className="w-20 h-1 bg-emerald-500 mx-auto mt-4 rounded-full" />
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-8">
+          {values.map((v, i) => (
+            <motion.div 
+              key={i}
+              whileHover={{ y: -10 }}
+              className="p-8 bg-slate-900 border border-slate-800 rounded-3xl text-center"
+            >
+              <div className="inline-block p-4 bg-slate-800 rounded-2xl mb-6">
+                {v.icon}
+              </div>
+              <h4 className="text-xl font-bold mb-3 text-white">{v.title}</h4>
+              <p className="text-slate-400 text-sm leading-relaxed">{v.desc}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Timeline / Journey Teaser */}
+      <section className="py-20 px-6 max-w-4xl mx-auto text-center">
+        <div className="bg-gradient-to-r from-blue-600/20 to-emerald-600/20 p-1 rounded-3xl border border-white/10">
+          <div className="bg-slate-950 p-12 rounded-[calc(1.5rem-1px)]">
+            <History className="mx-auto text-emerald-400 mb-6" size={48} />
+            <h3 className="text-3xl font-bold mb-4 text-white">12 Years in the Making</h3>
+            <p className="text-slate-400 mb-8">
+              From managing small shop-act registrations to handling the payroll and 
+              GST compliance of multi-state corporations, our journey has been 
+              defined by constant learning and legal excellence.
+            </p>
+            <button className="bg-white text-slate-950 font-bold px-8 py-3 rounded-xl hover:bg-emerald-400 transition-colors">
+              Read Full Story
+            </button>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
