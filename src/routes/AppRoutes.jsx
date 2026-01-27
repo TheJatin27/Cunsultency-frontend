@@ -21,7 +21,7 @@ const AppRoutes = () => {
           <Route path="/contact" element={<Contact />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 };
 
