@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-black text-white;
+}
+::selection {
+  background-color: #ffffff;
+  color: #000000;
+}
