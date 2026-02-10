@@ -6,6 +6,7 @@ export default function Contact() {
     {
       icon: <Phone className="text-blue-400" />,
       title: "Call Us",
+      
       value: "+91 95557 69448",
       sub: "Mon-Sat, 9am - 7pm",
       color: "border-blue-500/20"

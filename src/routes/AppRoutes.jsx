@@ -7,6 +7,8 @@ import Services from "../pages/Services";
 import GstQuotation from "../pages/GstQuotation";
 import Knowledge from "../pages/Knowledge";
 import Contact from "../pages/Contact";
+import MinimumWages from "../pages/MinimumWages";
+
 
 const AppRoutes = () => {
   return (
@@ -20,6 +22,8 @@ const AppRoutes = () => {
           <Route path="/knowledge" element={<Knowledge />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/minimum-wages" element={<MinimumWages />} />
+
 
         </Route>
       </Routes>

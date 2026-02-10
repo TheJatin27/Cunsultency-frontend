@@ -8,10 +8,11 @@
     "dev": "vite",
     "build": "vite build",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "npm run build && rm -rf docs && mv dist docs && git add docs && git commit -m \"deploy\" && git push"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
+    "firebase": "^12.9.0",
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.563.0",
     "react": "^19.2.0",

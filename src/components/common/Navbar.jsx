@@ -36,13 +36,13 @@ const Navbar = () => {
             whileHover={{ rotate: 10, scale: 1.1 }}
             className="w-10 h-10 bg-gradient-to-tr from-blue-600 via-blue-500 to-emerald-400 rounded-xl flex items-center justify-center font-black text-slate-950 shadow-xl shadow-blue-500/20"
           >
-            C
+            LF
           </motion.div>
           <div className="flex flex-col">
             <span className="text-white font-black text-xl tracking-tighter leading-none">
-              CHANDAN<span className="text-emerald-400">.</span>
+              LABOR<span className="text-emerald-400">.</span>
             </span>
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Compliance</span>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">FORGE</span>
           </div>
         </Link>
 

@@ -54,8 +54,8 @@ const Hero = () => {
           </motion.h1>
 
           <motion.p variants={itemVariants} className="text-slate-400 text-lg md:text-xl max-w-lg mb-12 leading-relaxed">
-            We bridge the gap between complex Indian regulations and your business growth with 12+ years of specialized mastery.
-          </motion.p>
+            LaborForge Advisors was founded in 2026 by a dedicated solo expert with a passion for forging innovative labor compliance and payroll solutions.
+              </motion.p>
 
           <motion.div variants={itemVariants} className="flex flex-wrap gap-6">
             <Link to="/gst-quotation" className="group relative px-10 py-5 bg-white text-slate-950 font-black rounded-2xl overflow-hidden transition-all hover:scale-105 shadow-2xl shadow-white/10">

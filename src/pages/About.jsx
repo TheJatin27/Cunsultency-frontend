@@ -24,8 +24,9 @@ export default function About() {
                 Over a Decade of <br/><span className="text-emerald-400">Compliance Mastery.</span>
               </h1>
               <p className="text-slate-400 text-lg leading-relaxed mb-8">
-                Founded by an expert with 12 years of specialized experience in Labour Compliance, Payroll, and GST. 
-                We don't just file returns; we provide strategic advisory to shield your business from penalties.
+                LaborForge Advisors launched ForgeWatch—its cutting-edge digital division dedicated to revolutionizing labor compliance management. ForgeWatch is a precision-engineered compliance technology platform designed to simplify tracking and execution of India's complex labour laws, ensuring businesses stay ahead of statutory deadlines and New Labour Code implementations.
+
+Born from frontline experience in payroll structuring, EPF/ESIC audits, and statutory registrations across manufacturing and staffing sectors, ForgeWatch transforms regulatory chaos into automated clarity. What took days of manual tracking now happens with real-time dashboards, predictive alerts, and audit-ready documentation.
               </p>
               
               <div className="grid grid-cols-2 gap-6 mb-8">
@@ -71,8 +72,7 @@ export default function About() {
             </div>
             <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
             <p className="text-slate-400 leading-relaxed">
-              To simplify complex legal compliance through technology and expert advisory, 
-              enabling business owners to focus purely on growth without the fear of statutory penalties.
+              To forge unbreakable compliance frameworks that transform regulatory complexity into operational excellence for businesses across India.
             </p>
           </div>
 
@@ -82,8 +82,7 @@ export default function About() {
             </div>
             <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
             <p className="text-slate-400 leading-relaxed">
-              To become the most trusted compliance partner in the country, known for 
-              unmatched precision, proactive advisory, and a zero-penalty track record.
+              India's premier solo-powered compliance forge—mastering New Labour Codes through precision payroll, statutory armor, and Lean Six Sigma innovation for businesses across India
             </p>
           </div>
         </div>
@@ -118,15 +117,13 @@ export default function About() {
         <div className="bg-gradient-to-r from-blue-600/20 to-emerald-600/20 p-1 rounded-3xl border border-white/10">
           <div className="bg-slate-950 p-12 rounded-[calc(1.5rem-1px)]">
             <History className="mx-auto text-emerald-400 mb-6" size={48} />
-            <h3 className="text-3xl font-bold mb-4 text-white">12 Years in the Making</h3>
+            <h3 className="text-3xl font-bold mb-4 text-white">Our Commitment</h3>
             <p className="text-slate-400 mb-8">
-              From managing small shop-act registrations to handling the payroll and 
-              GST compliance of multi-state corporations, our journey has been 
-              defined by constant learning and legal excellence.
+              LaborForge Advisors delivers unwavering reliability—precision payroll protection, real-time Labour Code monitoring, rapid audit readiness, and statutory gap elimination through proven expertise. From EPF/ESIC perfection to New Code navigation, we transform compliance burdens into seamless business strengths, every single day.
             </p>
-            <button className="bg-white text-slate-950 font-bold px-8 py-3 rounded-xl hover:bg-emerald-400 transition-colors">
+            {/* <button className="bg-white text-slate-950 font-bold px-8 py-3 rounded-xl hover:bg-emerald-400 transition-colors">
               Read Full Story
-            </button>
+            </button> */}
           </div>
         </div>
       </section>

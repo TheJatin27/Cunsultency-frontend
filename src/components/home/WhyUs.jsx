@@ -11,20 +11,20 @@ const WhyUs = () => {
 
   const features = [
     {
-      title: "Statutory Expertise",
-      desc: "Deep-rooted knowledge in EPF, ESIC, and Bonus Acts to protect your business from legal risks.",
+      title: "Audit Shield",
+      desc: "Pre-built statutory registers and inspection-ready reports.",
       icon: <ShieldCheck size={24} />,
       gradient: "from-blue-500/20 to-transparent"
     },
     {
-      title: "Real-time Filing",
-      desc: "We ensure your GSTR-1 and 3B are filed way before the deadline, every single month.",
+      title: "Labour Code Radar",
+      desc: "Instant updates on IRC 2020, WCC, OCC implementations",
       icon: <Zap size={24} />,
       gradient: "from-emerald-500/20 to-transparent"
     },
     {
-      title: "Data-Driven MIS",
-      desc: "Get monthly accounting reports and financial health checks to make informed decisions.",
+      title: "Payroll Fortress",
+      desc: "Automated PF/ESIC/Gratuity compliance with anomaly detection.",
       icon: <BarChart3 size={24} />,
       gradient: "from-purple-500/20 to-transparent"
     },
@@ -56,9 +56,9 @@ const WhyUs = () => {
             </h2>
             
             <p className="text-slate-400 text-lg mb-12 leading-relaxed max-w-xl">
-              Since 2014, we've transformed the way businesses handle the Indian regulatory landscape. 
-              We don't just file papers; we build compliance fortresses that let you scale without fear.
-            </p>
+              Over time, LaborForge Advisors aims to grow into one of India’s leading consulting firms, offering specialized services that help businesses optimize their statutory compliance, HR operations, and workforce management
+                        
+              </p>
 
             <div className="grid grid-cols-2 gap-4">
               {stats.map((stat, i) => (
