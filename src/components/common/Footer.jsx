@@ -1,56 +1,57 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Phone, Mail, MapPin, Facebook, Linkedin, Twitter, MessageCircle, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Facebook, Linkedin, Twitter, MessageCircle, Send, Globe } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-slate-950 border-t border-white/10 pt-24 pb-10 px-6 overflow-hidden relative">
-      {/* Subtle Bottom Glow */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent" />
+    <footer className="bg-[#FCFAF7] border-t border-slate-200 pt-24 pb-10 px-6 relative overflow-hidden">
+      {/* Background Decorative Blobs */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-rose-100/50 rounded-full blur-[100px] -z-0" />
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-100/50 rounded-full blur-[100px] -z-0" />
       
       <div className="max-w-7xl mx-auto relative z-10">
         
-        {/* Newsletter / CTA Section */}
-        <div className="grid lg:grid-cols-3 gap-12 pb-16 border-b border-white/5 mb-16 items-center">
-          <div className="lg:col-span-2">
-            <h3 className="text-2xl md:text-3xl font-black text-white mb-2">Stay ahead of the <span className="text-blue-400">Compliance Curve.</span></h3>
-            <p className="text-slate-400">Get monthly updates on GST amendments and Labour Law changes.</p>
+        {/* Newsletter Section */}
+        <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-[0_20px_50px_-20px_rgba(0,0,0,0.05)] border border-white mb-20 flex flex-col lg:flex-row items-center justify-between gap-10">
+          <div className="max-w-md text-center lg:text-left">
+            <h3 className="text-3xl font-black text-slate-900 mb-2 tracking-tighter">Stay Ahead of the Curve.</h3>
+            <p className="text-slate-500 font-medium">Get monthly updates on GST and Labour Law changes.</p>
           </div>
-          <div className="relative">
+          <div className="relative w-full max-w-md">
             <input 
               type="email" 
               placeholder="Enter your email" 
-              className="w-full bg-slate-900 border border-slate-800 rounded-2xl py-4 px-6 text-white outline-none focus:border-emerald-500/50 transition-all"
+              className="w-full bg-slate-50 border border-slate-100 rounded-2xl py-5 px-6 text-slate-900 outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium"
             />
-            <button className="absolute right-2 top-2 bottom-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 px-5 rounded-xl transition-all flex items-center justify-center">
-              <Send size={18} />
+            <button className="absolute right-2 top-2 bottom-2 bg-slate-900 hover:bg-emerald-600 text-white px-6 rounded-xl transition-all flex items-center justify-center group">
+              <Send size={18} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
           {/* Brand Column */}
           <div className="space-y-6">
             <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-tr from-blue-600 to-emerald-400 rounded-xl flex items-center justify-center font-black text-slate-950 text-sm shadow-lg shadow-blue-500/20">
-                C
+              <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center font-black text-white shadow-lg">
+                LF
               </div>
-              <span className="text-white font-black text-2xl tracking-tighter">
-                CHANDAN<span className="text-emerald-400">.</span>
+              <span className="text-slate-900 font-black text-2xl tracking-tighter">
+                LABOR<span className="text-emerald-500">.</span>FORGE
               </span>
             </Link>
-            <p className="text-slate-400 text-sm leading-relaxed max-w-xs">
+            <p className="text-slate-500 text-sm leading-relaxed font-medium">
               Navigating the complexities of Indian statutory compliance since 2014 with 100% precision and zero-penalty track record.
             </p>
             <div className="flex gap-3">
               {[Facebook, Linkedin, Twitter].map((Icon, i) => (
                 <motion.a 
                   key={i} 
-                  whileHover={{ y: -3, color: '#10b981' }}
+                  whileHover={{ y: -5, backgroundColor: '#10b981', color: '#fff' }}
                   href="#" 
-                  className="w-10 h-10 rounded-xl bg-slate-900 border border-white/5 flex items-center justify-center text-slate-500 transition-all"
+                  className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 transition-all shadow-sm"
                 >
                   <Icon size={18} />
                 </motion.a>
@@ -60,83 +61,75 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-white font-black uppercase tracking-widest text-xs mb-8">Navigation</h4>
-            <ul className="space-y-4 text-sm text-slate-400 font-bold">
-              <li><Link to="/about" className="hover:text-emerald-400 transition-colors">Our Founder</Link></li>
-              <li><Link to="/services" className="hover:text-emerald-400 transition-colors">Service Catalog</Link></li>
-              <li><Link to="/knowledge" className="hover:text-emerald-400 transition-colors">Resource Center</Link></li>
-              <li><Link to="/gst-quotation" className="hover:text-emerald-400 transition-colors">Price Calculator</Link></li>
+            <h4 className="text-slate-900 font-black uppercase tracking-widest text-[11px] mb-8">Navigation</h4>
+            <ul className="space-y-4 text-sm text-slate-500 font-bold">
+              <li><Link to="/about" className="hover:text-emerald-600 transition-colors">Our Founder</Link></li>
+              <li><Link to="/services" className="hover:text-emerald-600 transition-colors">Service Catalog</Link></li>
+              <li><Link to="/knowledge" className="hover:text-emerald-600 transition-colors">Resource Center</Link></li>
+              <li><Link to="/gst-quotation" className="hover:text-emerald-600 transition-colors">Price Calculator</Link></li>
             </ul>
           </div>
 
           {/* Specializations */}
           <div>
-            <h4 className="text-white font-black uppercase tracking-widest text-xs mb-8">Specializations</h4>
-            <ul className="space-y-4 text-sm text-slate-400 font-medium">
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> GST Management
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Labour Law (ESI/PF)
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-purple-500" /> Corporate Payroll
-              </li>
-              <li className="flex items-center gap-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-orange-500" /> Audit Readiness
-              </li>
+            <h4 className="text-slate-900 font-black uppercase tracking-widest text-[11px] mb-8">Specializations</h4>
+            <ul className="space-y-4 text-sm text-slate-500 font-bold">
+              <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-blue-500" /> GST Management</li>
+              <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Labour Law (ESI/PF)</li>
+              <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> Corporate Payroll</li>
+              <li className="flex items-center gap-3"><span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Audit Readiness</li>
             </ul>
           </div>
 
           {/* Contact Details */}
-          <div className="bg-slate-900/40 p-8 rounded-[2rem] border border-white/5">
-            <h4 className="text-white font-black uppercase tracking-widest text-xs mb-8">Headquarters</h4>
+          <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm">
+            <h4 className="text-slate-900 font-black uppercase tracking-widest text-[11px] mb-8">Headquarters</h4>
             <div className="space-y-6 text-sm">
-              <a href="tel:+919555769448" className="flex items-center gap-4 text-slate-300 hover:text-emerald-400 transition-colors font-bold">
-                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center text-emerald-500"><Phone size={14} /></div>
+              <a href="tel:+919555769448" className="flex items-center gap-4 text-slate-600 hover:text-emerald-600 transition-colors font-bold">
+                <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600 shrink-0"><Phone size={14} /></div>
                 +91 95557 69448
               </a>
-              <a href="mailto:contact@chandan.com" className="flex items-center gap-4 text-slate-300 hover:text-blue-400 transition-colors font-bold">
-                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center text-blue-400"><Mail size={14} /></div>
-                office@chandan.com
+              <a href="mailto:contact@chandan.com" className="flex items-center gap-4 text-slate-600 hover:text-blue-600 transition-colors font-bold">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0"><Mail size={14} /></div>
+                office@laborforge.com
               </a>
-              <div className="flex items-start gap-4 text-slate-400">
-                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-500 shrink-0"><MapPin size={14} /></div>
-                <span className="leading-relaxed">Sector 62, Noida, <br />UP 201301</span>
+              <div className="flex items-start gap-4 text-slate-500 font-medium leading-relaxed">
+                <div className="w-8 h-8 rounded-lg bg-slate-50 flex items-center justify-center text-slate-400 shrink-0"><MapPin size={14} /></div>
+                Sector 62, Noida, <br />UP 201301
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-white/5 pt-10 flex flex-col lg:flex-row justify-between items-center gap-6">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">
+        <div className="border-t border-slate-200 pt-10 flex flex-col lg:flex-row justify-between items-center gap-6">
+          <div className="flex flex-col md:flex-row items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-1 bg-white rounded-full border border-slate-100 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-tighter">All Systems Operational</span>
+              <span className="text-[10px] font-black text-slate-600 uppercase tracking-tighter">Live Support Active</span>
             </div>
-            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
-              © {currentYear} CHANDAN CONSULTANCY
+            <p className="text-slate-400 text-[10px] font-bold uppercase tracking-[0.2em]">
+              © {currentYear} LABORFORGE ADVISORS
             </p>
           </div>
           
-          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-slate-500">
-            <a href="#" className="hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-white transition-colors">Terms</a>
-            <a href="#" className="hover:text-white transition-colors">Sitemap</a>
+          <div className="flex gap-8 text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <a href="#" className="hover:text-slate-900 transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-slate-900 transition-colors">Terms of Service</a>
+            <a href="#" className="hover:text-slate-900 transition-colors">Cookies</a>
           </div>
         </div>
       </div>
 
-      {/* Floating Action Button */}
+      {/* WhatsApp FAB */}
       <motion.a
-        whileHover={{ scale: 1.1, rotate: 5 }}
+        whileHover={{ scale: 1.1, y: -5 }}
         whileTap={{ scale: 0.9 }}
         href="https://wa.me/919555769448"
         target="_blank"
-        className="fixed bottom-10 right-10 z-[100] bg-emerald-500 text-slate-950 w-16 h-16 rounded-2xl shadow-[0_20px_40px_-10px_rgba(16,185,129,0.5)] flex items-center justify-center"
+        className="fixed bottom-10 right-10 z-[100] bg-emerald-500 text-white w-16 h-16 rounded-2xl shadow-[0_20px_40px_-10px_rgba(16,185,129,0.4)] flex items-center justify-center"
       >
-        <MessageCircle size={28} fill="currentColor" />
+        <MessageCircle size={32} fill="white" />
       </motion.a>
     </footer>
   );

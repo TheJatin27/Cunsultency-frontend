@@ -1,146 +1,181 @@
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ShieldCheck, Zap, BarChart3, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  ShieldCheck, CheckCircle2, BarChart3, 
+  ArrowRight, Award, Menu, X, Briefcase 
+} from "lucide-react";
+
+const slides = [
+  {
+    tag: "Compliance First",
+    title: "Forging Compliance,",
+    highlight: "Shaping Success.",
+    description: "Navigate the complexities of labor law with confidence and ease.",
+    bg: "bg-[#FFFFFF]", // Pure White
+    accent: "text-emerald-600",
+    border: "border-emerald-200",
+    btn: "bg-emerald-600"
+  },
+  {
+    tag: "Strategic Planning",
+    title: "Optimizing Wages,",
+    highlight: "Minimizing Risk.",
+    description: "Smart payroll structuring that keeps your business competitive and legal.",
+    bg: "bg-[#FFF0F3]", // Soft Pink
+    accent: "text-rose-600",
+    border: "border-rose-200",
+    btn: "bg-rose-600"
+  },
+  {
+    tag: "Audit Ready",
+    title: "Precision Filing,",
+    highlight: "Zero Penalties.",
+    description: "Ensure your EPF, ESI, and statutory records are always inspection-ready.",
+    bg: "bg-[#FEF9E7]", // Pale Yellow
+    accent: "text-amber-600",
+    border: "border-amber-200",
+    btn: "bg-amber-600"
+  },
+  {
+    tag: "Growth Focused",
+    title: "Scalable Solutions,",
+    highlight: "Reliable Support.",
+    description: "Expert advisory that grows alongside your workforce requirements.",
+    bg: "bg-[#EBF5FF]", // Soft Blue
+    accent: "text-blue-600",
+    border: "border-blue-200",
+    btn: "bg-blue-600"
+  }
+];
 
 const Hero = () => {
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 500], [0, 200]);
-  const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+  const [current, setCurrent] = useState(0);
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
 
-  // Animation variants
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15, delayChildren: 0.2 },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
-  };
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+    }, 3000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center bg-slate-950 pt-20 overflow-hidden">
-      {/* 1. Enhanced Parallax Background */}
-      <div className="absolute inset-0 pointer-events-none">
+    <section className={`relative min-h-screen transition-colors duration-1000 ease-in-out overflow-hidden flex items-center ${slides[current].bg}`}>
+      
+      {/* Abstract Background Shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div 
-          style={{ y: y1 }}
-          className="absolute top-[10%] -left-[10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px]" 
+          animate={{ rotate: 360 }}
+          transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+          className="absolute -top-24 -right-24 w-96 h-96 border-[1px] border-black/5 rounded-full" 
         />
-        <motion.div 
-          style={{ y: y2 }}
-          className="absolute bottom-[10%] -right-[5%] w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[140px]" 
-        />
+        <div className="absolute top-1/2 left-10 w-4 h-4 bg-red-400 rounded-full opacity-20" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-        {/* 2. Text Content with Staggered Entrance */}
-        <motion.div variants={containerVariants} initial="hidden" animate="visible">
-          <motion.div variants={itemVariants} className="flex items-center gap-3 mb-8">
-            <span className="px-4 py-1 text-xs font-black tracking-[0.2em] text-emerald-400 uppercase bg-emerald-400/10 border border-emerald-400/20 rounded-full">
-              
-            </span>
-            <div className="h-px w-8 bg-slate-800" />
-            <span className="text-slate-500 text-xs font-bold uppercase tracking-widest">ISO 9001 Certified</span>
-          </motion.div>
-          
-          <motion.h1 variants={itemVariants} className="text-6xl md:text-8xl font-black text-white leading-[0.9] mb-8 tracking-tighter">
-            Stop Worrying, <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-emerald-400 to-blue-500 bg-[length:200%_auto] animate-gradient">
-              Start Scaling.
-            </span>
-          </motion.h1>
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="max-w-4xl">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <span className={`px-3 py-1 text-[10px] font-black uppercase tracking-widest border ${slides[current].border} ${slides[current].accent} rounded-full`}>
+                  {slides[current].tag}
+                </span>
+              </div>
 
-          <motion.p variants={itemVariants} className="text-slate-400 text-lg md:text-xl max-w-lg mb-12 leading-relaxed">
-            LaborForge Advisors was founded in 2026 by a dedicated solo expert with a passion for forging innovative labor compliance and payroll solutions.
-              </motion.p>
+              <h1 className="text-6xl md:text-8xl font-serif text-slate-900 leading-[1] mb-8 tracking-tight">
+                {slides[current].title} <br />
+                <span className={`${slides[current].accent} italic font-normal`}>
+                  {slides[current].highlight}
+                </span>
+              </h1>
 
-          <motion.div variants={itemVariants} className="flex flex-wrap gap-6">
-            <Link to="/gst-quotation" className="group relative px-10 py-5 bg-white text-slate-950 font-black rounded-2xl overflow-hidden transition-all hover:scale-105 shadow-2xl shadow-white/10">
-              <span className="relative z-10 flex items-center gap-2">Get Quote <Zap size={18} fill="currentColor"/></span>
-              <div className="absolute inset-0 bg-emerald-400 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              <p className="text-slate-600 text-lg md:text-xl max-w-xl mb-10 leading-relaxed">
+                {slides[current].description}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="flex flex-wrap gap-5">
+            <Link 
+              to="/contact" 
+              className={`px-10 py-5 ${slides[current].btn} text-white font-bold rounded-xl shadow-lg transition-transform hover:scale-105 flex items-center gap-3`}
+            >
+              Get Started <ArrowRight size={20} />
             </Link>
             
-            <Link to="/contact" className="px-10 py-5 bg-slate-900 text-white font-bold rounded-2xl border border-slate-800 hover:bg-slate-800 transition-all flex items-center gap-3 group">
-              Talk to Expert <ArrowRight size={18} className="text-emerald-400 group-hover:translate-x-2 transition-transform" />
-            </Link>
-          </motion.div>
-        </motion.div>
-
-        {/* 3. Floating 3D Dashboard Element */}
-        <motion.div 
-          initial={{ opacity: 0, x: 50, rotateY: -20 }}
-          animate={{ opacity: 1, x: 0, rotateY: 0 }}
-          transition={{ duration: 1.2, ease: "easeOut" }}
-          className="hidden lg:block relative perspective-1000"
-        >
-          <motion.div 
-            animate={{ y: [0, -20, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="bg-slate-900/40 backdrop-blur-3xl border border-white/10 p-10 rounded-[3rem] shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]"
-          >
-            <div className="flex items-center justify-between mb-12">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-600/30">
-                  <BarChart3 size={24} />
-                </div>
-                <div>
-                  <h4 className="text-white font-bold">Compliance Score</h4>
-                  <p className="text-slate-500 text-xs">Real-time health</p>
-                </div>
-              </div>
-              <div className="text-emerald-400 font-black text-2xl">99.9%</div>
-            </div>
-
-            <div className="space-y-5">
-              {[
-                { label: "GST Returns", status: "Active", icon: <ShieldCheck size={18}/>, color: "text-blue-400" },
-                { label: "Payroll Sync", status: "Verified", icon: <Zap size={18}/>, color: "text-emerald-400" },
-                { label: "Audit Readiness", status: "Ready", icon: <BarChart3 size={18}/>, color: "text-purple-400" }
-              ].map((item, i) => (
-                <motion.div 
-                  key={i}
-                  whileHover={{ x: 10, backgroundColor: "rgba(255,255,255,0.05)" }}
-                  className="flex justify-between items-center p-5 bg-white/5 rounded-2xl border border-white/5 transition-all"
-                >
-                  <div className="flex items-center gap-4 text-slate-300 font-bold text-sm">
-                    <span className={item.color}>{item.icon}</span>
-                    {item.label}
-                  </div>
-                  <span className={`text-[10px] font-black uppercase tracking-widest ${item.color}`}>{item.status}</span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          {/* Floating Authority Badge */}
-          <motion.div 
-            animate={{ y: [0, 15, 0] }}
-            transition={{ duration: 5, repeat: Infinity, delay: 1 }}
-            className="absolute -bottom-8 -left-12 bg-emerald-500 p-6 rounded-3xl shadow-2xl flex items-center gap-4 border-4 border-slate-950"
-          >
-            <div className="text-3xl font-black text-slate-950">500+</div>
-            <div className="text-[10px] font-black text-slate-900 uppercase leading-none">Successful <br />Audits</div>
-          </motion.div>
-        </motion.div>
+            <button 
+              onClick={() => setDrawerOpen(true)}
+              className="px-10 py-5 bg-white border border-slate-200 text-slate-900 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-3 shadow-sm"
+            >
+              <Menu size={20} /> Services
+            </button>
+          </div>
+        </div>
       </div>
 
-      {/* 4. Trust Bar Footer */}
-      <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
-        className="mt-auto py-12 border-t border-white/5 bg-slate-950/50 backdrop-blur-md"
-      >
-        <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-between items-center opacity-30 grayscale hover:opacity-100 hover:grayscale-0 transition-all duration-700 gap-8">
-           <p className="text-white font-black text-xl tracking-tighter italic">CHANDAN CONSULTANCY</p>
-           <p className="text-white font-black text-xl tracking-tighter italic">GST AUTHORIZED</p>
-           <p className="text-white font-black text-xl tracking-tighter italic">LABOUR LAW EXPERT</p>
-           <p className="text-white font-black text-xl tracking-tighter italic">PAYROLL CLOUD</p>
-        </div>
-      </motion.div>
+      {/* --- LIGHT SLIDING DRAWER --- */}
+      <AnimatePresence>
+        {isDrawerOpen && (
+          <>
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setDrawerOpen(false)}
+              className="fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[100]"
+            />
+            <motion.div 
+              initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed top-0 right-0 h-full w-full max-w-md bg-white z-[110] p-10 shadow-2xl border-l border-slate-100"
+            >
+              <div className="flex justify-between items-center mb-16">
+                <div className="flex items-center gap-2">
+                  <Briefcase className="text-emerald-600" />
+                  <span className="font-black uppercase tracking-tighter text-slate-900 text-xl">LaborForge</span>
+                </div>
+                <button onClick={() => setDrawerOpen(false)} className="p-2 text-slate-400 hover:text-red-500 transition-colors"><X /></button>
+              </div>
+              
+              <div className="space-y-6">
+                {[
+                  { icon: <ShieldCheck />, title: "Compliance Management", color: "text-emerald-600", bg: "bg-emerald-50" },
+                  { icon: <BarChart3 />, title: "Payroll Structuring", color: "text-blue-600", bg: "bg-blue-50" },
+                  { icon: <CheckCircle2 />, title: "Contract Labour", color: "text-rose-600", bg: "bg-rose-50" },
+                  { icon: <Award />, title: "ESI & EPF Advisory", color: "text-amber-600", bg: "bg-amber-50" }
+                ].map((item, i) => (
+                  <motion.div 
+                    key={i} 
+                    whileHover={{ x: 10 }}
+                    className="flex items-center gap-5 p-4 rounded-2xl border border-slate-50 hover:border-slate-200 hover:shadow-sm transition-all cursor-pointer group"
+                  >
+                    <div className={`p-3 rounded-xl ${item.bg} ${item.color} group-hover:scale-110 transition-transform`}>
+                      {item.icon}
+                    </div>
+                    <span className="font-bold text-slate-800">{item.title}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+              <div className="absolute bottom-10 left-10 right-10">
+                <p className="text-[10px] font-black uppercase text-slate-400 tracking-[0.2em] mb-4">Lead Advisor</p>
+                <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
+                  <div className="w-10 h-10 bg-slate-200 rounded-full flex items-center justify-center font-bold text-slate-600">CR</div>
+                  <div>
+                    <p className="text-sm font-bold text-slate-900 leading-none">Chandan Roy</p>
+                    <p className="text-[10px] text-slate-500 font-medium mt-1">Strategic Labour Relations</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </section>
   );
 };

@@ -8,7 +8,11 @@ import GstQuotation from "../pages/GstQuotation";
 import Knowledge from "../pages/Knowledge";
 import Contact from "../pages/Contact";
 import MinimumWages from "../pages/MinimumWages";
-
+import ComplianceRetainership from "../pages/ComplianceRetainership";
+import StrategicAdvisory from "../pages/StrategicAdvisory";
+import ComplianceAudit from "../pages/ComplianceAudit";
+import EstablishmentSetup from "../pages/EstablishmentSetup";
+import LabourCodeTransition from "../pages/LabourCodeTransition";
 
 const AppRoutes = () => {
   return (
@@ -23,6 +27,12 @@ const AppRoutes = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/minimum-wages" element={<MinimumWages />} />
+          <Route path="/ComplianceRetainership" element={<ComplianceRetainership />} />
+          <Route path="/StrategicAdvisory" element={<StrategicAdvisory />} />
+          <Route path="/ComplianceAudit" element={<ComplianceAudit />} />
+          <Route path="/EstablishmentSetup" element={<EstablishmentSetup />} />
+          <Route path="/LabourCodeTransition" element={<LabourCodeTransition />} />
+          
 
 
         </Route>

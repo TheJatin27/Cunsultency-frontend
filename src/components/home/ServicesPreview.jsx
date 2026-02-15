@@ -1,133 +1,147 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FileText, ShieldCheck, Banknote, ArrowUpRight, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, Users, FileSearch, ArrowUpRight, CheckCircle2, Sparkles } from "lucide-react";
 
 const services = [
   {
-    title: "GST Compliance",
-    desc: "Comprehensive management of GSTR-3B, GSTR-1, and professional handling of tax notices.",
-    features: ["Monthly Filing", "ITC Reconciliation", "Notice Defense"],
-    icon: <FileText className="text-blue-400" size={32} />,
-    color: "group-hover:text-blue-400",
-    accent: "bg-blue-400/20",
-    border: "hover:border-blue-500/50"
+    title: "Labour Law Compliance",
+    desc: "Management of ongoing labour law compliances, filings, and statutory adherence.",
+    features: ["Timely Filings", "Accurate Records", "Complete Adherence"],
+    icon: <ShieldCheck size={28} />,
+    theme: {
+      bg: "bg-emerald-50",
+      iconBox: "bg-emerald-500",
+      glow: "shadow-emerald-200/50",
+      text: "text-emerald-700",
+      hoverBorder: "hover:border-emerald-300"
+    }
   },
   {
-    title: "Labour Law",
-    desc: "Expert statutory filings for EPF, ESIC, and gratuity to keep your business protected.",
-    features: ["EPF & ESIC", "Payroll Audit", "Compliance Reports"],
-    icon: <ShieldCheck className="text-emerald-400" size={32} />,
-    color: "group-hover:text-emerald-400",
-    accent: "bg-emerald-400/20",
-    border: "hover:border-emerald-500/50"
+    title: "Minimum Wages & CLRA",
+    desc: "Structuring wages per legal requirements and ensuring CLRA licensing compliance.",
+    features: ["Wage Structuring", "CLRA Audits", "Licensing Support"],
+    icon: <FileSearch size={28} />,
+    theme: {
+      bg: "bg-rose-50",
+      iconBox: "bg-rose-500",
+      glow: "shadow-rose-200/50",
+      text: "text-rose-700",
+      hoverBorder: "hover:border-rose-300"
+    }
   },
   {
-    title: "Payroll Management",
-    desc: "End-to-end processing with automated payslips and statutory challan generation.",
-    features: ["Salary Disbursement", "TDS Management", "Employee Portal"],
-    icon: <Banknote className="text-purple-400" size={32} />,
-    color: "group-hover:text-purple-400",
-    accent: "bg-purple-400/20",
-    border: "hover:border-purple-500/50"
+    title: "EPF & ESI Advisory",
+    desc: "From registrations to monthly compliance, inspections, and notice handling.",
+    features: ["EPF & ESI Monthly", "Notice Handling", "Audit Readiness"],
+    icon: <Users size={28} />,
+    theme: {
+      bg: "bg-blue-50",
+      iconBox: "bg-blue-500",
+      glow: "shadow-blue-200/50",
+      text: "text-blue-700",
+      hoverBorder: "hover:border-blue-300"
+    }
   },
 ];
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.15 } },
-};
-
-const cardVariant = {
-  hidden: { opacity: 0, y: 30 },
-  show: { 
-    opacity: 1, 
-    y: 0, 
-    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
-  },
-};
-
 const ServicesPreview = () => {
   return (
-    <section className="bg-slate-950 py-32 relative overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-600/10 blur-[150px] pointer-events-none" />
+    <section className="bg-[#FCFAF7] py-32 relative overflow-hidden">
+      {/* Background Decor */}
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-yellow-50/50 to-transparent rounded-full blur-3xl -z-0" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+        <div className="flex flex-col items-center text-center mb-24">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-3xl"
+            className="flex items-center gap-2 mb-6 px-4 py-1.5 bg-white rounded-full border border-slate-200 shadow-sm"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-400 text-xs font-bold uppercase tracking-widest mb-6">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              Expertise
-            </div>
-            <h2 className="text-5xl md:text-6xl font-black text-white mb-8 tracking-tighter">
-              Compliance <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Perfected.</span>
-            </h2>
-            <p className="text-slate-400 text-lg leading-relaxed max-w-xl">
-              From GST precision to strategic Labour Law navigation, we provide the backbone for your corporate legal stability.
-            </p>
+            <Sparkles size={14} className="text-amber-500" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Expertise Modules</span>
           </motion.div>
-
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
-            <Link
-              to="/services"
-              className="group flex items-center gap-3 text-white text-sm font-black uppercase tracking-tighter bg-slate-900 px-8 py-4 rounded-2xl border border-slate-800 hover:border-emerald-500/50 transition-all shadow-xl"
-            >
-              All Modules
-              <ArrowUpRight className="text-emerald-400 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" size={18} />
-            </Link>
-          </motion.div>
+          
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-5xl md:text-7xl font-black text-slate-900 mb-8 tracking-tighter leading-none"
+          >
+            Built on <span className="italic font-light text-slate-400">Experience.</span>
+          </motion.h2>
+          
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="text-slate-500 text-lg max-w-2xl leading-relaxed"
+          >
+            Simplifying complex labour laws to ensure smooth operations and safeguard your business against future liabilities.
+          </motion.p>
         </div>
 
-        <motion.div
-          className="grid md:grid-cols-3 gap-8"
-          variants={container}
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-        >
+        <div className="grid md:grid-cols-3 gap-10">
           {services.map((s, i) => (
-            <motion.div
+            <motion.div 
               key={i}
-              variants={cardVariant}
-              whileHover={{ y: -10 }}
-              className={`group relative p-10 rounded-[2.5rem] bg-slate-900/40 border border-slate-800/50 transition-all duration-500 ${s.border} overflow-hidden`}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -12 }}
+              className={`group relative p-10 rounded-[2.5rem] bg-white border border-slate-100 transition-all duration-500 shadow-xl ${s.theme.glow} ${s.theme.hoverBorder}`}
             >
-              {/* Dynamic Accent Glow */}
-              <div className={`absolute -top-24 -right-24 w-48 h-48 ${s.accent} blur-[80px] rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700`} />
-
-              <div className="relative z-10">
-                <div className="mb-10 p-5 inline-block rounded-2xl bg-slate-950/80 border border-slate-800 group-hover:border-white/10 transition-all duration-500">
+              {/* Icon Header */}
+              <div className="flex justify-between items-start mb-12">
+                <div className={`p-5 rounded-2xl ${s.theme.bg} ${s.theme.text} transition-transform group-hover:rotate-6 group-hover:scale-110 duration-500`}>
                   {s.icon}
                 </div>
-
-                <h3 className={`text-2xl font-black text-white mb-4 tracking-tight transition-colors duration-300 ${s.color}`}>
-                  {s.title}
-                </h3>
-                
-                <p className="text-slate-400 leading-relaxed text-sm mb-8">
-                  {s.desc}
-                </p>
-
-                {/* Micro-Features List */}
-                <ul className="space-y-3 mb-10">
-                  {s.features.map((feat, idx) => (
-                    <li key={idx} className="flex items-center gap-3 text-xs font-bold text-slate-500 group-hover:text-slate-300 transition-colors">
-                      <CheckCircle2 size={14} className="text-emerald-500" /> {feat}
-                    </li>
-                  ))}
-                </ul>
-
-                <Link to="/services" className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-widest text-white/50 group-hover:text-white transition-colors">
-                  Learn More <ArrowUpRight size={14} />
+                <Link to="/services" className="p-3 rounded-full bg-slate-50 text-slate-400 hover:bg-slate-900 hover:text-white transition-all">
+                  <ArrowUpRight size={20} />
                 </Link>
               </div>
+
+              <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">
+                {s.title}
+              </h3>
+              
+              <p className="text-slate-500 text-sm mb-10 leading-relaxed font-medium">
+                {s.desc}
+              </p>
+
+              <div className="space-y-4 mb-10">
+                {s.features.map((feat, idx) => (
+                  <div key={idx} className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-full ${s.theme.bg} flex items-center justify-center`}>
+                      <CheckCircle2 size={12} className={s.theme.text} />
+                    </div>
+                    <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">{feat}</span>
+                  </div>
+                ))}
+              </div>
+
+              <Link 
+                to="/services" 
+                className={`w-full py-4 rounded-xl border border-slate-100 flex items-center justify-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all`}
+              >
+                Learn More
+              </Link>
             </motion.div>
           ))}
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="mt-20 flex justify-center"
+        >
+          <Link to="/services" className="group flex items-center gap-3 text-slate-900 text-xs font-black uppercase tracking-widest bg-white px-12 py-5 rounded-full border border-slate-200 hover:shadow-2xl transition-all">
+            Explore All 15+ Services <ArrowUpRight className="text-emerald-600 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" size={18} />
+          </Link>
         </motion.div>
       </div>
     </section>
