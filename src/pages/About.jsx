@@ -1,72 +1,95 @@
+import React from "react";
 import { motion } from "framer-motion";
-import { Target, Eye, Award, CheckCircle2, History, ShieldCheck, Sparkles, TrendingUp } from "lucide-react";
+import { 
+  Target, ShieldCheck, Sparkles, TrendingUp, 
+  Gavel, Compass, Briefcase, ChevronRight, 
+  Building2, Factory, HardHat, Cpu, Truck, Rocket
+} from "lucide-react";
 
 export default function About() {
   const values = [
-    { title: "Integrity", desc: "Honest advisory even when the regulatory landscape is tough.", icon: <ShieldCheck size={28} />, color: "bg-blue-50 text-blue-600" },
-    { title: "Precision", desc: "Zero-error filings and meticulous record-keeping for total peace of mind.", icon: <Target size={28} />, color: "bg-emerald-50 text-emerald-600" },
-    { title: "Authority", desc: "12+ years of on-ground regulatory and implementation expertise.", icon: <Award size={28} />, color: "bg-rose-50 text-rose-600" },
+    { 
+      title: "Clarity over Complexity", 
+      desc: "We simplify the dynamic landscape of Indian labour laws into actionable, straightforward insights for your business.", 
+      icon: <Compass size={24} />, 
+      color: "bg-emerald-50 text-emerald-600" 
+    },
+    { 
+      title: "Prevention over Correction", 
+      desc: "Identifying compliance gaps early to safeguard your operations from penalties, prosecutions, and disruptions.", 
+      icon: <ShieldCheck size={24} />, 
+      color: "bg-slate-100 text-slate-600" 
+    },
+    { 
+      title: "Practical Implementation", 
+      desc: "Moving beyond legal theory to provide ground-level solutions that actually work in day-to-day operations.", 
+      icon: <Gavel size={24} />, 
+      color: "bg-emerald-50 text-emerald-600" 
+    },
   ];
 
   return (
-    <div className="bg-white text-slate-900 min-h-screen pt-20">
-      {/* Hero Section */}
-      <section className="py-24 px-6 relative overflow-hidden">
-        {/* Background Decor */}
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-emerald-50/50 rounded-full blur-3xl -z-0 translate-x-1/2 -translate-y-1/2" />
+    <div className="bg-white text-slate-900 min-h-screen pt-20 font-sans">
+      {/* HERO SECTION: LEGACY & LEADERSHIP */}
+      <section className="py-20 px-6 relative overflow-hidden border-b border-slate-100">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-50/50 rounded-full blur-[100px] -z-0 translate-x-1/3 -translate-y-1/3" />
         
         <div className="max-w-7xl mx-auto relative z-10">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div 
-              initial={{ opacity: 0, x: -30 }} 
+              initial={{ opacity: 0, x: -20 }} 
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-full text-[10px] font-black uppercase tracking-widest mb-8">
-                <Sparkles size={12} className="text-amber-400" /> Our Legacy
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-sm text-[9px] font-black uppercase tracking-widest mb-6">
+                <Sparkles size={10} /> The Firm
               </div>
               
-              <h1 className="text-5xl md:text-7xl font-black mb-8 leading-[0.9] tracking-tighter">
-                Over a Decade of <br/>
-                <span className="text-emerald-500 italic font-light">Compliance Mastery.</span>
+              <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-[1.15] tracking-tight text-slate-900">
+                Practical Advisory. <br/>
+                <span className="text-emerald-600 italic font-serif font-light">Forging Success.</span>
               </h1>
               
-              <p className="text-slate-500 text-lg leading-relaxed mb-10 font-medium max-w-xl">
-                LaborForge Advisors launched <span className="text-slate-900 font-bold">ForgeWatch</span>—our precision-engineered digital division. Born from frontline experience in payroll structuring and statutory armor, we transform regulatory chaos into automated clarity.
+              <p className="text-slate-500 text-base md:text-lg leading-relaxed mb-8 font-light max-w-xl border-l-2 border-emerald-500/20 pl-6">
+                LaborForge Advisors is built on the conviction that compliance is not just a statutory burden—it is a strategic shield. We protect your reputation and finances through precise, ground-level implementation.
               </p>
               
-              <div className="grid grid-cols-2 gap-6 mb-8">
-                <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50">
-                  <p className="text-5xl font-black text-slate-900 tracking-tighter">12<span className="text-blue-500">+</span></p>
-                  <p className="text-slate-400 text-xs font-black uppercase tracking-widest mt-2">Years Experience</p>
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="bg-slate-50 p-6 border border-slate-100 rounded-sm">
+                  <p className="text-3xl font-bold text-slate-900 tracking-tighter">Multi<span className="text-emerald-600">-</span>State</p>
+                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mt-2">Regional Statutory Expertise</p>
                 </div>
-                <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/50">
-                  <p className="text-5xl font-black text-slate-900 tracking-tighter">500<span className="text-emerald-500">+</span></p>
-                  <p className="text-slate-400 text-xs font-black uppercase tracking-widest mt-2">Clients Managed</p>
+                <div className="bg-slate-50 p-6 border border-slate-100 rounded-sm">
+                  <p className="text-3xl font-bold text-slate-900 tracking-tighter">Precision</p>
+                  <p className="text-slate-400 text-[9px] font-black uppercase tracking-widest mt-2">Audit-Ready Systems</p>
                 </div>
               </div>
             </motion.div>
 
             <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
+              initial={{ opacity: 0, scale: 0.98 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="w-full h-[600px] bg-slate-100 rounded-[3.5rem] border-8 border-white shadow-2xl overflow-hidden flex items-center justify-center group">
-                {/* Replace with actual image */}
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 group-hover:scale-105 transition-transform duration-700" />
-                <span className="text-slate-400 text-xs font-black uppercase tracking-widest relative z-10">Founder / Expert Portrait</span>
+              <div className="w-full h-[500px] bg-slate-100 rounded-sm border border-slate-200 overflow-hidden flex items-end relative group">
+                {/* Visual placeholder for leadership portrait */}
+                <div className="absolute inset-0 bg-slate-200 group-hover:scale-105 transition-transform duration-1000" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent z-10" />
+                
+                <div className="relative z-20 p-10 w-full">
+                   <p className="text-emerald-400 font-serif italic text-xl mb-4">"We don’t just point out non-compliance—we help fix it."</p>
+                   <p className="text-white text-[10px] uppercase tracking-[0.3em] font-black">Chandan Roy • Principal Advisor</p>
+                </div>
               </div>
               
-              {/* Floating Performance Badge */}
-              <div className="absolute -bottom-10 -left-10 bg-white p-8 rounded-3xl shadow-2xl border border-slate-50 flex items-center gap-5">
-                <div className="w-14 h-14 bg-emerald-500 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
-                  <TrendingUp size={28} />
+              <div className="absolute -bottom-6 -left-6 bg-slate-900 p-6 rounded-sm shadow-xl flex items-center gap-4">
+                <div className="w-10 h-10 bg-emerald-600 flex items-center justify-center text-white shadow-lg">
+                  <Briefcase size={18} />
                 </div>
                 <div>
-                  <p className="text-2xl font-black text-slate-900 leading-none tracking-tighter">100%</p>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">Audit Success Rate</p>
+                  <p className="text-lg font-bold text-white leading-none tracking-tight">Audit Ready</p>
+                  <p className="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1">Inspection-Safe Operations</p>
                 </div>
               </div>
             </motion.div>
@@ -74,86 +97,108 @@ export default function About() {
         </div>
       </section>
 
-      {/* Mission & Vision Section */}
-      <section className="py-32 bg-slate-50 relative">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-10">
-          <motion.div 
-            whileHover={{ y: -10 }}
-            className="bg-white p-12 rounded-[3rem] border border-slate-100 shadow-sm group"
-          >
-            <div className="w-16 h-16 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-8 group-hover:bg-emerald-500 group-hover:text-white transition-all duration-500">
-              <Target size={32} />
-            </div>
-            <h3 className="text-3xl font-black mb-4 tracking-tight">Our Mission</h3>
-            <p className="text-slate-500 font-medium leading-relaxed">
-              To forge unbreakable compliance frameworks that transform regulatory complexity into operational excellence for businesses across India.
-            </p>
-          </motion.div>
+      {/* STRATEGIC CAPABILITIES */}
+      <section className="py-24 bg-slate-50/50 relative">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-2xl font-bold mb-6 tracking-tight uppercase text-slate-900">
+                Industrial <span className="text-emerald-600 italic font-serif font-light">Footprint.</span>
+              </h3>
+              <p className="text-slate-500 font-light leading-relaxed mb-10 max-w-lg">
+                Our tailored compliance strategies are forged through extensive exposure to high-complexity environments across India.
+              </p>
+              
+              <div className="grid grid-cols-2 gap-y-6 gap-x-4">
+                {[
+                  { name: "Staffing & Manpower", icon: <Building2 size={14}/> },
+                  { name: "Manufacturing Units", icon: <Factory size={14}/> },
+                  { name: "Mining & Infrastructure", icon: <HardHat size={14}/> },
+                  { name: "IT & Service Sector", icon: <Cpu size={14}/> },
+                  { name: "Retail & Logistics", icon: <Truck size={14}/> },
+                  { name: "Startups & Emerging Ent.", icon: <Rocket size={14}/> }
+                ].map((item) => (
+                  <div key={item.name} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-wider text-slate-600 group cursor-default">
+                    <div className="w-6 h-6 rounded-full bg-white border border-slate-200 flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                      {item.icon}
+                    </div>
+                    {item.name} 
+                  </div>
+                ))}
+              </div>
+            </motion.div>
 
-          <motion.div 
-            whileHover={{ y: -10 }}
-            className="bg-white p-12 rounded-[3rem] border border-slate-100 shadow-sm group"
-          >
-            <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600 mb-8 group-hover:bg-blue-500 group-hover:text-white transition-all duration-500">
-              <Eye size={32} />
+            <div className="grid gap-4">
+              <div className="p-8 bg-white border border-slate-100 rounded-sm hover:border-emerald-500 transition-all shadow-sm">
+                <Target className="text-emerald-600 mb-4" size={28} />
+                <h4 className="text-sm font-black uppercase tracking-widest mb-2 text-slate-900">Our Mission</h4>
+                <p className="text-slate-500 text-[13px] font-light leading-relaxed">
+                  To serve as an extended compliance arm, ensuring organizations stay audit-ready and legally secure through partnership rather than transactional service.
+                </p>
+              </div>
+              <div className="p-8 bg-white border border-slate-100 rounded-sm hover:border-emerald-500 transition-all shadow-sm">
+                <TrendingUp className="text-emerald-600 mb-4" size={28} />
+                <h4 className="text-sm font-black uppercase tracking-widest mb-2 text-slate-900">Our Commitment</h4>
+                <p className="text-slate-500 text-[13px] font-light leading-relaxed">
+                  Delivering accurate, up-to-date statutory advisory with transparent communication and practical, business-friendly implementation.
+                </p>
+              </div>
             </div>
-            <h3 className="text-3xl font-black mb-4 tracking-tight">Our Vision</h3>
-            <p className="text-slate-500 font-medium leading-relaxed">
-              To be India's premier compliance forge—mastering New Labour Codes through precision payroll, statutory armor, and Lean Six Sigma innovation.
-            </p>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Values Grid */}
-      <section className="py-32 px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-20">
-          <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-slate-900">
-            The <span className="text-emerald-500 italic font-light">Values</span> That Drive Us
+      {/* CORE PHILOSOPHY GRID */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 uppercase">
+            Consulting <span className="text-emerald-600 italic font-serif font-light">Philosophy</span>
           </h2>
-          <p className="text-slate-400 font-bold uppercase tracking-widest text-xs mt-4">Built on Trust, Precision, and integrity</p>
+          <div className="h-0.5 w-12 bg-emerald-500 mx-auto mt-4" />
         </div>
         
-        <div className="grid md:grid-cols-3 gap-10">
+        <div className="grid md:grid-cols-3 gap-6">
           {values.map((v, i) => (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               viewport={{ once: true }}
-              className="p-10 bg-white border border-slate-100 rounded-[2.5rem] shadow-xl shadow-slate-100/50 hover:border-emerald-200 transition-all text-center"
+              className="p-10 bg-white border border-slate-100 hover:border-emerald-200 transition-all group shadow-sm hover:shadow-md"
             >
-              <div className={`inline-flex w-16 h-16 rounded-2xl mb-8 items-center justify-center ${v.color}`}>
+              <div className={`inline-flex w-10 h-10 mb-8 items-center justify-center rounded-sm ${v.color}`}>
                 {v.icon}
               </div>
-              <h4 className="text-2xl font-black mb-4 text-slate-900 tracking-tight">{v.title}</h4>
-              <p className="text-slate-500 text-sm leading-relaxed font-medium">{v.desc}</p>
+              <h4 className="text-[11px] font-black mb-4 text-slate-900 uppercase tracking-widest group-hover:text-emerald-600 transition-colors">
+                {v.title}
+              </h4>
+              <p className="text-slate-500 text-[13px] leading-relaxed font-light">{v.desc}</p>
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Timeline / Journey Teaser */}
-      
-      <section className="py-32 px-6 max-w-5xl mx-auto text-center">
-        <div className="bg-slate-900 rounded-[4rem] p-16 md:p-24 relative overflow-hidden text-white">
-          {/* Internal Glow */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/20 rounded-full blur-[100px]" />
+      {/* CALL TO ACTION */}
+      <section className="py-24 px-6 max-w-5xl mx-auto text-center">
+        <div className="bg-slate-900 p-12 md:p-20 relative overflow-hidden rounded-sm shadow-2xl">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 blur-[100px]" />
           
           <div className="relative z-10">
-            <History className="mx-auto text-emerald-400 mb-8" size={60} />
-            <h3 className="text-4xl md:text-5xl font-black mb-6 tracking-tighter">Our Commitment</h3>
-            <p className="text-slate-400 text-lg mb-10 font-medium leading-relaxed">
-              LaborForge Advisors delivers unwavering reliability—precision payroll protection, real-time Labour Code monitoring, and statutory gap elimination through proven expertise.
+            <h3 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight text-white uppercase">
+              Forging Compliance. <br/><span className="text-emerald-400 italic font-serif font-light">Shaping Success.</span>
+            </h3>
+            <p className="text-slate-400 text-base mb-10 font-light max-w-2xl mx-auto leading-relaxed italic">
+              "Understand your risk exposure before it becomes a problem."
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-               <button className="bg-emerald-500 text-slate-900 font-black uppercase tracking-widest text-xs px-10 py-5 rounded-2xl hover:bg-white transition-all">
-                 Download Credentials
-               </button>
-               <button className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-black uppercase tracking-widest text-xs px-10 py-5 rounded-2xl hover:bg-white/20 transition-all">
-                 Our Team
-               </button>
+              <button className="bg-emerald-600 text-white font-black uppercase tracking-widest text-[10px] px-10 py-4 hover:bg-emerald-500 transition-all flex items-center justify-center gap-2 group">
+                Request Advisory Consultation <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform"/>
+              </button>
             </div>
           </div>
         </div>

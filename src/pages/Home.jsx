@@ -11,7 +11,7 @@ const Home = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="bg-white" // Switched from slate-950
+      className="bg-white font-sans"
     >
       <Hero />
       
@@ -20,40 +20,40 @@ const Home = () => {
       <WhyUs />
 
       {/* Final Lead Capture Section */}
-      <section className="py-32 px-6 relative overflow-hidden bg-[#FCFAF7]">
+      <section className="py-24 px-6 relative overflow-hidden bg-white">
         {/* Subtle Background Elements */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full">
-           <div className="absolute top-10 left-10 w-64 h-64 bg-emerald-100/50 rounded-full blur-3xl" />
-           <div className="absolute bottom-10 right-10 w-64 h-64 bg-blue-100/50 rounded-full blur-3xl" />
+        <div className="absolute inset-0 z-0">
+           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:30px_30px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)] opacity-20" />
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
-          <div className="bg-white border border-slate-100 rounded-[3rem] p-8 md:p-20 shadow-[0_40px_80px_-15px_rgba(0,0,0,0.05)] overflow-hidden">
+          <div className="bg-slate-50 border border-slate-100 rounded-sm p-10 md:p-20 shadow-sm overflow-hidden">
             
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div>
                 <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  className="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-widest mb-6"
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className="inline-flex items-center gap-2 px-3 py-1 bg-white border border-emerald-100 text-emerald-700 rounded-sm text-[9px] font-black uppercase tracking-widest mb-8 shadow-sm"
                 >
-                  <Sparkles size={12} /> Get Started Today
+                  <Sparkles size={10} /> Consultation
                 </motion.div>
 
-                <h2 className="text-4xl md:text-6xl font-black text-slate-900 mb-8 tracking-tighter leading-[0.9]">
-                  Ready to <span className="text-emerald-500 italic font-light">automate</span> <br /> 
-                  your compliance?
+                <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-8 tracking-tight leading-[1.1]">
+                  Secure your <br /> 
+                  <span className="text-emerald-600 italic font-serif font-light">statutory future</span> today.
                 </h2>
                 
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 gap-5">
                   {[
-                    "Zero Penalty Guarantee",
-                    "Expert Documentation",
-                    "24/7 Professional Support"
+                    "Zero-Gap Compliance Guarantee",
+                    "Audit-Ready Documentation",
+                    "Expert Inspection Support"
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 text-slate-600 font-bold text-sm">
-                      <div className="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                        <CheckCircle2 size={14} className="text-white" />
+                    <div key={i} className="flex items-center gap-4 text-slate-600 font-bold text-[11px] uppercase tracking-wider">
+                      <div className="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center shadow-md shadow-emerald-100">
+                        <CheckCircle2 size={12} className="text-white" />
                       </div>
                       {item}
                     </div>
@@ -64,21 +64,21 @@ const Home = () => {
               <div className="flex flex-col gap-4">
                 <Link
                   to="/gst-quotation"
-                  className="bg-slate-900 text-white px-10 py-6 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-emerald-600 transition-all flex items-center justify-center gap-3 group shadow-xl shadow-slate-200"
+                  className="bg-slate-900 text-white px-10 py-5 rounded-sm font-black uppercase tracking-widest text-[10px] hover:bg-emerald-700 transition-all flex items-center justify-center gap-3 group shadow-xl shadow-slate-200"
                 >
                   Request a Free Quote
-                  <ArrowRight size={18} className="group-hover:translate-x-2 transition-transform" />
+                  <ArrowRight size={14} className="group-hover:translate-x-2 transition-transform" />
                 </Link>
                 
                 <Link
                   to="/contact"
-                  className="bg-white border border-slate-200 text-slate-900 px-10 py-6 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-slate-50 transition-all text-center shadow-sm"
+                  className="bg-white border border-slate-200 text-slate-900 px-10 py-5 rounded-sm font-black uppercase tracking-widest text-[10px] hover:bg-slate-50 transition-all text-center shadow-sm"
                 >
-                  Schedule an Expert Call
+                  Schedule an Advisory Call
                 </Link>
 
-                <p className="text-center text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-2">
-                  No commitment required • Response within 2 hours
+                <p className="text-center text-[9px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-4 italic">
+                  "Prevention over correction" — Response within 2 business hours
                 </p>
               </div>
             </div>

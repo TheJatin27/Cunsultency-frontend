@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronDown, UserCircle, BookOpen, Newspaper, Phone, Home, Layers } from "lucide-react";
+import { 
+  Menu, X, ChevronDown, UserCircle, 
+  ShieldCheck, Gavel, FileText, Landmark 
+} from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,166 +19,147 @@ const Navbar = () => {
   }, []);
 
   const serviceLinks = [
-    { name: "Compliance Management", path: "ComplianceRetainership" },
-    { name: "Registration & Setup", path: "/EstablishmentSetup" },
-    { name: "Compliance Audit", path: "/ComplianceAudit" },
-    { name: "New Labour Code Advisory", path: "/LabourCodeTransition" },
+    { name: "Compliance Management", path: "/compliance", icon: <ShieldCheck size={16} />, desc: "Statutory management" },
+    { name: "Minimum Wages & Audit", path: "/wages", icon: <Gavel size={16} />, desc: "Legal wage structuring" },
+    { name: "EPF & ESI Advisory", path: "/epf-esi", icon: <Landmark size={16} />, desc: "Social security adherence" },
+    { name: "Contract Labour (CLRA)", path: "/clra", icon: <FileText size={16} />, desc: "Licensing & regulation" },
   ];
 
   const navLinks = [
-    { name: "Home", path: "/", icon: <Home size={14} /> },
-    { name: "About", path: "/about" },
-    // { name: "Industries", path: "/industries" },
-    { name: "E-Library", path: "/knowledge", icon: <BookOpen size={14} /> },
-    // { name: "Blog", path: "/blog", icon: <Newspaper size={14} /> },
-    { name: "Contact", path: "/contact", icon: <Phone size={14} /> },
+    { name: "Home", path: "/" },
+    { name: "The Firm", path: "/about" },
+    { name: "E-Library", path: "/knowledge" },
+    { name: "Contact", path: "/contact" },
   ];
 
   return (
     <nav
-      className={`fixed w-full z-[100] transition-all duration-500 px-6 ${
+      className={`fixed w-full z-[100] transition-all duration-500 px-6 lg:px-20 ${
         scrolled 
-          ? "py-3 bg-white/80 backdrop-blur-xl border-b border-slate-200 shadow-sm" 
-          : "py-6 bg-transparent"
+          ? "py-4 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm" 
+          : "py-8 bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* Logo Section */}
+        {/* BRAND IDENTITY */}
         <Link to="/" className="group flex items-center gap-3">
-          <motion.div 
-            whileHover={{ rotate: -5, scale: 1.05 }}
-            className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center font-black text-white shadow-lg"
-          >
-            LF
-          </motion.div>
           <div className="flex flex-col">
-            <span className="text-slate-900 font-black text-xl tracking-tighter leading-none">
-              LABOR<span className="text-emerald-500">.</span>FORGE
+            <span className="text-slate-900 font-black text-xl tracking-tighter leading-none group-hover:text-emerald-600 transition-colors uppercase italic">
+              LABORFORGE
             </span>
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-[0.3em]">Advisory Group</span>
+            <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-[0.4em] mt-1">
+              Advisors
+            </span>
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-8">
-          <div className="flex gap-7 text-[11px] font-black uppercase tracking-widest text-slate-500">
-            {/* Home & About */}
+        {/* DESKTOP ARCHITECTURE */}
+        <div className="hidden lg:flex items-center gap-10">
+          <div className="flex gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
             <NavLink link={navLinks[0]} active={location.pathname === "/"} />
             <NavLink link={navLinks[1]} active={location.pathname === "/about"} />
 
-            {/* Services Dropdown */}
+            {/* SERVICES DROP-PANEL */}
             <div 
-              className="relative group py-2"
+              className="relative py-2"
               onMouseEnter={() => setActiveDropdown("services")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className={`flex items-center gap-1 transition-colors uppercase tracking-widest hover:text-slate-900 ${activeDropdown === "services" ? "text-slate-900" : ""}`}>
-                Services <ChevronDown size={14} className={`transition-transform duration-300 ${activeDropdown === "services" ? "rotate-180" : ""}`} />
+              <button className={`flex items-center gap-2 transition-all hover:text-slate-900 ${activeDropdown === "services" ? "text-emerald-600" : ""}`}>
+                Expertise <ChevronDown size={10} className={`transition-transform duration-500 ${activeDropdown === "services" ? "rotate-180" : ""}`} />
               </button>
               
               <AnimatePresence>
                 {activeDropdown === "services" && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 15 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    className="absolute top-full -left-4 w-72 bg-white border border-slate-100 rounded-2xl p-3 shadow-2xl mt-2 overflow-hidden"
+                    exit={{ opacity: 0, y: 5 }}
+                    className="absolute top-full -left-24 w-[380px] bg-white border border-slate-100 rounded-sm p-5 shadow-2xl mt-4"
                   >
-                    <div className="p-3 mb-2 bg-slate-50 rounded-xl">
-                      <p className="text-[9px] text-slate-400 font-black">Practice Areas</p>
+                    <div className="grid grid-cols-1 gap-1">
+                      <p className="text-[8px] text-emerald-600 font-black uppercase tracking-widest mb-3 pb-2 border-b border-slate-50">Practice Areas</p>
+                      {serviceLinks.map((service) => (
+                        <Link 
+                          key={service.name} 
+                          to={service.path}
+                          className="flex items-center gap-4 p-3 hover:bg-slate-50 transition-all group/item border border-transparent"
+                        >
+                          <div className="text-slate-400 group-hover/item:text-emerald-600 transition-colors">
+                            {service.icon}
+                          </div>
+                          <div>
+                            <p className="text-slate-900 text-[11px] font-bold tracking-tight uppercase">{service.name}</p>
+                            <p className="text-slate-400 text-[10px] font-medium tracking-normal normal-case italic">{service.desc}</p>
+                          </div>
+                        </Link>
+                      ))}
                     </div>
-                    {serviceLinks.map((service) => (
-                      <Link 
-                        key={service.name} 
-                        to={service.path}
-                        className="flex items-center justify-between py-3 px-4 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50/50 rounded-xl transition-all font-bold text-[10px]"
-                      >
-                        {service.name}
-                        <Layers size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </Link>
-                    ))}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Remaining Links */}
-            {navLinks.slice(2).map((link) => (
-              <NavLink key={link.name} link={link} active={location.pathname === link.path} />
-            ))}
+            <NavLink link={navLinks[2]} active={location.pathname === "/knowledge"} />
+            <NavLink link={navLinks[3]} active={location.pathname === "/contact"} />
           </div>
 
-          {/* Action Group */}
-          <div className="flex items-center border-l border-slate-200 ml-2 pl-8">
+          {/* CTA GROUP */}
+          <div className="flex items-center border-l border-slate-100 ml-4 pl-10">
             <Link 
               to="/login" 
-              className="px-5 py-2.5 bg-slate-900 text-white text-[11px] font-bold uppercase tracking-widest rounded-full hover:bg-emerald-600 transition-all flex items-center gap-2 shadow-md shadow-slate-200"
+              className="group px-6 py-3 bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all duration-300 flex items-center gap-3 shadow-lg shadow-slate-200"
             >
-              <UserCircle size={16} />
-              Client Login
+              <UserCircle size={14} />
+              Partner Portal
             </Link>
           </div>
         </div>
 
-        {/* Mobile Toggle */}
+        {/* MOBILE TRIGGER */}
         <button 
-          className="lg:hidden text-slate-900 p-2 bg-slate-100 rounded-lg"
+          className="lg:hidden text-slate-900 p-2"
           onClick={() => setIsOpen(!isOpen)}
         >
-          {isOpen ? <X size={20} /> : <Menu size={20} />}
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* MOBILE OVERLAY */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25 }}
-            className="lg:hidden fixed top-0 right-0 w-[85%] h-full bg-white shadow-2xl z-[101] p-8 border-l border-slate-100"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="lg:hidden fixed inset-0 h-screen bg-white z-[101] p-12 flex flex-col justify-center"
           >
-            <div className="flex justify-between items-center mb-10">
-              <span className="font-black text-slate-900 tracking-tighter italic">MENU.</span>
-              <button onClick={() => setIsOpen(false)} className="p-2 bg-slate-50 rounded-full"><X size={20}/></button>
-            </div>
-
-            <div className="flex flex-col gap-6">
+            <button onClick={() => setIsOpen(false)} className="absolute top-10 right-10 text-slate-400"><X size={32}/></button>
+            
+            <div className="space-y-6">
               {navLinks.map((link) => (
                 <Link 
                   key={link.name} 
                   to={link.path} 
                   onClick={() => setIsOpen(false)}
-                  className="text-2xl font-black text-slate-900 hover:text-emerald-600 transition-colors flex items-center justify-between"
+                  className="block text-3xl font-bold text-slate-900 hover:text-emerald-600 transition-colors tracking-tighter"
                 >
-                  {link.name} <span className="opacity-20">/</span>
+                  {link.name}
                 </Link>
               ))}
-              
-              <div className="h-px bg-slate-100 my-4" />
-              
-              <div className="space-y-4">
-                <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest">Our Expertise</p>
+              <div className="h-px bg-slate-100 w-12 my-8" />
+              <div className="grid gap-4">
                 {serviceLinks.map((s) => (
                   <Link 
                     key={s.name} 
                     to={s.path} 
                     onClick={() => setIsOpen(false)} 
-                    className="block text-slate-500 font-bold hover:text-slate-900"
+                    className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px] hover:text-emerald-600"
                   >
                     {s.name}
                   </Link>
                 ))}
               </div>
-
-              <Link 
-                to="/login" 
-                onClick={() => setIsOpen(false)}
-                className="mt-8 flex items-center justify-center gap-2 bg-emerald-600 text-white py-5 rounded-2xl font-bold uppercase tracking-widest text-sm shadow-xl shadow-emerald-100"
-              >
-                <UserCircle size={20} /> Client Portal
-              </Link>
             </div>
           </motion.div>
         )}
@@ -187,14 +171,14 @@ const Navbar = () => {
 const NavLink = ({ link, active }) => (
   <Link
     to={link.path}
-    className={`relative group py-2 transition-colors ${active ? "text-slate-900" : "text-slate-500 hover:text-slate-900"}`}
+    className={`relative group transition-colors ${active ? "text-emerald-600" : "text-slate-500 hover:text-slate-900"}`}
   >
-    <span className="flex items-center gap-1.5 font-black">{link.name}</span>
+    <span className="font-black">{link.name}</span>
     {active && (
       <motion.div 
         layoutId="nav-underline" 
-        className="absolute -bottom-1 left-0 w-full h-1 bg-emerald-500 rounded-full" 
-        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        className="absolute -bottom-1.5 left-0 w-full h-[1.5px] bg-emerald-600" 
+        transition={{ type: "spring", stiffness: 400, damping: 30 }}
       />
     )}
   </Link>
