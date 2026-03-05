@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom"; // Use Link for external routing
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Menu, X, ChevronDown, UserCircle, 
@@ -18,81 +18,91 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const serviceLinks = [
-    { name: "Compliance Management", path: "/compliance", icon: <ShieldCheck size={16} />, desc: "Statutory management" },
-    { name: "Minimum Wages & Audit", path: "/wages", icon: <Gavel size={16} />, desc: "Legal wage structuring" },
-    { name: "EPF & ESI Advisory", path: "/epf-esi", icon: <Landmark size={16} />, desc: "Social security adherence" },
-    { name: "Contract Labour (CLRA)", path: "/clra", icon: <FileText size={16} />, desc: "Licensing & regulation" },
-  ];
+  // Internal Navigation Smooth Scroll (for same-page sections)
+  const scrollToSection = (id) => {
+    // If we are already on the home page, scroll
+    if (location.pathname === "/") {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+        setIsOpen(false);
+        setActiveDropdown(null);
+      }
+    }
+  };
 
-  const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "The Firm", path: "/about" },
-    { name: "E-Library", path: "/knowledge" },
-    { name: "Contact", path: "/contact" },
+  const serviceLinks = [
+    { name: "Compliance Management", id: "expertise", icon: <ShieldCheck size={18} /> },
+    { name: "Minimum Wages & Audit", id: "expertise", icon: <Gavel size={18} /> },
+    { name: "EPF & ESI Advisory", id: "expertise", icon: <Landmark size={18} /> },
+    { name: "Contract Labour (CLRA)", id: "expertise", icon: <FileText size={18} /> },
   ];
 
   return (
     <nav
-      className={`fixed w-full z-[100] transition-all duration-500 px-6 lg:px-20 ${
+      className={`fixed w-full z-[100] transition-all duration-500 px-6 lg:px-16 ${
         scrolled 
-          ? "py-4 bg-white/95 backdrop-blur-md border-b border-slate-100 shadow-sm" 
+          ? "py-4 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-lg" 
           : "py-8 bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
-        {/* BRAND IDENTITY */}
-        <Link to="/" className="group flex items-center gap-3">
+        
+        {/* BRAND IDENTITY: Chandan Roy's Vision */}
+        <div className="group flex items-center gap-3 cursor-pointer" onClick={() => scrollToSection('home')}>
           <div className="flex flex-col">
-            <span className="text-slate-900 font-black text-xl tracking-tighter leading-none group-hover:text-emerald-600 transition-colors uppercase italic">
-              LABORFORGE
+            <span className={`font-black text-2xl md:text-3xl tracking-tighter leading-none transition-colors duration-500 uppercase italic ${
+              scrolled ? "text-slate-900" : "text-white"
+            }`}>
+              LABOR<span className="text-blue-500">FORGE</span>
             </span>
-            <span className="text-[9px] font-bold text-emerald-600 uppercase tracking-[0.4em] mt-1">
+            <span className={`text-[11px] font-bold uppercase tracking-[0.4em] mt-1 transition-colors duration-500 ${
+              scrolled ? "text-slate-500" : "text-blue-400"
+            }`}>
               Advisors
             </span>
           </div>
-        </Link>
+        </div>
 
-        {/* DESKTOP ARCHITECTURE */}
+        {/* DESKTOP ARCHITECTURE: Large Visible Text */}
         <div className="hidden lg:flex items-center gap-10">
-          <div className="flex gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
-            <NavLink link={navLinks[0]} active={location.pathname === "/"} />
-            <NavLink link={navLinks[1]} active={location.pathname === "/about"} />
+          <div className={`flex gap-8 text-[14px] font-black uppercase tracking-widest ${
+            scrolled ? "text-slate-700" : "text-white"
+          }`}>
+            <button onClick={() => scrollToSection('home')} className="hover:text-blue-500 transition-colors">Home</button>
+            <button onClick={() => scrollToSection('firm')} className="hover:text-blue-500 transition-colors">The Firm</button>
 
-            {/* SERVICES DROP-PANEL */}
+            {/* ENTERPRISES (Expertise Dropdown) */}
             <div 
-              className="relative py-2"
+              className="relative"
               onMouseEnter={() => setActiveDropdown("services")}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className={`flex items-center gap-2 transition-all hover:text-slate-900 ${activeDropdown === "services" ? "text-emerald-600" : ""}`}>
-                Expertise <ChevronDown size={10} className={`transition-transform duration-500 ${activeDropdown === "services" ? "rotate-180" : ""}`} />
+              <button className={`flex items-center gap-2 transition-all hover:text-blue-500 ${activeDropdown === "services" ? "text-blue-500" : ""}`}>
+                Enterprises <ChevronDown size={16} className={`transition-transform duration-500 ${activeDropdown === "services" ? "rotate-180" : ""}`} />
               </button>
               
               <AnimatePresence>
                 {activeDropdown === "services" && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 5 }}
-                    className="absolute top-full -left-24 w-[380px] bg-white border border-slate-100 rounded-sm p-5 shadow-2xl mt-4"
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute top-full -left-20 w-[320px] bg-white border border-slate-100 rounded-xl p-5 shadow-2xl mt-4"
                   >
-                    <div className="grid grid-cols-1 gap-1">
-                      <p className="text-[8px] text-emerald-600 font-black uppercase tracking-widest mb-3 pb-2 border-b border-slate-50">Practice Areas</p>
+                    <div className="grid grid-cols-1 gap-1 text-left">
+                      <p className="text-[10px] text-blue-600 font-black uppercase tracking-widest mb-3 pb-2 border-b border-slate-50">Practice Areas</p>
                       {serviceLinks.map((service) => (
-                        <Link 
+                        <button 
                           key={service.name} 
-                          to={service.path}
-                          className="flex items-center gap-4 p-3 hover:bg-slate-50 transition-all group/item border border-transparent"
+                          onClick={() => scrollToSection(service.id)}
+                          className="flex items-center gap-4 p-3 hover:bg-blue-50 rounded-lg transition-all group/item w-full text-left"
                         >
-                          <div className="text-slate-400 group-hover/item:text-emerald-600 transition-colors">
+                          <div className="text-slate-400 group-hover/item:text-blue-600 transition-colors">
                             {service.icon}
                           </div>
-                          <div>
-                            <p className="text-slate-900 text-[11px] font-bold tracking-tight uppercase">{service.name}</p>
-                            <p className="text-slate-400 text-[10px] font-medium tracking-normal normal-case italic">{service.desc}</p>
-                          </div>
-                        </Link>
+                          <span className="text-slate-900 text-xs font-black uppercase leading-none">{service.name}</span>
+                        </button>
                       ))}
                     </div>
                   </motion.div>
@@ -100,28 +110,30 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
 
-            <NavLink link={navLinks[2]} active={location.pathname === "/knowledge"} />
-            <NavLink link={navLinks[3]} active={location.pathname === "/contact"} />
+            {/* E-LIBRARY: Navigates to /knowledge */}
+            <Link to="/knowledge" className="hover:text-blue-500 transition-colors">
+              E-Library
+            </Link>
           </div>
 
-          {/* CTA GROUP */}
-          <div className="flex items-center border-l border-slate-100 ml-4 pl-10">
-            <Link 
-              to="/login" 
-              className="group px-6 py-3 bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest hover:bg-emerald-700 transition-all duration-300 flex items-center gap-3 shadow-lg shadow-slate-200"
+          {/* PARTNER PORTAL: Direct Contact */}
+          <div className={`flex items-center border-l ml-2 pl-8 ${scrolled ? "border-slate-200" : "border-white/20"}`}>
+            <button 
+              onClick={() => scrollToSection('contact')}
+              className="group px-8 py-3.5 bg-blue-600 text-white text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all duration-300 flex items-center gap-3 rounded-full shadow-lg shadow-blue-600/20"
             >
-              <UserCircle size={14} />
+              <UserCircle size={18} />
               Partner Portal
-            </Link>
+            </button>
           </div>
         </div>
 
         {/* MOBILE TRIGGER */}
         <button 
-          className="lg:hidden text-slate-900 p-2"
+          className={`lg:hidden p-2 transition-colors ${scrolled ? "text-slate-900" : "text-white"}`}
           onClick={() => setIsOpen(!isOpen)}
         >
-          {isOpen ? <X size={24} /> : <Menu size={24} />}
+          {isOpen ? <X size={32} /> : <Menu size={32} />}
         </button>
       </div>
 
@@ -129,37 +141,30 @@ const Navbar = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="lg:hidden fixed inset-0 h-screen bg-white z-[101] p-12 flex flex-col justify-center"
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 100 }}
+            className="lg:hidden fixed inset-0 h-screen bg-slate-950 z-[101] p-10 flex flex-col justify-center text-white"
           >
-            <button onClick={() => setIsOpen(false)} className="absolute top-10 right-10 text-slate-400"><X size={32}/></button>
+            <button onClick={() => setIsOpen(false)} className="absolute top-8 right-8 text-white/50 hover:text-white"><X size={32}/></button>
             
-            <div className="space-y-6">
-              {navLinks.map((link) => (
-                <Link 
-                  key={link.name} 
-                  to={link.path} 
-                  onClick={() => setIsOpen(false)}
-                  className="block text-3xl font-bold text-slate-900 hover:text-emerald-600 transition-colors tracking-tighter"
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="h-px bg-slate-100 w-12 my-8" />
-              <div className="grid gap-4">
-                {serviceLinks.map((s) => (
-                  <Link 
-                    key={s.name} 
-                    to={s.path} 
-                    onClick={() => setIsOpen(false)} 
-                    className="text-slate-400 font-bold uppercase tracking-[0.2em] text-[10px] hover:text-emerald-600"
-                  >
-                    {s.name}
-                  </Link>
-                ))}
-              </div>
+            <div className="space-y-8">
+              <button onClick={() => scrollToSection('home')} className="block text-4xl font-black uppercase text-left italic">Home</button>
+              <button onClick={() => scrollToSection('firm')} className="block text-4xl font-black uppercase text-left italic">The Firm</button>
+              <button onClick={() => scrollToSection('expertise')} className="block text-4xl font-black uppercase text-left italic">Enterprises</button>
+              
+              {/* Mobile Link to E-Library */}
+              <Link to="/knowledge" onClick={() => setIsOpen(false)} className="block text-4xl font-black uppercase text-left italic hover:text-blue-500">
+                E-Library
+              </Link>
+              
+              <div className="h-1 bg-blue-600 w-12 my-6 rounded-full" />
+              <button 
+                onClick={() => scrollToSection('contact')}
+                className="flex items-center gap-4 text-white bg-blue-600 px-6 py-4 rounded-xl font-black uppercase tracking-widest text-sm"
+              >
+                <UserCircle size={24} /> Partner Portal
+              </button>
             </div>
           </motion.div>
         )}
@@ -167,21 +172,5 @@ const Navbar = () => {
     </nav>
   );
 };
-
-const NavLink = ({ link, active }) => (
-  <Link
-    to={link.path}
-    className={`relative group transition-colors ${active ? "text-emerald-600" : "text-slate-500 hover:text-slate-900"}`}
-  >
-    <span className="font-black">{link.name}</span>
-    {active && (
-      <motion.div 
-        layoutId="nav-underline" 
-        className="absolute -bottom-1.5 left-0 w-full h-[1.5px] bg-emerald-600" 
-        transition={{ type: "spring", stiffness: 400, damping: 30 }}
-      />
-    )}
-  </Link>
-);
 
 export default Navbar;
