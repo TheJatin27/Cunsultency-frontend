@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom"; // Use Link for external routing
+import { Link, useLocation, useNavigate } from "react-router-dom"; 
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Menu, X, ChevronDown, UserCircle, 
@@ -10,7 +10,9 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -18,15 +20,19 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Internal Navigation Smooth Scroll (for same-page sections)
+  // Updated Navigation Logic
   const scrollToSection = (id) => {
-    // If we are already on the home page, scroll
-    if (location.pathname === "/") {
+    setIsOpen(false);
+    setActiveDropdown(null);
+
+    if (location.pathname !== "/") {
+      // If not on home page, navigate to home with hash
+      navigate(`/#${id}`);
+    } else {
+      // If already on home page, smooth scroll to element
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
-        setIsOpen(false);
-        setActiveDropdown(null);
       }
     }
   };
@@ -48,7 +54,7 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         
-        {/* BRAND IDENTITY: Chandan Roy's Vision */}
+        {/* BRAND IDENTITY */}
         <div className="group flex items-center gap-3 cursor-pointer" onClick={() => scrollToSection('home')}>
           <div className="flex flex-col">
             <span className={`font-black text-2xl md:text-3xl tracking-tighter leading-none transition-colors duration-500 uppercase italic ${
@@ -64,7 +70,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* DESKTOP ARCHITECTURE: Large Visible Text */}
+        {/* DESKTOP ARCHITECTURE */}
         <div className="hidden lg:flex items-center gap-10">
           <div className={`flex gap-8 text-[14px] font-black uppercase tracking-widest ${
             scrolled ? "text-slate-700" : "text-white"
@@ -110,13 +116,13 @@ const Navbar = () => {
               </AnimatePresence>
             </div>
 
-            {/* E-LIBRARY: Navigates to /knowledge */}
+            {/* E-LIBRARY */}
             <Link to="/knowledge" className="hover:text-blue-500 transition-colors">
               E-Library
             </Link>
           </div>
 
-          {/* PARTNER PORTAL: Direct Contact */}
+          {/* PARTNER PORTAL */}
           <div className={`flex items-center border-l ml-2 pl-8 ${scrolled ? "border-slate-200" : "border-white/20"}`}>
             <button 
               onClick={() => scrollToSection('contact')}
@@ -153,7 +159,6 @@ const Navbar = () => {
               <button onClick={() => scrollToSection('firm')} className="block text-4xl font-black uppercase text-left italic">The Firm</button>
               <button onClick={() => scrollToSection('expertise')} className="block text-4xl font-black uppercase text-left italic">Enterprises</button>
               
-              {/* Mobile Link to E-Library */}
               <Link to="/knowledge" onClick={() => setIsOpen(false)} className="block text-4xl font-black uppercase text-left italic hover:text-blue-500">
                 E-Library
               </Link>

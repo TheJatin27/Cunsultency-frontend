@@ -16,7 +16,10 @@ import {
   ShieldCheck,
   FileText,
   Library,
-  Scale
+  Scale,
+  Briefcase,
+  Building,
+  AlertCircle
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { db } from "../firebase";
@@ -27,7 +30,9 @@ const Knowledge = () => {
   const navigate = useNavigate();
   const [wageUpdates, setWageUpdates] = useState([]);
 
-  // LOGIC REMAINS UNCHANGED
+  // ==========================================
+  // DO NOT CHANGE DYNAMIC LOGIC
+  // ==========================================
   useEffect(() => {
     const fetchWageUpdates = async () => {
       const q = query(
@@ -43,210 +48,225 @@ const Knowledge = () => {
     };
     fetchWageUpdates();
   }, []);
+  // ==========================================
 
-  // NEW RESOURCE DATA
-  const resources = [
+  // Structured Data to match the E-Library Image
+  const librarySections = [
     {
-      title: "Minimum Wages",
-      items: ["Haryana Minimum Wages", "Delhi Minimum Wages", "Rajasthan Minimum Wages"],
-      icon: <Scale size={20} className="text-blue-500" />
+      category: "Wage & Salary Laws",
+      icon: <Scale className="text-[#d59b3f]" size={24} />,
+      items: [
+        { title: "Minimum Wages", desc: "Understanding minimum wage rates and their applicability.", icon: <FileText size={28} /> },
+        { title: "Bonus", desc: "Eligibility and calculation of bonus under labour laws.", icon: <Briefcase size={28} /> },
+        { title: "Payment of Wages", desc: "Rules governing timely and correct payment of wages.", icon: <Scale size={28} /> }
+      ]
     },
     {
-      title: "EPF & ESI Resources",
-      items: ["EPF Wage Ceiling", "EPF Contribution Structure", "ESI Coverage & Rates", "Important Circulars"],
-      icon: <ShieldCheck size={20} className="text-emerald-500" />
+      category: "Social Security",
+      icon: <ShieldCheck className="text-blue-600" size={24} />,
+      items: [
+        { title: "PF", desc: "Provident Fund compliance and employer obligations.", icon: <ShieldCheck size={28} /> },
+        { title: "ESIC", desc: "ESIC coverage, benefits, and contribution norms.", icon: <ShieldCheck size={28} /> },
+        { title: "Gratuity", desc: "Gratuity eligibility, calculation, and payment rules.", icon: <FileText size={28} /> }
+      ]
     },
     {
-      title: "State Compliance",
-      items: ["Shops & Establishment", "Professional Tax (PT)", "LWF State-wise"],
-      icon: <Library size={20} className="text-purple-500" />
-    },
-    {
-      title: "New Labour Codes",
-      items: ["Code on Wages", "Code on Social Security", "Industrial Relations Code", "OSH Code"],
-      icon: <Zap size={20} className="text-amber-500" />
+      category: "State Compliance",
+      icon: <Building className="text-slate-600" size={24} />,
+      items: [
+        { title: "Professional Tax (PT)", desc: "State-wise PT applicability and deduction rules.", icon: <FileText size={28} /> },
+        { title: "Shops & Establishment", desc: "Compliance requirements for shops and establishments in various states.", icon: <Building size={28} /> },
+        { title: "Labour Welfare Fund (LWF)", desc: "Understanding state-wise LWF contributions and benefits.", icon: <AlertCircle size={28} /> }
+      ]
     }
   ];
 
   return (
-    <div className="bg-[#FCFAF7] min-h-screen text-slate-900 pb-20 pt-20">
-      {/* Header Section */}
-      <section className="pt-24 pb-16 px-6 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-50 rounded-full blur-[120px] -z-0 translate-x-1/2 -translate-y-1/2" />
+    <div className="bg-[#f8fbff] min-h-screen text-slate-800 font-sans pb-20">
+      
+      {/* HEADER SECTION (Matches Image Header) */}
+      <section className="bg-[#102a43] relative overflow-hidden pt-32 pb-20 px-6 border-b-4 border-blue-900 shadow-lg">
+        {/* Subtle Background Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#102a43]/90 z-0"></div>
+        <div 
+          className="absolute inset-0 opacity-20 z-0 mix-blend-overlay"
+          style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/cubes.png")' }}
+        ></div>
         
-        <div className="max-w-7xl mx-auto relative z-10">
+        <div className="max-w-4xl mx-auto relative z-10 text-center space-y-6">
+          <motion.h1 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl md:text-5xl font-serif text-[#d59b3f] font-medium"
+          >
+            E-Library
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="text-xl md:text-2xl text-blue-100 font-serif"
+          >
+            Simplifying Labour Laws — One Topic at a Time
+          </motion.p>
+          
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center gap-2 mb-6 px-4 py-1.5 bg-white rounded-full border border-slate-200 shadow-sm w-fit"
+            transition={{ delay: 0.2 }}
+            className="relative mt-10 max-w-2xl mx-auto"
           >
-            <Sparkles size={14} className="text-amber-500" />
-            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Resource Center</span>
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
+            <input
+              placeholder="Search any compliance topic..."
+              className="w-full bg-white text-slate-800 rounded-lg pl-12 pr-4 py-4 focus:outline-none focus:ring-2 focus:ring-[#d59b3f] shadow-2xl font-medium"
+            />
           </motion.div>
-
-          <h1 className="text-6xl md:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-[0.85]">
-            Knowledge <span className="text-emerald-500 italic font-light">Hub.</span>
-          </h1>
-          
-          <p className="text-slate-500 text-lg max-w-2xl mb-12 font-medium">
-            Stay ahead of India's evolving statutory landscape with real-time updates, compliance calendars, and expert labor law insights.
-          </p>
-
-          <div className="flex flex-col md:flex-row items-center gap-4 max-w-3xl">
-            <div className="relative flex-1 w-full">
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-              <input
-                placeholder="Search labor laws, states, or compliance topics..."
-                className="w-full bg-white border border-slate-200 p-6 pl-14 rounded-[2rem] shadow-sm focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 transition-all outline-none font-medium"
-              />
-            </div>
-          </div>
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-16">
-        
-        {/* LEFT & CENTER: MAIN CONTENT AREA */}
-        <div className="lg:col-span-2 space-y-16">
-          
-          {/* 1. E-LIBRARY SECTION */}
-          <section>
-            <div className="flex items-center justify-between mb-8 border-b border-slate-200 pb-4">
-              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
-                <BookOpen size={14} /> 📚 Resources / E-Library
-              </h2>
-            </div>
+      {/* SECONDARY HEADER REPEATED IN IMAGE */}
+      <div className="text-center py-12 border-b border-slate-200 bg-white shadow-sm mb-12">
+         <h2 className="text-3xl font-serif text-[#102a43] mb-2">E-Library</h2>
+         <p className="text-lg text-slate-600 font-serif">Simplifying Labour Laws — One Topic at a Time</p>
+      </div>
+
+      {/* E-LIBRARY GRIDS (Matches Image Content) */}
+      <div className="max-w-7xl mx-auto px-6 space-y-16">
+        {librarySections.map((section, idx) => (
+          <motion.div 
+            key={idx}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-2xl font-serif text-slate-800 mb-8 flex items-center gap-3 border-b border-slate-200 pb-3">
+              {section.icon} {section.category}
+            </h3>
             
-            <div className="grid md:grid-cols-2 gap-6">
-              {resources.map((res, idx) => (
-                <div key={idx} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-md transition-all">
-                  <div className="flex items-center gap-3 mb-6">
-                    {res.icon}
-                    <h3 className="font-black text-lg tracking-tight">{res.title}</h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {section.items.map((item, i) => (
+                <div key={i} className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full group">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="w-16 h-16 shrink-0 bg-[#f0f4f8] text-blue-700 rounded-xl flex items-center justify-center border border-blue-100 shadow-inner group-hover:scale-105 transition-transform">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-slate-800 text-lg">{item.title}</h4>
+                    </div>
                   </div>
-                  <ul className="space-y-3">
-                    {res.items.map((item, i) => (
-                      <li key={i} className="flex items-center justify-between text-sm font-bold text-slate-600 group cursor-pointer hover:text-emerald-600 transition-colors">
-                        {item} <Download size={14} className="opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </li>
-                    ))}
-                  </ul>
+                  <p className="text-sm text-slate-600 mb-6 flex-1">{item.desc}</p>
+                  <button className="bg-gradient-to-b from-[#e3b05a] to-[#c28a34] text-white text-xs px-6 py-2.5 rounded shadow-sm font-medium self-start hover:opacity-90 transition-opacity">
+                    Read More
+                  </button>
                 </div>
               ))}
             </div>
+          </motion.div>
+        ))}
+      </div>
 
-            {/* Statutory Formats Table-ish List */}
-            <div className="mt-8 p-10 bg-slate-900 rounded-[3rem] text-white">
-              <h3 className="text-xl font-black mb-6 flex items-center gap-2">
-                <FileText size={20} className="text-emerald-400" /> Statutory Registers & Formats
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {["EPF/ESI Registers", "CLRA Registers", "Wage Registers", "Muster Roll", "Leave Register", "Bonus Register", "Maternity Forms", "Gratuity Forms", "PT & LWF Formats"].map((form) => (
-                  <div key={form} className="text-[10px] font-black uppercase tracking-widest p-3 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 cursor-pointer transition-colors text-center">
-                    {form}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
+      <hr className="max-w-7xl mx-auto my-20 border-slate-200" />
 
-          {/* 2. LATEST UPDATES (YOUR ORIGINAL FEED) */}
-          <section>
-            <div className="flex items-center justify-between mb-8 border-b border-slate-200 pb-4">
-              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2">
-                <Clock size={14} /> Latest Regulatory Changes
-              </h2>
-            </div>
+      {/* ========================================== */}
+      {/* PRESERVING DYNAMIC & SIDEBAR LOGIC BELOW   */}
+      {/* ========================================== */}
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-12">
+        
+        {/* LATEST REGULATORY CHANGES (DYNAMIC WAGE UPDATES) */}
+        <div className="lg:col-span-2">
+            <h3 className="text-2xl font-serif text-slate-800 mb-8 flex items-center gap-3 border-b border-slate-200 pb-3">
+              <Clock className="text-blue-600" size={24} /> Latest Regulatory Changes
+            </h3>
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               {wageUpdates.length > 0 ? (
                 wageUpdates.map((item) => (
                   <motion.div
                     key={item.id}
-                    whileHover={{ x: 10 }}
+                    whileHover={{ x: 5 }}
                     onClick={() => navigate(`/minimum-wages?state=${item.state}`)}
-                    className="group cursor-pointer p-8 bg-white border border-slate-100 rounded-[2.5rem] shadow-sm transition-all flex gap-6 items-center"
+                    className="cursor-pointer p-6 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md hover:border-blue-300 transition-all flex gap-5 items-center group"
                   >
-                    <div className="w-12 h-12 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                    <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
                       <Bell size={20} />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-black text-slate-900 group-hover:text-emerald-600 transition-colors">
+                      <h4 className="text-base font-semibold text-slate-800 group-hover:text-blue-700 transition-colors">
                         New Minimum Wage Notification – {item.state}
-                      </h3>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
+                      </h4>
+                      <p className="text-xs font-medium text-slate-500 mt-1">
                         Effective: {item.effectiveDate}
                       </p>
                     </div>
-                    <ArrowRight size={20} className="text-slate-300 group-hover:translate-x-2 transition-transform" />
+                    <ArrowRight size={20} className="text-slate-300 group-hover:text-blue-500 transition-colors" />
                   </motion.div>
                 ))
               ) : (
-                <div className="p-10 border-2 border-dashed border-slate-200 rounded-[2.5rem] text-center">
-                  <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">Syncing Statutory Data...</p>
+                <div className="p-10 border-2 border-dashed border-slate-200 rounded-xl text-center bg-white">
+                  <p className="text-slate-500 font-medium text-sm">Syncing Statutory Data...</p>
                 </div>
               )}
             </div>
-          </section>
         </div>
 
-        {/* RIGHT SIDEBAR */}
-        <aside className="space-y-10">
+        {/* SIDEBAR TOOLS */}
+        <aside className="space-y-8">
           
-          {/* 3. COMPLIANCE HEALTH CHECK FORM */}
-          <div className="bg-white p-10 rounded-[3rem] border-2 border-emerald-500 shadow-xl shadow-emerald-100">
-            <h4 className="font-black text-2xl mb-2 tracking-tighter">Health Check</h4>
-            <p className="text-xs font-bold text-slate-500 mb-8 uppercase tracking-widest">Free Basic Assessment</p>
+          {/* Compliance Health Check */}
+          <div className="bg-white p-8 rounded-xl border-t-4 border-[#d59b3f] shadow-lg">
+            <h4 className="font-serif text-xl mb-1 text-[#102a43]">Health Check</h4>
+            <p className="text-xs font-semibold text-slate-500 mb-6 uppercase tracking-wider">Free Basic Assessment</p>
             
             <form className="space-y-4">
               <div>
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-2">No. of Employees</label>
-                <input type="number" className="w-full p-4 mt-1 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-emerald-500 font-bold" placeholder="e.g. 50" />
+                <label className="text-xs font-semibold text-slate-600 mb-1 block">No. of Employees</label>
+                <input type="number" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-blue-500 text-sm" placeholder="e.g. 50" />
               </div>
               <div>
-                <label className="text-[10px] font-black uppercase text-slate-400 ml-2">States of Operation</label>
-                <input type="text" className="w-full p-4 mt-1 bg-slate-50 border border-slate-100 rounded-2xl outline-none focus:border-emerald-500 font-bold" placeholder="e.g. Delhi, Haryana" />
+                <label className="text-xs font-semibold text-slate-600 mb-1 block">States of Operation</label>
+                <input type="text" className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg outline-none focus:border-blue-500 text-sm" placeholder="e.g. Delhi, Haryana" />
               </div>
-              <div className="flex flex-col gap-3 pt-2">
+              <div className="flex flex-col gap-2 pt-2">
                 <label className="flex items-center gap-3 cursor-pointer group">
-                  <input type="checkbox" className="w-5 h-5 rounded-lg border-slate-300 text-emerald-600" />
-                  <span className="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors">Contract Labour?</span>
+                  <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                  <span className="text-sm font-medium text-slate-700">Contract Labour?</span>
                 </label>
                 <label className="flex items-center gap-3 cursor-pointer group">
-                  <input type="checkbox" className="w-5 h-5 rounded-lg border-slate-300 text-emerald-600" />
-                  <span className="text-sm font-bold text-slate-600 group-hover:text-slate-900 transition-colors">Covered under EPF/ESI?</span>
+                  <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                  <span className="text-sm font-medium text-slate-700">Covered under EPF/ESI?</span>
                 </label>
               </div>
-              <button className="w-full bg-emerald-500 text-slate-950 py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] mt-4 hover:bg-slate-900 hover:text-white transition-all">
+              <button className="w-full bg-[#102a43] text-white py-3 rounded-lg font-semibold text-sm mt-4 hover:bg-blue-900 transition-colors shadow-md">
                 Get Result
               </button>
             </form>
           </div>
 
-          {/* Monthly Deadlines (From your original code) */}
-          <div className="bg-slate-900 p-10 rounded-[3rem] shadow-2xl text-white">
-            <div className="flex items-center gap-3 mb-8">
-              <Calendar className="text-emerald-400" size={24} />
-              <h4 className="font-black text-xl tracking-tight">Deadlines</h4>
+          {/* Deadlines */}
+          <div className="bg-[#102a43] p-8 rounded-xl shadow-lg text-white border-b-4 border-[#d59b3f]">
+            <div className="flex items-center gap-3 mb-6">
+              <Calendar className="text-[#d59b3f]" size={20} />
+              <h4 className="font-serif text-xl">Deadlines</h4>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[{ date: "15", task: "PF & ESIC Payment" }, { date: "20", task: "GSTR-3B Filing" }].map((e, i) => (
-                <div key={i} className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
-                  <span className="text-emerald-400 font-black text-lg">{e.date}</span>
-                  <span className="text-xs font-bold text-slate-200">{e.task}</span>
+                <div key={i} className="flex items-center gap-4 bg-white/10 p-3 rounded-lg border border-white/5">
+                  <span className="text-[#d59b3f] font-bold text-lg w-6 text-center">{e.date}</span>
+                  <span className="text-sm font-medium text-blue-50">{e.task}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Central Labour Laws List */}
-          <div className="p-10 bg-white border border-slate-100 rounded-[3rem]">
-            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Central Laws</h4>
-            <div className="space-y-4">
+          <div className="p-8 bg-white border border-slate-200 rounded-xl shadow-sm">
+            <h4 className="font-serif text-lg text-[#102a43] mb-4 border-b border-slate-100 pb-2">Central Laws</h4>
+            <div className="space-y-3">
               {["Maternity Benefit", "Gratuity Act", "Bonus Act", "Contract Labour", "Industrial Disputes"].map((law) => (
                 <div key={law} className="flex items-center justify-between group cursor-pointer">
-                  <span className="text-sm font-black text-slate-700 group-hover:text-emerald-600 transition-colors">{law}</span>
-                  <ChevronRight size={14} className="text-slate-300" />
+                  <span className="text-sm font-medium text-slate-600 group-hover:text-blue-700 transition-colors">{law}</span>
+                  <ChevronRight size={14} className="text-slate-400 group-hover:text-blue-500" />
                 </div>
               ))}
             </div>
@@ -254,6 +274,7 @@ const Knowledge = () => {
 
         </aside>
       </div>
+
     </div>
   );
 };
