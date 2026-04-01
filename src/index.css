@@ -8,4 +8,7 @@ body {
 ::selection {
   background-color: #ffffff;
   color: #000000;
-}
+}@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@400;600;700&display=swap');
+
+.font-serif { font-family: 'Playfair Display', serif; }
+.font-sans { font-family: 'Inter', sans-serif; }
