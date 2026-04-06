@@ -13,6 +13,12 @@ import StrategicAdvisory from "../pages/StrategicAdvisory";
 import ComplianceAudit from "../pages/ComplianceAudit";
 import EstablishmentSetup from "../pages/EstablishmentSetup";
 import LabourCodeTransition from "../pages/LabourCodeTransition";
+import PayrollStructuring from "../pages/PayrollStructuring";
+import LabourLawAdvisory from "../pages/LabourLawAdvisory";
+import PFESICCompliance from "../pages/PFESICCompliance";
+import ContractLabourCompliance from "../pages/CLRACompliance";
+import AuditInspectionReadiness from "../pages/AuditReadiness";
+import LabourCodeAdvisory from "../pages/LabourLawAdvisory";
 
 const AppRoutes = () => {
   return (
@@ -32,6 +38,12 @@ const AppRoutes = () => {
           <Route path="/ComplianceAudit" element={<ComplianceAudit />} />
           <Route path="/EstablishmentSetup" element={<EstablishmentSetup />} />
           <Route path="/LabourCodeTransition" element={<LabourCodeTransition />} />
+          <Route path="/PayrollStructuring" element={<PayrollStructuring />} />
+          <Route path="/LabourLawAdvisory" element={<LabourLawAdvisory />} />
+          <Route path="/PFESICCompliance" element={<PFESICCompliance />} />
+          <Route path="/ContractLabourCompliance" element={<ContractLabourCompliance />} />
+          <Route path="/AuditInspectionReadiness" element={<AuditInspectionReadiness />} />
+          <Route path="/LabourCodeAdvisory" element={<LabourCodeAdvisory />} />
           
 
 

@@ -10,7 +10,6 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  const [navbarHeight, setNavbarHeight] = useState(80);
   
   const location = useLocation();
   const navigate = useNavigate();
@@ -21,50 +20,110 @@ const Navbar = () => {
     };
     window.addEventListener("scroll", handleScroll);
     
-    // Get actual navbar height
-    const navbar = document.querySelector('nav');
-    if (navbar) {
-      setNavbarHeight(navbar.offsetHeight);
-    }
-    
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle scroll to section with proper offset for fixed navbar
-  const scrollToSection = (id) => {
+  // Handle scroll to top of page
+  const scrollToTop = () => {
     setIsOpen(false);
     setActiveDropdown(null);
-
-    const scrollToElement = () => {
-      const element = document.getElementById(id);
-      if (element) {
-        const navbarHeight = document.querySelector('nav')?.offsetHeight || 80;
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20; // Extra 20px for better spacing
-        
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth'
-        });
-      }
-    };
-
+    
     if (location.pathname !== "/") {
-      // Navigate to home page first, then scroll after a short delay
       navigate("/");
       setTimeout(() => {
-        scrollToElement();
-      }, 150);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
     } else {
-      scrollToElement();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
+  // Handle scroll to About section (The Firm)
+  const scrollToAbout = () => {
+    setIsOpen(false);
+    setActiveDropdown(null);
+    
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const aboutSection = document.getElementById('about-section');
+        if (aboutSection) {
+          const navbarHeight = document.querySelector('nav')?.offsetHeight || 80;
+          const elementPosition = aboutSection.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20;
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      const aboutSection = document.getElementById('about-section');
+      if (aboutSection) {
+        const navbarHeight = document.querySelector('nav')?.offsetHeight || 80;
+        const elementPosition = aboutSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+    }
+  };
+
+  // Handle scroll to Contact section
+  const scrollToContact = () => {
+    setIsOpen(false);
+    setActiveDropdown(null);
+    
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const contactSection = document.getElementById('contact-section');
+        if (contactSection) {
+          const navbarHeight = document.querySelector('nav')?.offsetHeight || 80;
+          const elementPosition = contactSection.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20;
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      const contactSection = document.getElementById('contact-section');
+      if (contactSection) {
+        const navbarHeight = document.querySelector('nav')?.offsetHeight || 80;
+        const elementPosition = contactSection.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+    }
+  };
+
+  // Service links with correct paths matching your AppRoutes
   const serviceLinks = [
-    { name: "Compliance Management", id: "expertise", icon: <ShieldCheck size={18} /> },
-    { name: "Minimum Wages & Audit", id: "expertise", icon: <Gavel size={18} /> },
-    { name: "EPF & ESI Advisory", id: "expertise", icon: <Landmark size={18} /> },
-    { name: "Contract Labour (CLRA)", id: "expertise", icon: <FileText size={18} /> },
+    { 
+      name: "Payroll Structuring", 
+      path: "/PayrollStructuring",
+      icon: <Landmark size={18} /> 
+    },
+    { 
+      name: "PF & ESI Compliance", 
+      path: "/PFESICCompliance",
+      icon: <ShieldCheck size={18} /> 
+    },
+    { 
+      name: "Labour Law Advisory", 
+      path: "/LabourLawAdvisory",
+      icon: <Gavel size={18} /> 
+    },
+    { 
+      name: "Contract Labour (CLRA)", 
+      path: "/ContractLabourCompliance",
+      icon: <FileText size={18} /> 
+    },
+    { 
+      name: "Audit & Inspection", 
+      path: "/AuditInspectionReadiness",
+      icon: <ShieldCheck size={18} /> 
+    },
+    { 
+      name: "Labour Code Advisory", 
+      path: "/LabourCodeAdvisory",
+      icon: <Landmark size={18} /> 
+    },
   ];
 
   return (
@@ -85,7 +144,7 @@ const Navbar = () => {
           {/* BRAND IDENTITY */}
           <div 
             className="group flex items-center gap-3 cursor-pointer z-[102]" 
-            onClick={() => scrollToSection('home')}
+            onClick={scrollToTop}
           >
             <div className="flex flex-col">
               <span className={`font-black text-2xl md:text-3xl tracking-tighter leading-none transition-colors duration-500 uppercase italic ${
@@ -106,15 +165,18 @@ const Navbar = () => {
             <div className={`flex gap-8 text-[13px] font-black uppercase tracking-widest ${
               scrolled ? "text-slate-700" : "text-white"
             }`}>
+              {/* Home - scrolls to top */}
               <button 
-                onClick={() => scrollToSection('home')} 
+                onClick={scrollToTop}
                 className="hover:text-blue-500 transition-colors relative group"
               >
                 Home
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
               </button>
+              
+              {/* The Firm - scrolls to About section */}
               <button 
-                onClick={() => scrollToSection('firm')} 
+                onClick={scrollToAbout}
                 className="hover:text-blue-500 transition-colors relative group"
               >
                 The Firm
@@ -155,9 +217,13 @@ const Navbar = () => {
                           Practice Areas
                         </p>
                         {serviceLinks.map((service) => (
-                          <button 
-                            key={service.name} 
-                            onClick={() => scrollToSection(service.id)}
+                          <Link
+                            key={service.name}
+                            to={service.path}
+                            onClick={() => {
+                              setIsOpen(false);
+                              setActiveDropdown(null);
+                            }}
                             className="flex items-center gap-3 p-2.5 hover:bg-blue-50 rounded-lg transition-all group/item w-full text-left"
                           >
                             <div className="text-slate-400 group-hover/item:text-blue-600 transition-colors">
@@ -166,7 +232,7 @@ const Navbar = () => {
                             <span className="text-slate-800 text-xs font-semibold uppercase tracking-wide">
                               {service.name}
                             </span>
-                          </button>
+                          </Link>
                         ))}
                       </div>
                     </motion.div>
@@ -174,25 +240,36 @@ const Navbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* E-LIBRARY Link */}
+              {/* E-LIBRARY Link - goes to separate page */}
               <Link 
                 to="/knowledge" 
                 className="hover:text-blue-500 transition-colors relative group"
+                onClick={() => setIsOpen(false)}
               >
                 E-Library
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
               </Link>
+
+              {/* Contact - scrolls to Contact section */}
+              <button 
+                onClick={scrollToContact}
+                className="hover:text-blue-500 transition-colors relative group"
+              >
+                Contact
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
+              </button>
             </div>
 
-            {/* PARTNER PORTAL BUTTON */}
+            {/* PARTNER PORTAL BUTTON - goes to login page */}
             <div className={`flex items-center border-l pl-8 ${scrolled ? "border-slate-200" : "border-white/20"}`}>
-              <button 
-                onClick={() => scrollToSection('contact')}
+              <Link
+                to="/login"
+                onClick={() => setIsOpen(false)}
                 className="group px-6 py-2.5 bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all duration-300 flex items-center gap-2 rounded-full shadow-lg shadow-blue-600/20"
               >
                 <UserCircle size={16} />
                 Partner Portal
-              </button>
+              </Link>
             </div>
           </div>
 
@@ -208,7 +285,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* MOBILE OVERLAY - Fixed positioning to prevent overlap */}
+      {/* MOBILE OVERLAY */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -228,25 +305,44 @@ const Navbar = () => {
               </button>
               
               <div className="space-y-6">
+                {/* Home - scrolls to top */}
                 <button 
-                  onClick={() => scrollToSection('home')} 
+                  onClick={() => {
+                    setIsOpen(false);
+                    scrollToTop();
+                  }}
                   className="block text-3xl font-black uppercase tracking-tighter text-white hover:text-blue-400 transition-colors w-full text-left py-2 border-b border-white/10"
                 >
                   Home
                 </button>
+                
+                {/* The Firm - scrolls to About section */}
                 <button 
-                  onClick={() => scrollToSection('firm')} 
+                  onClick={() => {
+                    setIsOpen(false);
+                    scrollToAbout();
+                  }}
                   className="block text-3xl font-black uppercase tracking-tighter text-white hover:text-blue-400 transition-colors w-full text-left py-2 border-b border-white/10"
                 >
                   The Firm
                 </button>
-                <button 
-                  onClick={() => scrollToSection('expertise')} 
-                  className="block text-3xl font-black uppercase tracking-tighter text-white hover:text-blue-400 transition-colors w-full text-left py-2 border-b border-white/10"
-                >
-                  Enterprises
-                </button>
                 
+                <div className="py-2 border-b border-white/10">
+                  <p className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-3">Enterprises</p>
+                  {serviceLinks.map((service) => (
+                    <Link
+                      key={service.name}
+                      to={service.path}
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/10 rounded-lg p-3 w-full transition-colors"
+                    >
+                      <div className="text-blue-400">{service.icon}</div>
+                      <span className="text-sm font-semibold uppercase tracking-wide">{service.name}</span>
+                    </Link>
+                  ))}
+                </div>
+                
+                {/* E-Library - goes to separate page */}
                 <Link 
                   to="/knowledge" 
                   onClick={() => setIsOpen(false)} 
@@ -254,29 +350,26 @@ const Navbar = () => {
                 >
                   E-Library
                 </Link>
-                
-                {/* Mobile Service Links */}
-                <div className="pt-4 space-y-2">
-                  <p className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-3">Practice Areas</p>
-                  {serviceLinks.map((service) => (
-                    <button 
-                      key={service.name}
-                      onClick={() => scrollToSection(service.id)}
-                      className="flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/10 rounded-lg p-3 w-full transition-colors"
-                    >
-                      <div className="text-blue-400">{service.icon}</div>
-                      <span className="text-sm font-semibold uppercase tracking-wide">{service.name}</span>
-                    </button>
-                  ))}
-                </div>
+
+                {/* Contact - scrolls to Contact section */}
+                <button 
+                  onClick={() => {
+                    setIsOpen(false);
+                    scrollToContact();
+                  }}
+                  className="block text-3xl font-black uppercase tracking-tighter text-white hover:text-blue-400 transition-colors w-full text-left py-2 border-b border-white/10"
+                >
+                  Contact
+                </button>
                 
                 <div className="pt-8">
-                  <button 
-                    onClick={() => scrollToSection('contact')}
+                  <Link 
+                    to="/login"
+                    onClick={() => setIsOpen(false)}
                     className="flex items-center justify-center gap-3 w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-black uppercase tracking-wider text-sm transition-all"
                   >
                     <UserCircle size={20} /> Partner Portal
-                  </button>
+                  </Link>
                 </div>
               </div>
             </div>
