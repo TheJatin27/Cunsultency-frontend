@@ -98,9 +98,9 @@ const Footer = () => {
                 <Phone size={14} className="group-hover:rotate-12 transition-transform" />
                 <span>+91 95557 69448</span>
               </a>
-              <a href="mailto:info@Labourforge.com" className="flex items-start gap-3 text-gray-500 hover:text-blue-500 transition-colors">
+              <a href="mailto:info@Labourforge.co.in" className="flex items-start gap-3 text-gray-500 hover:text-blue-500 transition-colors">
                 <Mail size={14} />
-                <span>info@labourforge.co.in</span>
+                <span>info@Labourforge.co.in</span>
               </a>
               <div className="flex items-start gap-3 text-gray-600">
                 <MapPin size={14} className="shrink-0" />
