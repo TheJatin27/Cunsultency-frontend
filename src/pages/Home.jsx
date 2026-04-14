@@ -25,6 +25,7 @@ const Labourforge = () => {
     navigate(servicePath);
     window.scrollTo(0, 0);
   };
+  
 
   // Navigation handlers for e-library topics
   const handleTopicClick = (topicPath) => {
