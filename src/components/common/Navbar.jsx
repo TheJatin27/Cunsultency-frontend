@@ -150,7 +150,7 @@ const Navbar = () => {
               <span className={`font-black text-2xl md:text-3xl tracking-tighter leading-none transition-colors duration-500 uppercase italic ${
                 scrolled ? "text-slate-900" : "text-white"
               }`}>
-                LABOR<span className="text-blue-500">FORGE</span>
+                Labour<span className="text-blue-500">FORGE</span>
               </span>
               <span className={`text-[10px] font-bold uppercase tracking-[0.4em] mt-1 transition-colors duration-500 ${
                 scrolled ? "text-slate-500" : "text-blue-300"

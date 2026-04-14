@@ -48,7 +48,7 @@ const Footer = () => {
           {/* FIRM IDENTITY */}
           <div className="space-y-6">
             <div className="flex flex-col">
-              <span className="text-white font-black text-xl tracking-tighter leading-none uppercase italic">LABORFORGE</span>
+              <span className="text-white font-black text-xl tracking-tighter leading-none uppercase italic">LabourFORGE</span>
               <span className="text-blue-500 text-[8px] font-bold uppercase tracking-[0.5em] mt-1">Advisors</span>
             </div>
             <p className="text-gray-500 text-[11px] leading-relaxed font-bold uppercase tracking-wider">
@@ -98,9 +98,9 @@ const Footer = () => {
                 <Phone size={14} className="group-hover:rotate-12 transition-transform" />
                 <span>+91 95557 69448</span>
               </a>
-              <a href="mailto:office@laborforge.com" className="flex items-start gap-3 text-gray-500 hover:text-blue-500 transition-colors">
+              <a href="mailto:info@Labourforge.com" className="flex items-start gap-3 text-gray-500 hover:text-blue-500 transition-colors">
                 <Mail size={14} />
-                <span>office@laborforge.com</span>
+                <span>info@labourforge.co.in</span>
               </a>
               <div className="flex items-start gap-3 text-gray-600">
                 <MapPin size={14} className="shrink-0" />
@@ -121,7 +121,7 @@ const Footer = () => {
           </div>
           
           <p className="text-gray-700 text-[9px] font-black uppercase tracking-[0.4em] order-1 lg:order-2">
-            © {currentYear} LaborForge Advisors
+            © {currentYear} LabourForge Advisors
           </p>
           
           <div className="flex gap-6 text-[9px] font-black uppercase tracking-widest text-gray-600 order-3 justify-center lg:justify-end">
