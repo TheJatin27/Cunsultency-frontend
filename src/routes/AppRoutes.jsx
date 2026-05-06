@@ -20,6 +20,7 @@ import ContractLabourCompliance from "../pages/CLRACompliance";
 import AuditInspectionReadiness from "../pages/AuditReadiness";
 import LabourCodeAdvisory from "../pages/LabourLawAdvisory";
 import MinimumWagesLookup from "../pages/MinimumWagesLookup";
+import WageCodeDetails from "../pages/WageCodeDetails";
 
 const AppRoutes = () => {
   return (
@@ -46,6 +47,7 @@ const AppRoutes = () => {
           <Route path="/AuditInspectionReadiness" element={<AuditInspectionReadiness />} />
           <Route path="/LabourCodeAdvisory" element={<LabourCodeAdvisory />} />
           <Route path="/MinimumWagesLookup" element={<MinimumWagesLookup />} />
+          <Route path="/library/:slug" element={<WageCodeDetails />} />
 
 
         </Route>
