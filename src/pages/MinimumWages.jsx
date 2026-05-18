@@ -1,15 +1,26 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { motion } from "framer-motion";
-import { MapPin, IndianRupee, Info, Search, ShieldCheck, Sparkles, TrendingUp, AlertCircle } from "lucide-react";
+import { 
+  MapPin, 
+  IndianRupee, 
+  Scale, 
+  Download, 
+  AlertCircle, 
+  Loader2, 
+  TrendingUp, 
+  ShieldCheck,
+  Search
+} from "lucide-react";
 
 const MinimumWages = () => {
   const [states, setStates] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [wages, setWages] = useState([]);
+  const [documentUrl, setDocumentUrl] = useState(""); // Holds the associated state gazette url reference
 
-  // LOGIC REMAINS UNCHANGED
+  // DATA FETCH PIPELINES REMAIN UNCHANGED
   useEffect(() => {
     const loadStates = async () => {
       const snap = await getDocs(collection(db, "minimumWages"));
@@ -28,177 +39,213 @@ const MinimumWages = () => {
     );
     const snap = await getDocs(q);
     if (!snap.empty) {
-      setWages(snap.docs[0].data().wages);
+      const dataDoc = snap.docs[0].data();
+      setWages(dataDoc.wages || []);
+      setDocumentUrl(dataDoc.documentUrl || ""); // Set official document link context state
     }
   };
 
   return (
-    <div className="bg-[#FCFAF7] min-h-screen text-slate-900 pb-20 pt-20">
-      {/* 1. Hero Section */}
-      <section className="relative pt-24 pb-16 px-6 overflow-hidden">
-        {/* Decorative Background */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-50 rounded-full blur-[120px] -z-0 translate-x-1/2 -translate-y-1/2" />
-        
-        <div className="max-w-7xl mx-auto relative z-10">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-4xl"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-white rounded-full border border-slate-200 shadow-sm mb-6">
-              <ShieldCheck size={14} className="text-emerald-500" />
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Statutory Intelligence</span>
-            </div>
-            
-            <h1 className="text-6xl md:text-8xl font-black text-slate-900 mb-8 tracking-tighter leading-[0.85]">
-              Minimum <span className="text-emerald-500 italic font-light">Wages.</span>
-            </h1>
-            
-            <p className="text-slate-500 text-lg font-medium leading-relaxed max-w-2xl">
-              Access real-time statutory data across all Indian jurisdictions. 
-              Ensure your payroll remains bulletproof against audits with the latest government notifications.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      <div className="max-w-7xl mx-auto px-6 mt-8">
-        {/* 2. State Selection Filter */}
-        <div className="mb-16">
-          <div className="flex items-center gap-2 mb-6">
-            <MapPin size={16} className="text-slate-400" />
-            <h2 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">
-              Select Jurisdiction
-            </h2>
+    <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 pb-20 overflow-x-hidden">
+      
+      {/* HEADER SECTION - FULL WIDTH NAVY BANNER METRICS MATCHING OTHER PAGES */}
+      <header className="bg-[#0B1538] text-white pt-6 pb-10 px-6 lg:px-12 relative">
+        <div className="w-full">
+          <div className="flex items-center gap-2 text-slate-400 mb-3">
+            <ShieldCheck size={14} className="text-emerald-400" />
+            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Statutory Intelligence</span>
           </div>
+
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
+            <div className="flex items-center gap-4">
+              <div className="p-2.5 bg-orange-500 rounded-xl shadow-lg shadow-orange-500/20 flex-shrink-0">
+                <Scale size={24} className="text-white" />
+              </div>
+              <h1 className="text-2xl lg:text-4xl font-black tracking-tight uppercase break-words leading-none">
+                Statutory Minimum Wages
+              </h1>
+            </div>
+
+            {selectedState && documentUrl && (
+              <a
+                href={documentUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-3 bg-orange-500 text-white px-6 py-3.5 rounded-2xl font-black text-[11px] hover:bg-white hover:text-[#0B1538] transition-all shadow-xl shadow-orange-500/20 uppercase tracking-widest flex-shrink-0 border-2 border-transparent"
+              >
+                <Download size={18} /> Download Gazetted PDF
+              </a>
+            )}
+          </div>
+
+          <p className="text-slate-400 text-sm lg:text-base w-full max-w-4xl leading-relaxed opacity-80 border-l-2 border-white/10 pl-6">
+            Access real-time statutory minimum layout metrics across all Indian regional jurisdictions. 
+            Ensure your operational payroll engine remains bulletproof against compliance audits.
+          </p>
+        </div>
+      </header>
+
+      {/* JURISDICTION STATE CONTAINER SELECTOR FILTER */}
+      <main className="w-full px-4 lg:px-8 -mt-4 relative z-20">
+        <div className="grid grid-cols-12 gap-6 lg:gap-10">
           
-          <div className="flex flex-wrap gap-4">
-            {states.map((s, i) => (
-              <button
-                key={i}
-                onClick={() => {
-                  setSelectedState(s);
-                  loadWages(s);
-                }}
-                className={`px-8 py-4 rounded-2xl text-[11px] font-black uppercase tracking-widest transition-all border ${
-                  selectedState === s
-                    ? "bg-slate-900 text-white border-slate-900 shadow-xl shadow-slate-200 scale-105"
-                    : "bg-white text-slate-500 border-slate-100 hover:border-emerald-500 hover:text-emerald-600 shadow-sm"
-                }`}
-              >
-                {s}
-              </button>
-            ))}
-            {states.length === 0 && (
-              <div className="flex items-center gap-3 py-4 text-slate-400 italic">
-                <div className="w-2 h-2 bg-slate-200 rounded-full animate-pulse" />
-                No states found in database...
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* 3. Main Content Display */}
-        <div className="grid lg:grid-cols-4 gap-12">
-          {/* Data Grid */}
-          <div className="lg:col-span-3">
-            {wages.length > 0 ? (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.98 }} 
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-white border border-slate-100 rounded-[3rem] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.04)]"
-              >
-                <div className="bg-slate-50 px-10 py-6 border-b border-slate-100 flex justify-between items-center">
-                   <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 bg-emerald-500 rounded-full" />
-                      <span className="text-xs font-black uppercase tracking-widest text-slate-500">Live Wage Table: {selectedState}</span>
-                   </div>
-                   <button className="text-[10px] font-black uppercase tracking-widest text-emerald-600 flex items-center gap-2">
-                      Export CSV
-                   </button>
+          {/* LEFT COLUMN FRAME SEGMENT */}
+          <div className="col-span-12 xl:col-span-9 bg-white rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 p-6 lg:p-10 space-y-8 min-w-0">
+            
+            <section className="w-full min-w-0">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="p-2 rounded-lg bg-white border border-slate-100 shadow-sm text-slate-400">
+                  <MapPin size={18} />
                 </div>
+                <h2 className="text-base lg:text-lg font-black uppercase tracking-tight text-slate-800">
+                  Select Jurisdiction
+                </h2>
+              </div>
+              
+              <div className="flex flex-wrap gap-3 pl-0 lg:pl-12">
+                {states.map((s, i) => (
+                  <button
+                    key={i}
+                    onClick={() => {
+                      setSelectedState(s);
+                      loadWages(s);
+                    }}
+                    className={`px-5 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all border ${
+                      selectedState === s
+                        ? "bg-[#0B1538] text-white border-[#0B1538] shadow-md scale-105"
+                        : "bg-slate-50 text-slate-500 border-slate-100 hover:border-orange-500 hover:text-orange-600 shadow-sm"
+                    }`}
+                  >
+                    {s}
+                  </button>
+                ))}
+                {states.length === 0 && (
+                  <div className="flex items-center gap-3 py-2 text-slate-400 text-xs italic">
+                    <Loader2 className="animate-spin text-slate-300" size={14} />
+                    Awaiting cloud server datasets...
+                  </div>
+                )}
+              </div>
+            </section>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="text-slate-400 text-[10px] font-black uppercase tracking-widest">
-                        <th className="py-8 px-10">Labour Class</th>
-                        <th className="py-8 px-4 text-right">Basic</th>
-                        <th className="py-8 px-4 text-right">VDA</th>
-                        <th className="py-8 px-4 text-right">Total Monthly</th>
-                        <th className="py-8 px-10 text-right text-emerald-600 font-black">Daily Rate</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-50">
-                      {wages.map((w, i) => (
-                        <tr key={i} className="group hover:bg-emerald-50/50 transition-colors">
-                          <td className="py-6 px-10">
-                            <span className="text-slate-900 font-black tracking-tight block">{w.class}</span>
-                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Skilled Category</span>
-                          </td>
-                          <td className="py-6 px-4 text-right text-slate-500 font-bold">₹{w.basicPerMonth}</td>
-                          <td className="py-6 px-4 text-right text-slate-500 font-bold">₹{w.vdaPerMonth}</td>
-                          <td className="py-6 px-4 text-right text-slate-900 font-black">₹{w.totalPerMonth}</td>
-                          <td className="py-6 px-10 text-right">
-                            <span className="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-sm font-black inline-block">
-                              ₹{w.totalPerDay}
-                            </span>
-                          </td>
+            {/* LIVE DATA GRID TABLE SYSTEM */}
+            <section className="w-full min-w-0">
+              {wages.length > 0 ? (
+                <motion.div 
+                  initial={{ opacity: 0, scale: 0.99 }} 
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="p-5 bg-slate-50 rounded-2xl border border-slate-100 scroll-mt-24 w-full min-w-0"
+                >
+                  <h3 className="text-base font-black text-[#0B1538] mb-4 uppercase tracking-tight flex items-center gap-2">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                    Live Scale Table: {selectedState}
+                  </h3>
+
+                  <div className="overflow-x-auto rounded-xl border border-slate-200/60 bg-white">
+                    <table className="w-full text-left text-sm">
+                      <thead>
+                        <tr className="bg-slate-50 text-slate-400 text-[10px] font-black uppercase tracking-wider border-b border-slate-200">
+                          <th className="py-4 px-6">Labour Class</th>
+                          <th className="py-4 px-4 text-right">Basic</th>
+                          <th className="py-4 px-4 text-right">VDA</th>
+                          <th className="py-4 px-4 text-right">Total Monthly</th>
+                          <th className="py-4 px-6 text-right text-emerald-600">Daily Rate</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {wages.map((w, i) => (
+                          <tr key={i} className="hover:bg-slate-50/80 transition-colors">
+                            <td className="py-4 px-6 font-black text-slate-800 tracking-tight">
+                              {w.class}
+                            </td>
+                            <td className="py-4 px-4 text-right text-slate-500 font-bold">₹{w.basicPerMonth}</td>
+                            <td className="py-4 px-4 text-right text-slate-500 font-bold">₹{w.vdaPerMonth}</td>
+                            <td className="py-4 px-4 text-right text-slate-900 font-extrabold">₹{w.totalPerMonth}</td>
+                            <td className="py-4 px-6 text-right">
+                              <span className="bg-emerald-50 text-emerald-600 px-3 py-1.5 rounded-xl text-xs font-black inline-block">
+                                ₹{w.totalPerDay}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </motion.div>
+              ) : (
+                <div className="h-72 border-2 border-dashed border-slate-200 rounded-[2rem] flex flex-col items-center justify-center text-center p-8 bg-white">
+                  <div className="w-14 h-14 bg-slate-50 border border-slate-100 shadow-sm rounded-2xl flex items-center justify-center text-slate-300 mb-3">
+                    <Search size={24} />
+                  </div>
+                  <h3 className="text-base font-black text-slate-400 tracking-tight uppercase">Jurisdiction Unselected</h3>
+                  <p className="text-slate-400 text-xs mt-1 max-w-xs leading-relaxed">
+                    Select an active state element indicator listed above to map live compliance data fields directly.
+                  </p>
                 </div>
-              </motion.div>
-            ) : (
-              <div className="h-[500px] border-4 border-dashed border-slate-100 rounded-[4rem] flex flex-col items-center justify-center text-center p-12 bg-white/50">
-                <div className="w-20 h-20 bg-emerald-50 rounded-3xl flex items-center justify-center text-emerald-200 mb-6">
-                   <Search size={40} />
-                </div>
-                <h3 className="text-2xl font-black text-slate-300 tracking-tight uppercase">Jurisdiction Not Selected</h3>
-                <p className="text-slate-400 text-sm mt-2 max-w-xs">Please select a state above to pull the latest statutory wage data from our cloud database.</p>
-              </div>
-            )}
+              )}
+            </section>
           </div>
 
-          {/* Sidebar Info */}
-          <aside className="space-y-8">
-            <div className="bg-emerald-500 p-10 rounded-[3rem] text-slate-950 shadow-xl shadow-emerald-100 relative group overflow-hidden">
-              <TrendingUp size={80} className="absolute -bottom-4 -right-4 opacity-10 group-hover:scale-110 transition-transform" />
-              <div className="relative z-10">
-                <AlertCircle size={32} className="mb-6" />
-                <h4 className="font-black text-2xl mb-4 leading-none tracking-tighter">Compliance Alert</h4>
-                <p className="text-emerald-950 text-sm font-medium leading-relaxed opacity-80 mb-6">
-                  Minimum wages are typically revised in **April and October**. Using outdated rates can lead to severe statutory penalties and labor disputes.
-                </p>
-                <div className="h-1 w-full bg-emerald-600/30 rounded-full" />
+          {/* RIGHT COL SIDEBAR METRICS MODULE */}
+          <aside className="col-span-12 xl:col-span-3 space-y-6">
+            
+            {/* COMPLIANCE ALERT CARD BOX */}
+            <div className="bg-[#FFF9F2] border border-[#FFEAD1] p-8 rounded-[2.5rem] shadow-sm relative overflow-hidden group">
+              <TrendingUp size={80} className="absolute -bottom-4 -right-4 opacity-5 text-orange-500 pointer-events-none" />
+              <h3 className="text-[#0B1538] font-black text-sm uppercase tracking-widest mb-4 flex items-center gap-2">
+                <AlertCircle size={18} className="text-orange-500" />
+                Compliance Card
+              </h3>
+              <p className="text-slate-600 text-[12px] leading-relaxed font-medium">
+                Minimum wage metric rules are systematically updated bi-annually around **April and October**. 
+                Relying on legacy tables triggers structural statutory penalties.
+              </p>
+            </div>
+
+            {/* SUMMARY VIEW CONTROLLER CARD */}
+            <div className="bg-[#0B1538] p-6 rounded-[2.5rem] text-white shadow-xl space-y-5">
+              <h3 className="text-orange-400 font-black text-xs uppercase tracking-widest pb-2 border-b border-white/10 flex items-center gap-2">
+                <IndianRupee size={16} /> Summary Details
+              </h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <span className="text-slate-400 uppercase font-black tracking-widest text-[9px] block mb-0.5">Active Region</span>
+                  <span className="text-white font-black text-base tracking-tight uppercase">{selectedState || "Awaiting Selection"}</span>
+                </div>
+                
+                <div>
+                  <span className="text-slate-400 uppercase font-black tracking-widest text-[9px] block mb-0.5">VDA Lifecycle</span>
+                  <span className="text-emerald-400 font-black text-base tracking-tight">Active Matrix</span>
+                </div>
+
+                {selectedState && documentUrl ? (
+                  <div className="pt-2">
+                    <a
+                      href={documentUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full text-center block py-3 bg-white text-[#0B1538] hover:bg-orange-500 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-md"
+                    >
+                      Download Gazetted PDF
+                    </a>
+                  </div>
+                ) : (
+                  <div className="pt-2">
+                    <button
+                      disabled
+                      className="w-full text-center block py-3 bg-white/5 text-white/30 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-not-allowed"
+                    >
+                      PDF Link Unavailable
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="bg-white border border-slate-100 p-8 rounded-[3rem] shadow-sm">
-              <div className="flex items-center gap-3 text-slate-900 mb-8 pb-4 border-b border-slate-50">
-                <IndianRupee size={20} className="text-emerald-500" />
-                <span className="font-black uppercase text-xs tracking-widest">Summary View</span>
-              </div>
-              <div className="space-y-6">
-                <div>
-                  <span className="text-slate-400 uppercase font-black tracking-widest text-[10px] block mb-1">Current State</span>
-                  <span className="text-slate-900 font-black text-lg tracking-tight">{selectedState || "Pending"}</span>
-                </div>
-                <div>
-                  <span className="text-slate-400 uppercase font-black tracking-widest text-[10px] block mb-1">VDA Update</span>
-                  <span className="text-emerald-600 font-black text-lg tracking-tight">Active</span>
-                </div>
-                <div className="pt-4">
-                   <button className="w-full bg-slate-900 text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-emerald-600 transition-all">
-                      Download Gazetted PDF
-                   </button>
-                </div>
-              </div>
-            </div>
           </aside>
         </div>
-      </div>
+      </main>
     </div>
   );
 };

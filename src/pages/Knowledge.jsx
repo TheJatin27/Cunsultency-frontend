@@ -100,14 +100,16 @@ const Knowledge = () => {
                />
             ))}
 
-            {/* ORIGINAL STATIC LABELS PRESERVED */}
+            {/* STATE COMPLIANCE NAVIGATION */}
             <SidebarHeader label="State Compliance (State Laws)" />
             <NavItem label="Shops & Establishments" icon={<Building2 size={18}/>} hasChevron />
             <NavItem label="Professional Tax" icon={<IndianRupee size={18}/>} hasChevron />
             <NavItem label="Labour Welfare Fund" icon={<HeartPulse size={18}/>} hasChevron />
+            
+            {/* UPDATED: Navigates cleanly to /minimum-wages */}
             <NavItem 
               active={activeTab === "min-wages"} 
-              onClick={() => setActiveTab("min-wages")} 
+              onClick={() => navigate("/minimum-wages")} 
               icon={<LayoutDashboard size={18}/>}
               label="Minimum Wages (State-wise)" 
               hasChevron 
@@ -176,7 +178,6 @@ const Knowledge = () => {
                       icon={index % 4 === 0 ? <Scale /> : index % 4 === 1 ? <ShieldCheck /> : index % 4 === 2 ? <HardHat /> : <Users />}
                       title={item.title}
                       subtitle={item.shortDescription}
-                      // MODIFIED: Pass new includedActs for bullet points
                       includedActs={item.includedActs}
                       onClick={() => navigate(`/library/${item.slug}`)}
                     />
@@ -188,11 +189,13 @@ const Knowledge = () => {
                   <StateCard icon={<Building2 size={24} className="text-[#8B5CF6]" />} title="Shops & Establishments" desc="State-specific Shop laws." bg="bg-[#EDE9FE]" />
                   <StateCard icon={<IndianRupee size={24} className="text-[#10B981]" />} title="Professional Tax" desc="State PT applicability." bg="bg-[#D1FAE5]" />
                   <StateCard icon={<HeartPulse size={24} className="text-[#EC4899]" />} title="Labour Welfare Fund" desc="LWF laws by state." bg="bg-[#FCE7F3]" />
-                  <StateCard icon={<LayoutDashboard size={24} className="text-[#2563EB]" />} title="Minimum Wages (State-wise)" desc="Min Wage & VDA data." bg="bg-[#DBEAFE]" onClick={() => setActiveTab("min-wages")} />
+                  
+                  {/* UPDATED: Navigates cleanly to /minimum-wages */}
+                  <StateCard icon={<LayoutDashboard size={24} className="text-[#2563EB]" />} title="Minimum Wages (State-wise)" desc="Min Wage & VDA data." bg="bg-[#DBEAFE]" onClick={() => navigate("/minimum-wages")} />
                 </div>
 
                 {/* QUICK TOOLS SECTION */}
-                <div className="bg-[#FAFBFD] p-6 rounded-3xl border border-slate-100 flex flex-wrap items-center justify-between gap-6">
+                <div className="bg-[#0B1538]/5 p-6 rounded-3xl border border-slate-100 flex flex-wrap items-center justify-between gap-6">
                   <div className="flex items-center gap-3">
                     <Calculator className="text-[#0B1538]" size={22}/>
                     <h5 className="font-bold text-[#0B1538] uppercase text-xs tracking-widest">Quick Tools</h5>
@@ -202,7 +205,7 @@ const Knowledge = () => {
                     <ToolItem label="Gratuity Calculator" icon={<IndianRupee size={16}/>}/>
                     <ToolItem label="LWF Calculator" icon={<HeartPulse size={16}/>}/>
                     <ToolItem label="PT Calculator" icon={<Percent size={16}/>}/>
-                    <button className="bg-orange-50 text-orange-600 px-5 py-2.5 rounded-full font-bold text-xs flex items-center gap-2 hover:bg-orange-100 transition">
+                    <button className="bg-[#F97316]/10 text-[#F97316] px-5 py-2.5 rounded-full font-bold text-xs flex items-center gap-2 hover:bg-[#F97316]/20 transition">
                       All Tools <ArrowRight size={14}/>
                     </button>
                   </div>
@@ -284,13 +287,11 @@ const LawCard = ({ color, icon, title, subtitle, includedActs, onClick }) => {
       </div>
       <h4 className="font-bold text-[#0B1538] text-lg mb-1 leading-tight">{title}</h4>
       
-      {/* Banner Description Rendering */}
       <div 
         className="text-[12px] text-[#64748B] font-medium leading-relaxed mb-6 rich-text-subtitle line-clamp-2"
         dangerouslySetInnerHTML={{ __html: subtitle }}
       />
       
-      {/* Acts Points from DB (Like Screenshot image_d0165f) */}
       <div className="flex-grow mb-8">
         <ul className="space-y-3">
           {includedActs?.map((act, i) => (
