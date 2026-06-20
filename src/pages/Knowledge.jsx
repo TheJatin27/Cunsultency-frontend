@@ -19,6 +19,7 @@ import {
   Percent,
   Calculator
 } from "lucide-react";
+
 import { db } from "../firebase";
 import {
   collection,
@@ -28,21 +29,33 @@ import {
   limit
 } from "firebase/firestore";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Knowledge = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   const [wageUpdates, setWageUpdates] = useState([]);
   const [libraryPages, setLibraryPages] = useState([]);
+
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const fetchWages = async () => {
       try {
-        const q = query(collection(db, "minimumWages"), orderBy("createdAt", "desc"), limit(4));
+        const q = query(
+          collection(db, "minimumWages"),
+          orderBy("createdAt", "desc"),
+          limit(4)
+        );
+
         const snap = await getDocs(q);
-        const data = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+        const data = snap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
         setWageUpdates(data);
       } catch (err) {
         console.error("Firebase Error:", err);
@@ -52,14 +65,16 @@ const Knowledge = () => {
     const fetchLibraryPages = async () => {
       try {
         const snap = await getDocs(collection(db, "eLibraryPages"));
+
         const data = snap.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
+
         setLibraryPages(data);
-        setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("Firebase Error:", err);
+      } finally {
         setLoading(false);
       }
     };
@@ -81,8 +96,11 @@ const Knowledge = () => {
         <div className="flex-1 overflow-y-auto pt-3 scrollbar-thin scrollbar-thumb-slate-200">
           <nav className="space-y-0.5">
             <NavItem 
-              active={activeTab === "overview"} 
-              onClick={() => setActiveTab("overview")} 
+              active={activeTab === "overview" && location.pathname === "/knowledge"} 
+              onClick={() => {
+                setActiveTab("overview");
+                navigate("/knowledge");
+              }} 
               icon={<Building2 size={18}/>} 
               label="Overview" 
             />
@@ -102,17 +120,37 @@ const Knowledge = () => {
 
             {/* STATE COMPLIANCE NAVIGATION */}
             <SidebarHeader label="State Compliance (State Laws)" />
-            <NavItem label="Shops & Establishments" icon={<Building2 size={18}/>} hasChevron />
-            <NavItem label="Professional Tax" icon={<IndianRupee size={18}/>} hasChevron />
-            <NavItem label="Labour Welfare Fund" icon={<HeartPulse size={18}/>} hasChevron />
             
-            {/* UPDATED: Navigates cleanly to /minimum-wages */}
-            <NavItem 
-              active={activeTab === "min-wages"} 
-              onClick={() => navigate("/minimum-wages")} 
-              icon={<LayoutDashboard size={18}/>}
-              label="Minimum Wages (State-wise)" 
-              hasChevron 
+            <NavItem
+              active={location.pathname.startsWith("/elibrary/delhi-shops-establishments-act-1954")}
+              onClick={() => navigate("/elibrary/delhi-shops-establishments-act-1954")}
+              icon={<Building2 size={18} />}
+              label="Shops & Establishments"
+              hasChevron
+            />
+
+            <NavItem
+              active={location.pathname === "/ProfessionalTaxCompliance"}
+              onClick={() => navigate("/ProfessionalTaxCompliance")}
+              icon={<IndianRupee size={18} />}
+              label="Professional Tax"
+              hasChevron
+            />
+
+            <NavItem
+              active={location.pathname === "/LabourWelfareFundCompliance"}
+              onClick={() => navigate("/LabourWelfareFundCompliance")}
+              icon={<HeartPulse size={18} />}
+              label="Labour Welfare Fund"
+              hasChevron
+            />
+
+            <NavItem
+              active={location.pathname === "/minimumwageslookup" || location.pathname === "/minimum-wages"}
+              onClick={() => navigate("/minimum-wages")}
+              icon={<LayoutDashboard size={18} />}
+              label="Minimum Wages (State-wise)"
+              hasChevron
             />
 
             <SidebarHeader label="Other Resources" />
@@ -175,7 +213,7 @@ const Knowledge = () => {
                     <LawCard
                       key={item.id}
                       color={["orange", "green", "blue", "red"][index % 4]}
-                      icon={index % 4 === 0 ? <Scale /> : index % 4 === 1 ? <ShieldCheck /> : index % 4 === 2 ? <HardHat /> : <Users />}
+                      icon={index % 4 === 0 ? <Scale size={22} /> : index % 4 === 1 ? <ShieldCheck size={22} /> : index % 4 === 2 ? <HardHat size={22} /> : <Users size={22} />}
                       title={item.title}
                       subtitle={item.shortDescription}
                       includedActs={item.includedActs}
@@ -186,12 +224,10 @@ const Knowledge = () => {
 
                 <ContentHeader label="State Compliance (State Laws)" />
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                  <StateCard icon={<Building2 size={24} className="text-[#8B5CF6]" />} title="Shops & Establishments" desc="State-specific Shop laws." bg="bg-[#EDE9FE]" />
-                  <StateCard icon={<IndianRupee size={24} className="text-[#10B981]" />} title="Professional Tax" desc="State PT applicability." bg="bg-[#D1FAE5]" />
-                  <StateCard icon={<HeartPulse size={24} className="text-[#EC4899]" />} title="Labour Welfare Fund" desc="LWF laws by state." bg="bg-[#FCE7F3]" />
-                  
-                  {/* UPDATED: Navigates cleanly to /minimum-wages */}
-                  <StateCard icon={<LayoutDashboard size={24} className="text-[#2563EB]" />} title="Minimum Wages (State-wise)" desc="Min Wage & VDA data." bg="bg-[#DBEAFE]" onClick={() => navigate("/minimum-wages")} />
+                  <StateCard icon={<Building2 size={24} />} title="Shops & Establishments" desc="State-specific Shop laws." bg="bg-[#EDE9FE]" textColor="text-[#8B5CF6]" onClick={() => navigate("/elibrary/delhi-shops-establishments-act-1954")} />
+                  <StateCard icon={<IndianRupee size={24} />} title="Professional Tax" desc="State PT applicability." bg="bg-[#D1FAE5]" textColor="text-[#10B981]" onClick={() => navigate("/ProfessionalTaxCompliance")} />
+                  <StateCard icon={<HeartPulse size={24} />} title="Labour Welfare Fund" desc="LWF laws by state." bg="bg-[#FCE7F3]" textColor="text-[#EC4899]" onClick={() => navigate("/LabourWelfareFundCompliance")} />
+                  <StateCard icon={<LayoutDashboard size={24} />} title="Minimum Wages (State-wise)" desc="Min Wage & VDA data." bg="bg-[#DBEAFE]" textColor="text-[#2563EB]" onClick={() => navigate("/minimum-wages")} />
                 </div>
 
                 {/* QUICK TOOLS SECTION */}
@@ -310,12 +346,12 @@ const LawCard = ({ color, icon, title, subtitle, includedActs, onClick }) => {
   );
 };
 
-const StateCard = ({ icon, title, desc, bg, onClick }) => (
+const StateCard = ({ icon, title, desc, bg, textColor, onClick }) => (
   <div 
     onClick={onClick}
     className="bg-white border border-[#E2E8F0] p-6 rounded-3xl flex flex-col items-start gap-4 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer group"
   >
-    <div className={`p-4 rounded-2xl ${bg} transition-transform group-hover:scale-105`}>
+    <div className={`p-4 rounded-2xl ${bg} ${textColor} transition-transform group-hover:scale-105`}>
       {React.cloneElement(icon, { strokeWidth: 2.5 })}
     </div>
     <div>
