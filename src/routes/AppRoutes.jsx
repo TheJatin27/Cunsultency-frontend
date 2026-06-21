@@ -24,6 +24,7 @@ import WageCodeDetails from "../pages/WageCodeDetails";
 import ShopsEstablishmentsDetails from "../pages/ShopsEstablishmentsDetails";
 import ProfessionalTaxCompliance from "../pages/ProfessionalTaxDetails";
 import LabourWelfareFundCompliance from "../pages/LabourWelfareFundDetails";
+import StateComplianceTable from "../pages/StateComplianceTable";
 
 const AppRoutes = () => {
   return (
@@ -49,16 +50,21 @@ const AppRoutes = () => {
           <Route path="/ContractLabourCompliance" element={<ContractLabourCompliance />} />
           <Route path="/AuditInspectionReadiness" element={<AuditInspectionReadiness />} />
           <Route path="/LabourCodeAdvisory" element={<LabourCodeAdvisory />} />
-           <Route path="/MinimumWagesLookup" element={<MinimumWagesLookup />} />
+          <Route path="/MinimumWagesLookup" element={<MinimumWagesLookup />} />
+          
+          {/* CENTRAL LAWS */}
           <Route path="/library/:slug" element={<WageCodeDetails />} />
-          <Route
-  path="/ShopsEstablishmentsDetails/:slug"
-  element={<ShopsEstablishmentsDetails />}
-/>
+          
+          {/* MAIN SHOPS & ESTABLISHMENTS CONTENT PAGE */}
+          <Route path="/ShopsEstablishmentsDetails/:slug" element={<ShopsEstablishmentsDetails />} />
+          <Route path="/elibrary/:slug" element={<ShopsEstablishmentsDetails />} />
+          
+          {/* TAX & WELFARE */}
           <Route path="/ProfessionalTaxCompliance" element={<ProfessionalTaxCompliance />} />
           <Route path="/LabourWelfareFundCompliance" element={<LabourWelfareFundCompliance />} />
-
-
+          
+          {/* STATE SPECIFIC EXCEL-STYLE COMPLIANCE GRIDS (UNIFIED UNIQUE PATH) */}
+          <Route path="/compliance/state/:slug" element={<StateComplianceTable />} />
 
         </Route>
       </Routes>

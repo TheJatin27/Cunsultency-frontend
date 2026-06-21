@@ -25,21 +25,13 @@ const ShopsEstablishmentsDetails = () => {
 
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dynamicStates, setDynamicStates] = useState([]);
 
-  // Dynamic hardcoded links for parallel state legislation navigation inside the module
-  const targetStates = [
-    { name: "Delhi Shops & Establishments Act, 1954", routeSlug: "delhi-shops-establishments-act-1954" },
-    { name: "Haryana Shops & Commercial Establishments Act, 1958", routeSlug: "haryana-shops-commercial-establishments-act-1958" },
-    { name: "Uttar Pradesh Shops & Commercial Establishments Act, 1962", routeSlug: "uttar-pradesh-shops-commercial-establishments-act-1962" },
-    { name: "Karnataka Shops & Commercial Establishments Act, 1961", routeSlug: "karnataka-shops-commercial-establishments-act-1961" },
-    { name: "Maharashtra Shops & Establishments Act, 2017", routeSlug: "maharashtra-shops-establishments-act-2017" }
-  ];
-
-  // Utility to scrub arbitrary system linebreaks and line carriage errors safely
   const cleanTextFormatting = (htmlString) => {
     if (!htmlString) return "";
     return htmlString
-      .replace(/\r?\n|\r/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/[\u00AD\u200B]/g, "")
       .replace(/Paym\s+ent/gi, "Payment")
       .replace(/Payme\s*-\s*nt/gi, "Payment")
       .replace(/princi\s+ple/gi, "principle")
@@ -52,15 +44,26 @@ const ShopsEstablishmentsDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const snap = await getDocs(collection(db, "eLibraryPages"));
-        const pages = snap.docs.map((doc) => ({
+        // 1. Fetch page metadata
+        const pageSnap = await getDocs(collection(db, "shop-and-establishment"));
+        const pages = pageSnap.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
         const found = pages.find((item) => item.slug === slug);
         setData(found);
+
+        // 2. Dynamically fetch preset compliance state rows
+        const complianceSnap = await getDocs(collection(db, "shop-state-compliance"));
+        const statesData = complianceSnap.docs.map((doc) => ({
+          id: doc.id,
+          name: doc.data().actTitle || doc.data().stateName,
+          routeSlug: doc.data().stateSlug,
+        }));
+        setDynamicStates(statesData);
+
       } catch (err) {
-        console.error("Error fetching page details:", err);
+        console.error("Error fetching dynamic layout records:", err);
       } finally {
         setLoading(false);
       }
@@ -77,6 +80,9 @@ const ShopsEstablishmentsDetails = () => {
   }
 
   if (!data) return <div className="p-20 text-center font-bold text-slate-600">Page Not Found</div>;
+
+  const hasAmendments = data.amendments && data.amendments.replace(/<[^>]*>/g, "").trim() !== "";
+  const hasRules = data.rules && data.rules.replace(/<[^>]*>/g, "").trim() !== "";
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 pb-20 overflow-x-hidden">
@@ -141,7 +147,7 @@ const ShopsEstablishmentsDetails = () => {
               </section>
             )}
 
-            {/* DYNAMIC INDIVIDUAL STATE PAGES PORTAL SECTION */}
+            {/* STATE PAGES PORTAL GRID COMPONENT */}
             <section id="state-legislation-portal" className="w-full min-w-0 bg-slate-50/70 border border-slate-200/60 p-6 lg:p-8 rounded-[2rem]">
               <SectionHeader icon={<MapPin className="text-orange-600" />} title="State-Specific Legislations" />
               <p className="text-sm text-slate-500 pl-6 lg:pl-10 mb-6 font-medium">
@@ -149,10 +155,10 @@ const ShopsEstablishmentsDetails = () => {
               </p>
               
               <div className="pl-6 lg:pl-10 grid gap-3 sm:grid-cols-1 md:grid-cols-2">
-                {targetStates.map((state, idx) => (
+                {dynamicStates.map((state, idx) => (
                   <Link
                     key={idx}
-                    to={`/elibrary/${state.routeSlug}`}
+                    to={`/compliance/state/${state.routeSlug}`}
                     className="flex items-center justify-between p-4 bg-white hover:bg-orange-500/5 border border-slate-200/80 hover:border-orange-500/30 rounded-xl transition-all shadow-sm group"
                   >
                     <span className="text-[13px] font-bold text-slate-700 group-hover:text-orange-600 transition-colors tracking-tight">
@@ -196,17 +202,17 @@ const ShopsEstablishmentsDetails = () => {
               </section>
             )}
 
-            {/* AMENDMENTS + RULES LAYOUT CONTAINER */}
-            {(data.amendments || data.rules) && (
-              <div className="grid lg:grid-cols-2 gap-8 pt-2 w-full min-w-0">
-                {data.amendments && (
-                  <section className="border-l-4 border-purple-100 pl-6 lg:pl-10 min-w-0">
+            {/* DYNAMIC AMENDMENTS AND RULES CONTAINER */}
+            {(hasAmendments || hasRules) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2 w-full min-w-0">
+                {hasAmendments && (
+                  <section className={`border-l-4 border-purple-100 pl-6 lg:pl-10 min-w-0 ${!hasRules ? "col-span-2" : ""}`}>
                     <SectionHeader icon={<Gavel className="text-purple-600" />} title="03. Amendments" />
                     <div className="text-slate-600 text-[13px] rich-text-area mt-1 w-full" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.amendments) }} />
                   </section>
                 )}
-                {data.rules && (
-                  <section className="border-l-4 border-emerald-100 pl-6 lg:pl-10 min-w-0">
+                {hasRules && (
+                  <section className={`border-l-4 border-emerald-100 pl-6 lg:pl-10 min-w-0 ${!hasAmendments ? "col-span-2" : ""}`}>
                     <SectionHeader icon={<ClipboardCheck className="text-emerald-600" />} title="04. Statutory Rules" />
                     <div className="text-slate-600 text-[13px] rich-text-area mt-1 w-full" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.rules) }} />
                   </section>
@@ -237,7 +243,7 @@ const ShopsEstablishmentsDetails = () => {
           {/* RIGHT SIDEBAR COLUMN */}
           <aside className="col-span-12 xl:col-span-3 space-y-6">
             
-            {/* REGION SELECTION SIDEBAR CARD */}
+            {/* DYNAMIC REGION SELECTION SIDEBAR CARD */}
             <div className="bg-[#FFF9F2] border border-[#FFEAD1] p-8 rounded-[2.5rem] shadow-sm">
               <h3 className="text-[#0B1538] font-black text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
                 <Scale size={18} className="text-orange-500" />
@@ -245,10 +251,10 @@ const ShopsEstablishmentsDetails = () => {
               </h3>
               
               <ul className="space-y-4">
-                {targetStates.map((state, i) => (
+                {dynamicStates.map((state, i) => (
                   <li key={i}>
                     <Link 
-                      to={`/elibrary/${state.routeSlug}`}
+                      to={`/compliance/state/${state.routeSlug}`}
                       className="flex items-start gap-3 text-left group w-full"
                     >
                       <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-1.5 flex-shrink-0" />
@@ -313,6 +319,7 @@ const ShopsEstablishmentsDetails = () => {
           text-align: left !important;
         }
         .rich-text-area p { margin-bottom: 0.4rem; text-align: left !important; }
+        .rich-text-area h3 { font-size: 1.1rem; font-weight: 800; color: #0B1538; margin-top: 1.25rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: -0.025em; }
         .rich-text-area a { color: #f97316; text-decoration: underline; font-weight: 800; }
         .rich-text-area strong { color: #1e293b; font-weight: 700; }
 
@@ -331,7 +338,6 @@ const ShopsEstablishmentsDetails = () => {
   );
 };
 
-{/* ACCORDION ACCESSIBLE COMPONENT CONTAINER */}
 const FaqItem = ({ faq, cleanTextFormatting }) => {
   const [isOpen, setIsOpen] = useState(false);
 

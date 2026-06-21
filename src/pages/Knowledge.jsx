@@ -36,6 +36,7 @@ const Knowledge = () => {
   const [loading, setLoading] = useState(true);
   const [wageUpdates, setWageUpdates] = useState([]);
   const [libraryPages, setLibraryPages] = useState([]);
+  const [shopPages, setShopPages] = useState([]); // Isolated state configuration for custom collections
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -48,14 +49,11 @@ const Knowledge = () => {
           orderBy("createdAt", "desc"),
           limit(4)
         );
-
         const snap = await getDocs(q);
-
         const data = snap.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-
         setWageUpdates(data);
       } catch (err) {
         console.error("Firebase Error:", err);
@@ -65,15 +63,27 @@ const Knowledge = () => {
     const fetchLibraryPages = async () => {
       try {
         const snap = await getDocs(collection(db, "eLibraryPages"));
-
         const data = snap.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-
         setLibraryPages(data);
       } catch (err) {
         console.error("Firebase Error:", err);
+      }
+    };
+
+    const fetchShopPages = async () => {
+      try {
+        // Querying strictly from your isolated shop-and-establishment parameters setup
+        const snap = await getDocs(collection(db, "shop-and-establishment"));
+        const data = snap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setShopPages(data);
+      } catch (err) {
+        console.error("Shop Collection Firebase Error:", err);
       } finally {
         setLoading(false);
       }
@@ -81,6 +91,7 @@ const Knowledge = () => {
 
     fetchLibraryPages();
     fetchWages();
+    fetchShopPages();
   }, []);
 
   return (
@@ -107,7 +118,7 @@ const Knowledge = () => {
 
             <SidebarHeader label="Labour Codes (Central Laws)" />
             
-            {/* DYNAMIC SIDEBAR ITEMS FROM FIREBASE */}
+            {/* DYNAMIC SIDEBAR ITEMS FROM CENTRAL LAWS */}
             {libraryPages.map((page) => (
                <NavItem 
                 key={page.id}
@@ -121,13 +132,28 @@ const Knowledge = () => {
             {/* STATE COMPLIANCE NAVIGATION */}
             <SidebarHeader label="State Compliance (State Laws)" />
             
-            <NavItem
-              active={location.pathname.startsWith("/elibrary/delhi-shops-establishments-act-1954")}
-              onClick={() => navigate("/elibrary/delhi-shops-establishments-act-1954")}
-              icon={<Building2 size={18} />}
-              label="Shops & Establishments"
-              hasChevron
-            />
+            {/* DYNAMIC SHOPS & ESTABLISHMENTS FROM TARGET DIRECT COLLECTION */}
+            {shopPages.map((page) => (
+              <NavItem
+                key={page.id}
+                active={location.pathname === `/elibrary/${page.slug}`}
+                onClick={() => navigate(`/elibrary/${page.slug}`)}
+                icon={<Building2 size={18} />}
+                label={page.title}
+                hasChevron
+              />
+            ))}
+
+            {/* fallback default items or related sub-modules handles */}
+            {shopPages.length === 0 && (
+              <NavItem
+                active={location.pathname.startsWith("/elibrary/delhi-shops-establishments-act-1954")}
+                onClick={() => navigate("/elibrary/delhi-shops-establishments-act-1954")}
+                icon={<Building2 size={18} />}
+                label="Shops & Establishments"
+                hasChevron
+              />
+            )}
 
             <NavItem
               active={location.pathname === "/ProfessionalTaxCompliance"}
@@ -224,7 +250,20 @@ const Knowledge = () => {
 
                 <ContentHeader label="State Compliance (State Laws)" />
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                  <StateCard icon={<Building2 size={24} />} title="Shops & Establishments" desc="State-specific Shop laws." bg="bg-[#EDE9FE]" textColor="text-[#8B5CF6]" onClick={() => navigate("/elibrary/delhi-shops-establishments-act-1954")} />
+                  <StateCard 
+                    icon={<Building2 size={24} />} 
+                    title="Shops & Establishments" 
+                    desc="State-specific Shop laws." 
+                    bg="bg-[#EDE9FE]" 
+                    textColor="text-[#8B5CF6]" 
+                    onClick={() => {
+                      if (shopPages.length > 0) {
+                        navigate(`/elibrary/${shopPages[0].slug}`);
+                      } else {
+                        navigate("/elibrary/delhi-shops-establishments-act-1954");
+                      }
+                    }} 
+                  />
                   <StateCard icon={<IndianRupee size={24} />} title="Professional Tax" desc="State PT applicability." bg="bg-[#D1FAE5]" textColor="text-[#10B981]" onClick={() => navigate("/ProfessionalTaxCompliance")} />
                   <StateCard icon={<HeartPulse size={24} />} title="Labour Welfare Fund" desc="LWF laws by state." bg="bg-[#FCE7F3]" textColor="text-[#EC4899]" onClick={() => navigate("/LabourWelfareFundCompliance")} />
                   <StateCard icon={<LayoutDashboard size={24} />} title="Minimum Wages (State-wise)" desc="Min Wage & VDA data." bg="bg-[#DBEAFE]" textColor="text-[#2563EB]" onClick={() => navigate("/minimum-wages")} />
@@ -280,7 +319,7 @@ const SidebarHeader = ({ label }) => (
 
 const NavItem = ({ active, onClick, icon, label, hasChevron, disabled, status }) => (
   <div 
-    onClick={onClick}
+    onClick={disabled ? undefined : onClick}
     className={`flex items-center justify-between py-3.5 px-4 cursor-pointer transition-all border-l-4 ${
       active 
       ? "bg-[#FEF6F0] border-[#F97316] text-[#F97316] font-bold" 
