@@ -7,7 +7,8 @@ import {
   FileSpreadsheet, 
   Loader2, 
   ShieldAlert,
-  Info
+  Info,
+  Download
 } from "lucide-react";
 
 export default function StateComplianceTable() {
@@ -24,7 +25,6 @@ export default function StateComplianceTable() {
       
       try {
         setLoading(true);
-        // 1. Direct indexed query targeted right at the exact URL string value
         const q = query(
           collection(db, "shop-state-compliance"),
           where("stateSlug", "==", slug.trim().toLowerCase())
@@ -33,7 +33,6 @@ export default function StateComplianceTable() {
         const snap = await getDocs(q);
         
         if (!snap.empty) {
-          // 2. Document exists, read the first match out
           setComplianceData({
             id: snap.docs[0].id,
             ...snap.docs[0].data()
@@ -103,7 +102,7 @@ export default function StateComplianceTable() {
             <span className="text-[10px] font-black uppercase tracking-[0.25em]">Back to Portal</span>
           </button>
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-orange-500 rounded-2xl shadow-lg shadow-orange-500/20 flex-shrink-0 text-white">
                 <FileSpreadsheet size={28} />
@@ -112,11 +111,23 @@ export default function StateComplianceTable() {
                 <span className="text-[10px] bg-orange-500/20 text-orange-400 border border-orange-500/30 px-2.5 py-1 rounded-full font-bold uppercase tracking-widest">
                   {complianceData.stateName}
                 </span>
-                <h1 className="text-2xl lg:text-3xl font-black tracking-tight uppercase text-white mt-1.5">
+                <h1 className="text-2xl lg:text-3xl font-black tracking-tight uppercase text-white mt-1.5 leading-tight">
                   {complianceData.actTitle}
                 </h1>
               </div>
             </div>
+
+            {/* DYNAMIC TOP ACTION DOWNLOAD BUTTON BLOCK */}
+            {complianceData.bareActUrl && (
+              <a
+                href={complianceData.bareActUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2.5 bg-orange-500 text-white px-6 py-3.5 rounded-2xl font-black text-xs hover:bg-white hover:text-[#0B1538] transition-all shadow-xl shadow-orange-500/25 uppercase tracking-wider flex-shrink-0 border-2 border-transparent"
+              >
+                <Download size={16} strokeWidth={2.5} /> Download Bare Act PDF
+              </a>
+            )}
           </div>
         </div>
       </header>
