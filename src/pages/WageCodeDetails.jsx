@@ -252,33 +252,40 @@ const WageCodeDetails = () => {
         </div>
       </main>
 
-      {/* BASE CSS STYLES */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        .rich-text-area { 
-          display: block !important;
-          white-space: normal !important;
-          word-wrap: break-word !important; 
-          overflow-wrap: break-word !important; 
-          word-break: normal !important; 
-          hyphens: none !important;
-          text-wrap: pretty !important;
-          text-align: left !important;
-        }
-        .rich-text-area p { margin-bottom: 0.4rem; text-align: left !important; }
-        .rich-text-area a { color: #f97316; text-decoration: underline; font-weight: 800; }
-        .rich-text-area strong { color: #1e293b; font-weight: 700; }
+     {/* BASE CSS STYLES */}
+<style dangerouslySetInnerHTML={{ __html: `
+  .rich-text-area { 
+    display: block !important;
+    white-space: normal !important;
+    word-wrap: break-word !important; 
+    overflow-wrap: break-word !important; 
+    word-break: normal !important; 
+    hyphens: none !important;
+    text-wrap: pretty !important;
+    text-align: left !important;
+  }
+  .rich-text-area p { margin-bottom: 0.6rem; text-align: left !important; }
+  .rich-text-area a { color: #f97316; text-decoration: underline; font-weight: 800; }
+  
+  /* --- HEADINGS STYLING (Overrides Tailwind Preflight) --- */
+  .rich-text-area h1 { font-size: 1.5rem !important; font-weight: 900 !important; color: #0B1538 !important; margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; display: block !important; }
+  .rich-text-area h2 { font-size: 1.25rem !important; font-weight: 800 !important; color: #0B1538 !important; margin-top: 1.25rem !important; margin-bottom: 0.5rem !important; display: block !important; }
+  .rich-text-area h3 { font-size: 1.1rem !important; font-weight: 700 !important; color: #0B1538 !important; margin-top: 1rem !important; margin-bottom: 0.5rem !important; display: block !important; }
+  
+  /* --- BOLD STYLING (Targets both strong and b tags) --- */
+  .rich-text-area strong, .rich-text-area b { color: #0B1538 !important; font-weight: 800 !important; }
 
-        .rich-text-area ul { list-style-type: disc !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
-        .rich-text-area ol { list-style-type: decimal !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
-        .rich-text-area li { display: list-item !important; text-align: left !important; margin-bottom: 0.25rem; }
+  .rich-text-area ul { list-style-type: disc !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
+  .rich-text-area ol { list-style-type: decimal !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
+  .rich-text-area li { display: list-item !important; text-align: left !important; margin-bottom: 0.25rem; }
 
-        .practical-inline-area, .practical-inline-area * {
-          display: inline !important;
-          white-space: normal !important;
-          word-break: normal !important;
-          text-align: left !important;
-        }
-      `}} />
+  .practical-inline-area, .practical-inline-area * {
+    display: inline !important;
+    white-space: normal !important;
+    word-break: normal !important;
+    text-align: left !important;
+  }
+`}} />
     </div>
   );
 };

@@ -1,8 +1,41 @@
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { ShieldCheck, Lock, Mail, ArrowRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ShieldCheck, Lock, Mail, ArrowRight, Loader2 } from "lucide-react";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!email || !password) {
+      setError("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Place your authentication verification code (Firebase Auth, JWT etc.) here
+      // Simulated mock API authentication:
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+
+      // On successful credentials confirmation, route over to the dynamic dashboard section
+      navigate("/shops-establishments");
+    } catch (err) {
+      console.error(err);
+      setError("Invalid credentials or unauthorized login registration.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-950 flex items-center justify-center px-6 py-20 relative overflow-hidden">
       {/* Background Glows */}
@@ -18,7 +51,7 @@ const Login = () => {
           <div>
             <Link to="/" className="flex items-center gap-3 mb-12">
               <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center font-black text-slate-950">C</div>
-              <span className="text-white font-black text-xl">CHANDAN<span className="text-emerald-400">.</span></span>
+              <span className="text-white font-black text-xl">COMPLIANCE<span className="text-emerald-400">.</span></span>
             </Link>
             <h2 className="text-4xl font-black text-white leading-tight mb-6">
               Access Your <br />
@@ -34,7 +67,7 @@ const Login = () => {
               <ShieldCheck size={20} /> 256-bit AES Encryption
             </div>
             <p className="text-slate-500 text-xs">
-              Protected by Chandan Compliance Security Protocols.
+              Protected by Enterprise Compliance Security Protocols.
             </p>
           </div>
         </div>
@@ -42,21 +75,30 @@ const Login = () => {
         {/* Right Side: Login Form */}
         <div className="p-12 lg:p-16 bg-slate-900/60">
           <div className="mb-10 lg:hidden">
-            <Link to="/" className="text-white font-black text-xl">CHANDAN<span className="text-emerald-400">.</span></Link>
+            <Link to="/" className="text-white font-black text-xl">COMPLIANCE<span className="text-emerald-400">.</span></Link>
           </div>
 
           <h3 className="text-2xl font-black text-white mb-2">Welcome Back</h3>
           <p className="text-slate-500 text-sm mb-10 font-medium italic">Authorized Client Access Only</p>
 
-          <form className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-6">
+            {error && (
+              <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-xl text-xs font-bold tracking-wide">
+                {error}
+              </div>
+            )}
+
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-1">Work Email</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
                 <input 
                   type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com" 
-                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-white outline-none focus:border-blue-500/50 transition-all"
+                  disabled={loading}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-white outline-none focus:border-blue-500/50 transition-all disabled:opacity-50"
                 />
               </div>
             </div>
@@ -70,14 +112,29 @@ const Login = () => {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
                 <input 
                   type="password" 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••" 
-                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-white outline-none focus:border-blue-500/50 transition-all"
+                  disabled={loading}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-2xl py-4 pl-12 pr-4 text-white outline-none focus:border-blue-500/50 transition-all disabled:opacity-50"
                 />
               </div>
             </div>
 
-            <button className="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-600/20 group">
-              Secure Login <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+            <button 
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-500 disabled:bg-blue-600/50 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-600/20 group cursor-pointer disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={18} /> Verifying Credentials...
+                </>
+              ) : (
+                <>
+                  Secure Login <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                </>
+              )}
             </button>
           </form>
 

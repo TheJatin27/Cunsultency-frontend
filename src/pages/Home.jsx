@@ -91,7 +91,7 @@ const Labourforge = () => {
       {/* Quote Strip - Reduced padding */}
       <div className="w-full bg-white border-y border-slate-200 py-4 text-center">
         <p className="text-slate-700 text-md md:text-lg font-['Playfair_Display',serif] italic">
-          “Most compliance issues don't arise from intent — they arise from incorrect structuring.”
+          “Most compliance issues don't arise from intent they arise from incorrect structuring.”
         </p>
       </div>
 
@@ -235,7 +235,7 @@ const Labourforge = () => {
             Bringing structure and clarity to payroll & labour law compliance
           </p>
           <p className="text-slate-700 max-w-3xl mx-auto text-base">
-            Labourforge was established with a clear objective — to bring structure, clarity, and{' '}
+            Labourforge was established with a clear objective to bring structure, clarity, and{' '}
             <span className="text-blue-700 font-semibold">practical understanding</span> to payroll and labour law compliance.
           </p>
           <div className="grid md:grid-cols-2 gap-6 items-start text-left">
@@ -328,7 +328,7 @@ const Labourforge = () => {
           </div>
           
           <p className="text-center text-slate-700 text-sm mb-8 max-w-3xl mx-auto">
-            Payroll and compliance are not isolated functions — they are interconnected systems that directly impact risk, cost, and operational stability.
+            Payroll and compliance are not isolated functions they are interconnected systems that directly impact risk, cost, and operational stability.
           </p>
           
           <div className="grid md:grid-cols-2 gap-5">
@@ -452,7 +452,7 @@ const Labourforge = () => {
         <div className="bg-[#0f2b3f] py-10 md:py-12 px-5 relative">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl font-['Playfair_Display',serif] text-[#d59b3f]">E-Library</h2>
-            <p className="text-blue-100 text-lg mt-2">Simplifying Labour Laws — One Topic at a Time</p>
+            <p className="text-blue-100 text-lg mt-2">Simplifying Labour Laws One Topic at a Time</p>
             <div className="relative mt-6 max-w-xl mx-auto">
               <Search size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400" />
               <input 
@@ -619,7 +619,7 @@ const Labourforge = () => {
           </div>
         </div>
         <div className="text-xs text-slate-400 mt-6">
-          © Labourforge — Simplifying Labour Laws, One Topic at a Time
+          © Labourforge Simplifying Labour Laws, One Topic at a Time
         </div>
       </footer>
     </div>

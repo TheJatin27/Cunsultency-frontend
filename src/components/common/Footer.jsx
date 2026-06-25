@@ -94,7 +94,7 @@ const Footer = () => {
           <div className="bg-white/[0.02] p-6 border border-white/5 rounded-2xl">
             <h4 className="text-white font-black uppercase tracking-[0.3em] text-[9px] mb-6">Corporate Office</h4>
             <div className="space-y-4 text-[10px] font-bold uppercase tracking-widest">
-              <a href="tel:+919555769448" className="flex items-start gap-3 text-gray-500 hover:text-blue-500 transition-colors group">
+              <a href="tel:+919971826278" className="flex items-start gap-3 text-gray-500 hover:text-blue-500 transition-colors group">
                 <Phone size={14} className="group-hover:rotate-12 transition-transform" />
                 <span>+91 95557 69448</span>
               </a>
@@ -136,7 +136,7 @@ const Footer = () => {
       <motion.a
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        href="https://wa.me/919555769448"
+        href="https://wa.me/919971826278"
         target="_blank"
         className="fixed bottom-6 right-6 z-[100] bg-white text-[#020617] pl-5 pr-2 py-2 rounded-full shadow-2xl flex items-center gap-3 border border-white/10 group"
       >
