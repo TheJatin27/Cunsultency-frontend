@@ -11,7 +11,8 @@ import {
   CheckCircle2, 
   RefreshCw, 
   SlidersHorizontal,
-  ChevronRight
+  ChevronRight,
+  FileText
 } from "lucide-react";
 
 // Helper component to render the custom state abbreviations
@@ -59,7 +60,7 @@ const MinimumWages = () => {
 
   const stateDropdownOptions = ["All States", ...new Set(wageDocs.map(d => d.state))];
 
-  // Cleans broken sheet encoding strings like (Â ¹) safely without parser crashes
+  // Cleans broken sheet encoding strings safely without parser crashes
   const cleanHeaderString = (str) => {
     if (!str) return "";
     return String(str)
@@ -77,13 +78,15 @@ const MinimumWages = () => {
     return "Skill-wise";
   };
 
-  // DETECT FILTERABLE COLUMNS (Find headings like Category, District, Zone, etc.)
+  // DETECT FILTERABLE COLUMNS (Limit output directly to a maximum of 3 filters)
   const getFilterableColumns = () => {
     if (!activeModalDoc || !activeModalDoc.headers) return [];
-    return activeModalDoc.headers.filter(header => {
-      const lower = header.toLowerCase();
-      return lower.includes("category") || lower.includes("class") || lower.includes("district") || lower.includes("zone") || lower.includes("designation");
-    });
+    return activeModalDoc.headers
+      .filter(header => {
+        const lower = header.toLowerCase();
+        return lower.includes("category") || lower.includes("class") || lower.includes("district") || lower.includes("zone") || lower.includes("designation");
+      })
+      .slice(0, 3); // Restricts view to only 2-3 dropdown filters maximum
   };
 
   // Get unique cell options for a detected filterable column header
@@ -292,7 +295,7 @@ const MinimumWages = () => {
                 <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
                 <input
                   type="text"
-                  placeholder={`Search table rows in ${activeModalDoc.state}...`}
+                  placeholder={`Search table rows in ${String(activeModalDoc.state).toLowerCase()}...`}
                   value={modalSearch}
                   onChange={(e) => setModalSearch(e.target.value)}
                   className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 outline-none font-medium focus:border-blue-500"
@@ -301,7 +304,7 @@ const MinimumWages = () => {
 
               {/* Dynamic Dropdown Controls Generator based on extracted Columns */}
               {getFilterableColumns().length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {getFilterableColumns().map((headerName, idx) => (
                     <div key={idx}>
                       <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">
@@ -329,7 +332,26 @@ const MinimumWages = () => {
             </div>
 
             {/* Dynamic Grid Table Data Representation Area */}
-            <div className="p-6 overflow-y-auto flex-1 bg-white">
+            <div className="p-6 overflow-y-auto flex-1 bg-white space-y-4">
+              
+              {/* Compliance Notes Alert Block Element */}
+              {activeModalDoc.notes && activeModalDoc.notes.trim() !== "" && (
+                <div className="bg-[#FFFDF4] border border-[#FFEFA6] rounded-xl p-4 flex gap-3 shadow-sm">
+                  <div className="text-amber-600 mt-0.5 flex-shrink-0">
+                    <FileText size={16} />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-black text-amber-900 tracking-wide">
+                      Compliance Notes & Remarks:
+                    </h4>
+                    <p className="text-xs text-amber-800 font-medium mt-1 leading-relaxed whitespace-pre-line">
+                      {activeModalDoc.notes}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Table Shell */}
               <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[38vh]">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead className="sticky top-0 z-10 bg-slate-100 text-slate-600 font-black uppercase border-b border-slate-200">

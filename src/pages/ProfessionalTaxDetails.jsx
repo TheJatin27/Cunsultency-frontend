@@ -8,10 +8,7 @@ import {
   Download, 
   Loader2, 
   CheckCircle2, 
-  RefreshCw, 
-  SlidersHorizontal,
   ChevronRight,
-  Building,
   StickyNote,
   FileText,
   User,
@@ -130,99 +127,109 @@ const ProfessionalTaxes = () => {
   return (
     <div className="min-h-screen bg-[#F4F7FC] text-slate-800 font-sans antialiased">
       
-      {/* 1️⃣ PORTAL HEADER INFO HEADER MODULE */}
-      <div className="max-w-7xl mx-auto px-4 pt-10 pb-6">
+      {/* Reduced top padding from pt-10 to pt-6 */}
+      <div className="max-w-7xl mx-auto px-4 pt-6 pb-6">
         
-        {/* Row 1: Informational Concept Banner Blocks */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 shadow-sm">
-          <div className="flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 text-blue-600">
-              <FileText size={22} />
+        {/* Main Title Module - Reduced bottom margin from mb-10 to mb-5 */}
+        <div className="text-center mb-5">
+          <h1 className="text-3xl font-black text-[#0B1538] tracking-tight uppercase mb-1">
+            Professional Tax (PT)
+          </h1>
+          <p className="text-xs font-semibold text-slate-500 tracking-wide">
+            State-wise Professional Tax Applicability, Rates & Compliance Information
+          </p>
+        </div>
+
+        {/* 1️⃣ PORTAL HEADER INFO MODULE - Tightened internal padding and margin-bottom to mb-4 */}
+        <div className="bg-white border border-slate-100 rounded-2xl p-4 grid grid-cols-1 md:grid-cols-3 gap-5 mb-4 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 text-blue-600">
+              <FileText size={20} />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-blue-600 mb-1">What is Professional Tax?</h3>
-              <p className="text-xs text-slate-500 leading-relaxed font-medium">
+              <h3 className="text-xs font-bold text-blue-600 mb-0.5">What is Professional Tax?</h3>
+              <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                 Professional Tax is a state levy on individuals earning income by way of any profession, employment, trade or calling.
               </p>
             </div>
           </div>
-          <div className="flex items-start gap-4 border-t md:border-t-0 md:border-x border-slate-100 pt-4 md:pt-0 md:px-6">
-            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0 text-emerald-600">
-              <User size={22} />
+          <div className="flex items-start gap-3 border-t md:border-t-0 md:border-x border-slate-100 pt-3 md:pt-0 md:px-5">
+            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0 text-emerald-600">
+              <User size={20} />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-emerald-600 mb-1">Why is it Levied?</h3>
-              <p className="text-xs text-slate-500 leading-relaxed font-medium">
+              <h3 className="text-xs font-bold text-emerald-600 mb-0.5">Why is it Levied?</h3>
+              <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                 It is levied to generate revenue for the state government which is used for public welfare and development activities.
               </p>
             </div>
           </div>
-          <div className="flex items-start gap-4 border-t md:border-t-0 pt-4 md:pt-0">
-            <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0 text-purple-600">
-              <ShieldAlert size={22} />
+          <div className="flex items-start gap-3 border-t md:border-t-0 pt-3 md:pt-0">
+            <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0 text-purple-600">
+              <ShieldAlert size={20} />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-purple-600 mb-1">Who Pays?</h3>
-              <p className="text-xs text-slate-500 leading-relaxed font-medium">
+              <h3 className="text-xs font-bold text-purple-600 mb-0.5">Who Pays?</h3>
+              <p className="text-[11px] text-slate-500 leading-relaxed font-medium">
                 Employees, employers, partners, directors and self-employed professionals in notified states.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Row 2: Quantifiable State Metric Overview Block */}
-        <div className="bg-white border border-slate-100 rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8 shadow-sm text-center sm:text-left">
-          <div className="flex flex-col sm:flex-row items-center gap-4 sm:pl-4">
-            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
-              <CheckCircle2 size={20} />
+        {/* Row 2: Quantifiable State Metric Overview Block - Reduced padding and layout margin to mb-4 */}
+        <div className="bg-white border border-slate-100 rounded-2xl p-4 grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 shadow-sm text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:pl-2">
+            <div className="w-9 h-9 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+              <CheckCircle2 size={18} />
             </div>
             <div>
-              <span className="text-xs font-semibold text-slate-400 block">Applicable States</span>
-              <span className="text-2xl font-black text-emerald-600">{applicableCount}</span>
+              <span className="text-[11px] font-semibold text-slate-400 block">Applicable States</span>
+              <span className="text-xl font-black text-emerald-600">{applicableCount}</span>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row items-center gap-4 border-y sm:border-y-0 sm:border-x border-slate-100 py-4 sm:py-0 sm:px-8">
-            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
-              <X size={20} />
+          <div className="flex flex-col sm:flex-row items-center gap-3 border-y sm:border-y-0 sm:border-x border-slate-100 py-3 sm:py-0 sm:px-6">
+            <div className="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
+              <X size={18} />
             </div>
             <div>
-              <span className="text-xs font-semibold text-slate-400 block">Not Applicable States</span>
-              <span className="text-2xl font-black text-slate-700">{notApplicableCount}</span>
+              <span className="text-[11px] font-semibold text-slate-400 block">Not Applicable States</span>
+              <span className="text-xl font-black text-slate-700">{notApplicableCount}</span>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row items-center gap-4 sm:pl-4">
-            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
-              <Calendar size={20} />
+          <div className="flex flex-col sm:flex-row items-center gap-3 sm:pl-2">
+            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+              <Calendar size={18} />
             </div>
             <div>
-              <span className="text-xs font-semibold text-slate-400 block">Last Updated</span>
-              <span className="text-base font-black text-blue-600">July 2026</span>
+              <span className="text-[11px] font-semibold text-slate-400 block">Last Updated</span>
+              <span className="text-sm font-black text-blue-600">July 2026</span>
             </div>
           </div>
         </div>
 
-        {/* 2️⃣ OUTER PAGE SEARCH AND REGION PICKER CONTROLS */}
-        <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center mb-5 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
-          <div className="text-sm font-black text-[#0B1538] uppercase tracking-wider whitespace-nowrap self-center">
+        {/* 2️⃣ OUTER PAGE SEARCH AND REGION PICKER CONTROLS - Adjusted spacing down to mb-4 */}
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center mb-4 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+          <div className="text-xs font-black text-[#0B1538] uppercase tracking-wider whitespace-nowrap self-center">
             Professional Tax by State
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center flex-1 justify-end">
             <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute left-3.5 top-3 text-slate-400" size={15} />
+              <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
               <input
                 type="text"
                 placeholder="Search State..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-slate-50 rounded-xl border border-slate-200 outline-none text-xs font-medium focus:border-blue-500 transition-colors"
+                className="w-full pl-8 pr-4 py-1.5 bg-slate-50 rounded-xl border border-slate-200 outline-none text-xs font-medium focus:border-blue-500 transition-colors"
               />
             </div>
             
             <select
               value={selectedRegion}
               onChange={(e) => setSelectedRegion(e.target.value)}
-              className="bg-slate-50 border border-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold outline-none cursor-pointer min-w-[140px]"
+              className="bg-slate-50 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold outline-none cursor-pointer min-w-[130px]"
             >
               {stateDropdownOptions.map((opt, i) => (
                 <option key={i} value={opt}>{opt}</option>
@@ -230,9 +237,9 @@ const ProfessionalTaxes = () => {
             </select>
 
             {/* Status Segment Filters */}
-            <div className="flex items-center gap-4 px-2 border-l border-slate-100 sm:h-8 self-center">
-              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status Filter</span>
-              <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 px-2 border-l border-slate-100 sm:h-6 self-center">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status Filter</span>
+              <div className="flex items-center gap-2.5">
                 <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600">
                   <input 
                     type="radio" 
@@ -241,7 +248,7 @@ const ProfessionalTaxes = () => {
                     onChange={() => setStatusFilter("Applicable")}
                     className="hidden" 
                   />
-                  <span className={`w-2.5 h-2.5 rounded-full bg-green-500 ${statusFilter === "Applicable" ? "ring-2 ring-offset-2 ring-green-400" : "opacity-40"}`} />
+                  <span className={`w-2 h-2 rounded-full bg-green-500 ${statusFilter === "Applicable" ? "ring-2 ring-offset-2 ring-green-400" : "opacity-40"}`} />
                   Applicable
                 </label>
                 <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600">
@@ -252,7 +259,7 @@ const ProfessionalTaxes = () => {
                     onChange={() => setStatusFilter("Not Applicable")}
                     className="hidden" 
                   />
-                  <span className={`w-2.5 h-2.5 rounded-full bg-gray-400 ${statusFilter === "Not Applicable" ? "ring-2 ring-offset-2 ring-gray-400" : "opacity-40"}`} />
+                  <span className={`w-2 h-2 rounded-full bg-gray-400 ${statusFilter === "Not Applicable" ? "ring-2 ring-offset-2 ring-gray-400" : "opacity-40"}`} />
                   Not Applicable
                 </label>
                 <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600">
@@ -263,7 +270,7 @@ const ProfessionalTaxes = () => {
                     onChange={() => setStatusFilter("All")}
                     className="hidden" 
                   />
-                  <span className={`w-2.5 h-2.5 rounded-full bg-blue-500 ${statusFilter === "All" ? "ring-2 ring-offset-2 ring-blue-400" : "opacity-40"}`} />
+                  <span className={`w-2 h-2 rounded-full bg-blue-500 ${statusFilter === "All" ? "ring-2 ring-offset-2 ring-blue-400" : "opacity-40"}`} />
                   All
                 </label>
               </div>
@@ -272,27 +279,27 @@ const ProfessionalTaxes = () => {
         </div>
 
         {/* 3️⃣ PORTAL MAIN JURISDICTIONS TABLE LISTING */}
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-xl overflow-hidden mb-6">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-xl overflow-hidden mb-4">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
                 <tr className="bg-[#0B1538] text-white text-[11px] font-black uppercase tracking-widest">
-                  <th className="py-4 px-6">State / UT</th>
-                  <th className="py-4 px-6">Status</th>
-                  <th className="py-4 px-6">Frequency</th>
-                  <th className="py-4 px-6">Last Updated</th>
-                  <th className="py-4 px-6 text-right">View Details</th>
+                  <th className="py-3 px-6">State / UT</th>
+                  <th className="py-3 px-6">Status</th>
+                  <th className="py-3 px-6">Frequency</th>
+                  <th className="py-3 px-6">Last Updated</th>
+                  <th className="py-3 px-6 text-right">View Details</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {filteredDocs.length > 0 ? (
                   filteredDocs.map((doc) => (
                     <tr key={doc.id} className="hover:bg-slate-50/70 transition-colors">
-                      <td className="py-4 px-6 font-bold text-slate-800 uppercase tracking-wide text-xs flex items-center gap-3">
+                      <td className="py-3 px-6 font-bold text-slate-800 uppercase tracking-wide text-xs flex items-center gap-3">
                         <StateIcon stateName={doc.state} />
                         {doc.state}
                       </td>
-                      <td className="py-4 px-6">
+                      <td className="py-3 px-6">
                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold text-[11px] uppercase tracking-wide ${
                           doc.status === "Applicable" ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"
                         }`}>
@@ -300,28 +307,28 @@ const ProfessionalTaxes = () => {
                           {doc.status}
                         </span>
                       </td>
-                      <td className="py-4 px-6 font-semibold text-slate-500 text-xs">{doc.frequency || "-"}</td>
-                      <td className="py-4 px-6 font-semibold text-slate-400 font-mono text-xs">{doc.period || "N/A"}</td>
-                      <td className="py-4 px-6 text-right">
+                      <td className="py-3 px-6 font-semibold text-slate-500 text-xs">{doc.frequency || "-"}</td>
+                      <td className="py-3 px-6 font-semibold text-slate-400 font-mono text-xs">{doc.period || "N/A"}</td>
+                      <td className="py-3 px-6 text-right">
                         <button
                           onClick={() => {
                             setActiveModalDoc(doc);
                             setModalSearch("");
                             setModalDropdownFilters({});
                           }}
-                          className="inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-[#0B1538] hover:bg-[#0B1538] hover:text-white transition-all text-xs font-bold rounded-xl shadow-sm"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 border border-slate-200 text-[#0B1538] hover:bg-[#0B1538] hover:text-white transition-all text-xs font-bold rounded-xl shadow-sm"
                         >
-                          View Details <ChevronRight size={14} />
+                          View Details <ChevronRight size={13} />
                         </button>
                       </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="py-20 text-center text-slate-400 font-medium italic">
+                    <td colSpan="5" className="py-16 text-center text-slate-400 font-medium italic">
                       {ptDocs.length === 0 ? (
                         <div className="flex flex-col items-center justify-center gap-2">
-                          <Loader2 className="animate-spin text-blue-600" size={24} />
+                          <Loader2 className="animate-spin text-blue-600" size={22} />
                           <span>Fetching official tax compliance registry...</span>
                         </div>
                       ) : (
@@ -344,20 +351,20 @@ const ProfessionalTaxes = () => {
           <div className="bg-white rounded-[1.5rem] w-full max-w-6xl shadow-2xl flex flex-col max-h-[90vh] border border-slate-100 overflow-hidden">
             
             {/* Modal Title Banner */}
-            <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
-              <h2 className="text-lg font-black text-[#0B1538] tracking-tight uppercase">
+            <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-white">
+              <h2 className="text-base font-black text-[#0B1538] tracking-tight uppercase">
                 Professional Tax Details - {activeModalDoc.state}
               </h2>
               <button 
                 onClick={() => setActiveModalDoc(null)}
                 className="p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
             </div>
 
             {/* Modal Static Summary Information Row */}
-            <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="px-5 py-3 bg-slate-50 border-b border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
                 <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">State</span>
                 <span className="text-xs font-bold text-[#0B1538] uppercase">{activeModalDoc.state}</span>
@@ -377,17 +384,17 @@ const ProfessionalTaxes = () => {
             </div>
 
             {/* DYNAMIC FILTERS TOOLBAR ROW AND LOCAL SEARCH INPUT */}
-            <div className="px-6 py-4 bg-white border-b border-slate-100 space-y-4">
+            <div className="px-5 py-3 bg-white border-b border-slate-100 space-y-3">
               
               {/* Search Inside the Current Modal */}
               <div className="relative max-w-md">
-                <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
+                <Search className="absolute left-3 top-2 text-slate-400" size={13} />
                 <input
                   type="text"
                   placeholder={`Search table rows in ${activeModalDoc.state}...`}
                   value={modalSearch}
                   onChange={(e) => setModalSearch(e.target.value)}
-                  className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 outline-none font-medium focus:border-blue-500"
+                  className="w-full pl-8 pr-4 py-1.5 text-xs bg-slate-50 rounded-lg border border-slate-200 outline-none font-medium focus:border-blue-500"
                 />
               </div>
 
@@ -396,7 +403,7 @@ const ProfessionalTaxes = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {getFilterableColumns().map((headerName, idx) => (
                     <div key={idx}>
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">
+                      <label className="block text-[9px] font-bold text-slate-400 uppercase mb-0.5">
                         {cleanHeaderString(headerName)}
                       </label>
                       <select 
@@ -405,7 +412,7 @@ const ProfessionalTaxes = () => {
                           ...modalDropdownFilters,
                           [headerName]: e.target.value
                         })}
-                        className="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-700 outline-none"
+                        className="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-1.5 font-medium text-slate-700 outline-none"
                       >
                         <option value={`All ${cleanHeaderString(headerName)}s`}>
                           All {cleanHeaderString(headerName)}s
@@ -421,12 +428,12 @@ const ProfessionalTaxes = () => {
             </div>
 
             {/* Dynamic Grid Table Data Representation Area */}
-            <div className="p-6 overflow-y-auto flex-1 bg-white">
+            <div className="p-5 overflow-y-auto flex-1 bg-white">
               
               {/* Compliance Notes Area */}
               {activeModalDoc.notes && activeModalDoc.notes.trim() !== "" && (
-                <div className="mb-4 bg-amber-50/70 border border-amber-200 rounded-xl p-4 text-xs flex gap-2.5 text-amber-900">
-                  <StickyNote size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                <div className="mb-3 bg-amber-50/70 border border-amber-200 rounded-xl p-3 text-xs flex gap-2.5 text-amber-900">
+                  <StickyNote size={15} className="text-amber-600 flex-shrink-0 mt-0.5" />
                   <div>
                     <span className="font-bold block mb-0.5">Compliance Notes & Remarks:</span>
                     <p className="leading-relaxed whitespace-pre-line text-slate-600">{activeModalDoc.notes}</p>
@@ -440,7 +447,7 @@ const ProfessionalTaxes = () => {
                     <thead className="sticky top-0 z-10 bg-slate-100 text-slate-600 font-black uppercase border-b border-slate-200">
                       <tr>
                         {activeModalDoc.headers.map((heading, i) => (
-                          <th key={i} className="py-2.5 px-4 font-bold whitespace-nowrap bg-slate-100">
+                          <th key={i} className="py-2 px-3 font-bold whitespace-nowrap bg-slate-100">
                             {cleanHeaderString(heading)}
                           </th>
                         ))}
@@ -455,7 +462,7 @@ const ProfessionalTaxes = () => {
                               return (
                                 <td 
                                   key={colIndex} 
-                                  className={`py-3 px-4 ${
+                                  className={`py-2 px-3 ${
                                     colIndex === 0 
                                       ? "font-bold text-slate-800 bg-slate-50/40" 
                                       : typeof val === "number" 
@@ -471,7 +478,7 @@ const ProfessionalTaxes = () => {
                         ))
                       ) : (
                         <tr>
-                          <td colSpan={activeModalDoc.headers.length} className="text-center py-10 text-slate-400 italic">
+                          <td colSpan={activeModalDoc.headers.length} className="text-center py-8 text-slate-400 italic">
                             No matching records located inside current structural criteria layout views.
                           </td>
                         </tr>
@@ -480,21 +487,21 @@ const ProfessionalTaxes = () => {
                   </table>
                 </div>
               ) : (
-                <div className="text-center py-12 text-gray-400 bg-gray-50/50 border border-dashed rounded-lg text-sm">
+                <div className="text-center py-10 text-gray-400 bg-gray-50/50 border border-dashed rounded-lg text-sm">
                   No layout matrices unconfigured for this region entry item.
                 </div>
               )}
             </div>
 
             {/* Modal Bottom Fixed Control Panel */}
-            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+            <div className="p-3 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
               <div>
                 {activeModalDoc.documentUrl ? (
                   <button
                     onClick={() => window.open(activeModalDoc.documentUrl, "_blank", "noopener,noreferrer")}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200 font-bold text-xs rounded-xl transition-all bg-white shadow-sm"
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200 font-bold text-xs rounded-xl transition-all bg-white shadow-sm"
                   >
-                    <Download size={14} /> Download Notification
+                    <Download size={13} /> Download Notification
                   </button>
                 ) : (
                   <span className="text-xs text-slate-400 italic font-medium">Official notification link unconfigured</span>
@@ -502,7 +509,7 @@ const ProfessionalTaxes = () => {
               </div>
               <button
                 onClick={() => setActiveModalDoc(null)}
-                className="px-6 py-2.5 bg-[#0B1538] text-white font-bold text-xs rounded-xl hover:bg-slate-800 transition-colors shadow-md"
+                className="px-5 py-2 bg-[#0B1538] text-white font-bold text-xs rounded-xl hover:bg-slate-800 transition-colors shadow-md"
               >
                 Close
               </button>
