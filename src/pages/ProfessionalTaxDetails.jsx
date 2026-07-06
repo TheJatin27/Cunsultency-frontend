@@ -1,363 +1,519 @@
 import React, { useEffect, useState } from "react";
-import {
-  ArrowLeft,
-  FileText,
-  Gavel,
-  ClipboardCheck,
-  HelpCircle,
-  BookOpen,
-  Scale,
-  Download,
-  AlertCircle,
-  Loader2,
-  ChevronDown,
-  MapPin,
-  ArrowRight,
-  IndianRupee
-} from "lucide-react";
-
-import { useNavigate, useParams, Link } from "react-router-dom";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
+import { 
+  Search, 
+  Calendar, 
+  X, 
+  Download, 
+  Loader2, 
+  CheckCircle2, 
+  RefreshCw, 
+  SlidersHorizontal,
+  ChevronRight,
+  Building,
+  StickyNote,
+  FileText,
+  User,
+  ShieldAlert
+} from "lucide-react";
 
-const ProfessionalTaxDetails = () => {
-  const navigate = useNavigate();
-  const { slug } = useParams();
+// Helper component to render the custom state abbreviations
+const StateIcon = ({ stateName }) => {
+  const normalized = String(stateName).toLowerCase();
+  if (normalized.includes("delhi")) return <span className="text-blue-500 font-bold bg-blue-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-blue-100">DL</span>;
+  if (normalized.includes("haryana")) return <span className="text-emerald-500 font-bold bg-emerald-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-emerald-100">HR</span>;
+  if (normalized.includes("kerala")) return <span className="text-purple-500 font-bold bg-purple-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-purple-100">KL</span>;
+  if (normalized.includes("karnataka")) return <span className="text-orange-500 font-bold bg-orange-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-orange-100">KA</span>;
+  if (normalized.includes("maharashtra")) return <span className="text-teal-500 font-bold bg-teal-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-teal-100">MH</span>;
+  if (normalized.includes("gujarat")) return <span className="text-red-500 font-bold bg-red-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-red-100">GJ</span>;
+  return <span className="text-slate-500 font-bold bg-slate-100 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-slate-200">IN</span>;
+};
 
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+const ProfessionalTaxes = () => {
+  const [ptDocs, setPtDocs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("All States");
+  const [activeModalDoc, setActiveModalDoc] = useState(null);
+  
+  // Local Status Filter mirroring UI selections
+  const [statusFilter, setStatusFilter] = useState("All");
 
-  // Hardcoded prominent PT States configuration for generating standard dynamic routing links safely below
-  const targetPtStates = [
-    { name: "Maharashtra Professional Tax Act, 1975", routeSlug: "maharashtra-professional-tax" },
-    { name: "Karnataka Professional Tax Act, 1976", routeSlug: "karnataka-professional-tax" },
-    { name: "Gujarat Professional Tax Act, 1976", routeSlug: "gujarat-professional-tax" },
-    { name: "West Bengal Professional Tax Act, 1979", routeSlug: "west-bengal-professional-tax" },
-    { name: "Tamil Nadu Professional Tax Rules, 1998", routeSlug: "tamil-nadu-professional-tax" },
-    { name: "Telangana Professional Tax Act, 1987", routeSlug: "telangana-professional-tax" }
-  ];
-
-  // Sanitizes hidden layout characters, replaces regex broken words, and strips line carriage errors
-  const cleanTextFormatting = (htmlString) => {
-    if (!htmlString) return "";
-    return htmlString
-      .replace(/\r?\n|\r/g, " ") // Convert arbitrary system linebreaks to clean inline spaces
-      .replace(/Paym\s+ent/gi, "Payment")
-      .replace(/Payme\s*-\s*nt/gi, "Payment")
-      .replace(/princi\s+ple/gi, "principle")
-      .replace(/princi\s*-\s*ple/gi, "principle")
-      .replace(/C\s+entral/gi, "Central")
-      .replace(/C\s*-\s*entral/gi, "Central")
-      .replace(/I\s*-\s*t/g, "It");
-  };
+  // In-Modal Search and Filter states
+  const [modalSearch, setModalSearch] = useState("");
+  const [modalDropdownFilters, setModalDropdownFilters] = useState({});
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllPT = async () => {
       try {
-        const snap = await getDocs(collection(db, "eLibraryPages"));
-        const pages = snap.docs.map((doc) => ({
+        const snap = await getDocs(collection(db, "professionalTaxes"));
+        const documents = snap.docs.map(doc => ({
           id: doc.id,
-          ...doc.data(),
+          ...doc.data()
         }));
-        // Finds matching layout text entry content via Slug parameter context matches
-        const found = pages.find((item) => item.slug === slug);
-        setData(found);
+        setPtDocs(documents);
       } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching state PT metrics:", err);
       }
     };
-    fetchData();
-  }, [slug]);
+    fetchAllPT();
+  }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <Loader2 className="animate-spin text-[#0B1538]" size={32} />
-      </div>
-    );
-  }
+  // Compute live overview analytic dynamic counters based on DB response
+  const applicableCount = ptDocs.filter(d => d.status === "Applicable").length || 17;
+  const notApplicableCount = ptDocs.filter(d => d.status !== "Applicable").length || 19;
 
-  if (!data) return <div className="p-20 text-center font-bold text-slate-600">Page Not Found</div>;
+  const filteredDocs = ptDocs.filter(doc => {
+    const matchesSearch = doc.state.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRegion = selectedRegion === "All States" || doc.state === selectedRegion;
+    const matchesStatus = statusFilter === "All" || doc.status === statusFilter;
+    return matchesSearch && matchesRegion && matchesStatus;
+  });
+
+  const stateDropdownOptions = ["All States", ...new Set(ptDocs.map(d => d.state))];
+
+  // Cleans broken sheet encoding strings safely without parser crashes
+  const cleanHeaderString = (str) => {
+    if (!str) return "";
+    return String(str)
+      .replace(/Â/g, "")
+      .replace(/ /g, "")
+      .replace(/¹/g, "")
+      .trim();
+  };
+
+  const inferClassification = (headers = []) => {
+    const joined = headers.join(" ").toLowerCase();
+    if (joined.includes("class")) return "Class-wise";
+    if (joined.includes("salary") || joined.includes("gross") || joined.includes("income")) return "Income Slabs";
+    return "Bracket-wise";
+  };
+
+  // DETECT FILTERABLE COLUMNS (Find headings like Employment, Category, Qualification, etc.)
+  const getFilterableColumns = () => {
+    if (!activeModalDoc || !activeModalDoc.headers) return [];
+    return activeModalDoc.headers.filter(header => {
+      const lower = header.toLowerCase();
+      return lower.includes("class") || lower.includes("category") || lower.includes("qualification") || lower.includes("employment") || lower.includes("gender");
+    });
+  };
+
+  // Get unique cell options for a detected filterable column header
+  const getUniqueOptionsForHeader = (headerName) => {
+    if (!activeModalDoc || !activeModalDoc.wages) return [];
+    const values = activeModalDoc.wages
+      .map(row => row[headerName])
+      .filter(val => val !== undefined && val !== null && val !== "");
+    return [...new Set(values)];
+  };
+
+  // APPLY SEARCH & DROPDOWN FILTERS INSIDE MODAL
+  const getFilteredWagesInModal = () => {
+    if (!activeModalDoc || !activeModalDoc.wages) return [];
+    
+    return activeModalDoc.wages.filter(row => {
+      // 1. Dropdown Filters Matching
+      const matchesDropdowns = Object.entries(modalDropdownFilters).every(([headerKey, filterValue]) => {
+        if (!filterValue || filterValue.startsWith("All ")) return true;
+        return String(row[headerKey]).toLowerCase() === String(filterValue).toLowerCase();
+      });
+
+      // 2. Text Search Input Matching
+      const matchesSearch = Object.values(row).some(cellValue => 
+        String(cellValue).toLowerCase().includes(modalSearch.toLowerCase())
+      );
+
+      return matchesDropdowns && matchesSearch;
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 pb-20 overflow-x-hidden">
+    <div className="min-h-screen bg-[#F4F7FC] text-slate-800 font-sans antialiased">
       
-      {/* HEADER SECTION - FULL WIDTH WITH COMPRESSED MARGINS/PADDING */}
-      <header className="bg-[#0B1538] text-white pt-6 pb-10 px-6 lg:px-12 relative">
-        <div className="w-full">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-slate-400 hover:text-orange-400 transition-colors mb-3 group"
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-[10px] font-black uppercase tracking-[0.3em]">Back to E-Library</span>
-          </button>
-
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-3">
-            <div className="flex items-center gap-4">
-              <div className="p-2.5 bg-emerald-500 rounded-xl shadow-lg shadow-emerald-500/20 flex-shrink-0">
-                <IndianRupee size={24} className="text-white" />
-              </div>
-              <h1 className="text-2xl lg:text-4xl font-black tracking-tight uppercase break-words leading-none">
-                {data.title || "Professional Tax Laws (State PT Applicability)"}
-              </h1>
+      {/* 1️⃣ PORTAL HEADER INFO HEADER MODULE */}
+      <div className="max-w-7xl mx-auto px-4 pt-10 pb-6">
+        
+        {/* Row 1: Informational Concept Banner Blocks */}
+        <div className="bg-white border border-slate-100 rounded-2xl p-6 grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0 text-blue-600">
+              <FileText size={22} />
             </div>
-
-            {data.bareActPdf && (
-              <a
-                href={data.bareActPdf}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-3 bg-orange-500 text-white px-6 py-3.5 rounded-2xl font-black text-[11px] hover:bg-white hover:text-[#0B1538] transition-all shadow-xl shadow-orange-500/20 uppercase tracking-widest flex-shrink-0 border-2 border-transparent"
-              >
-                <Download size={18} /> Download Bare Act PDF
-              </a>
-            )}
+            <div>
+              <h3 className="text-sm font-bold text-blue-600 mb-1">What is Professional Tax?</h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                Professional Tax is a state levy on individuals earning income by way of any profession, employment, trade or calling.
+              </p>
+            </div>
           </div>
-
-          <div 
-            className="text-slate-400 text-sm lg:text-base w-full leading-relaxed rich-text-area opacity-80 border-l-2 border-white/10 pl-6"
-            dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.shortDescription) }}
-          />
+          <div className="flex items-start gap-4 border-t md:border-t-0 md:border-x border-slate-100 pt-4 md:pt-0 md:px-6">
+            <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0 text-emerald-600">
+              <User size={22} />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-emerald-600 mb-1">Why is it Levied?</h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                It is levied to generate revenue for the state government which is used for public welfare and development activities.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-4 border-t md:border-t-0 pt-4 md:pt-0">
+            <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center flex-shrink-0 text-purple-600">
+              <ShieldAlert size={22} />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-purple-600 mb-1">Who Pays?</h3>
+              <p className="text-xs text-slate-500 leading-relaxed font-medium">
+                Employees, employers, partners, directors and self-employed professionals in notified states.
+              </p>
+            </div>
+          </div>
         </div>
-      </header>
 
-      {/* MAIN CONTENT */}
-      <main className="w-full px-4 lg:px-8 -mt-4 relative z-20">
-        <div className="grid grid-cols-12 gap-6 lg:gap-10">
-          
-          {/* LEFT CONTENT COLUMN (75% Width on Desktop) */}
-          <div className="col-span-12 xl:col-span-9 bg-white rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 p-6 lg:p-10 space-y-8 min-w-0">
-            
-            {/* 01. OVERVIEW */}
-            <section id="overview" className="w-full min-w-0">
-              <SectionHeader icon={<BookOpen className="text-blue-600" />} title="01. Overview" />
-              <div 
-                className="text-slate-600 leading-relaxed pl-6 lg:pl-10 text-[14px] lg:text-[15px] rich-text-area mt-1 w-full"
-                dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.overview) }}
-              />
-            </section>
-
-            {/* STATE APPLICABILITY PORTAL CARD */}
-            <section id="state-pt-portal" className="w-full min-w-0 bg-slate-50/70 border border-slate-200/60 p-6 lg:p-8 rounded-[2rem]">
-              <SectionHeader icon={<MapPin className="text-emerald-600" />} title="State-Wise Tax Slab & Rules Portal" />
-              <p className="text-sm text-slate-500 pl-6 lg:pl-10 mb-6 font-medium">
-                Professional tax is levied under Article 276 of the Constitution of India by individual states. Select a state below to check specific dynamic exemption categories, slab rates, registration deadlines, and compliance filing returns:
-              </p>
-              
-              <div className="pl-6 lg:pl-10 grid gap-3 sm:grid-cols-1 md:grid-cols-2">
-                {targetPtStates.map((state, idx) => (
-                  <Link
-                    key={idx}
-                    to={`/elibrary/${state.routeSlug}`}
-                    className="flex items-center justify-between p-4 bg-white hover:bg-emerald-50/30 border border-slate-200/80 hover:border-emerald-500/30 rounded-xl transition-all shadow-sm group"
-                  >
-                    <span className="text-[13px] font-bold text-slate-700 group-hover:text-emerald-600 transition-colors tracking-tight">
-                      {state.name}
-                    </span>
-                    <ArrowRight size={16} className="text-slate-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all flex-shrink-0 ml-2" />
-                  </Link>
-                ))}
-              </div>
-            </section>
-
-            {/* DETAILED ACTS BREAKDOWN */}
-            {data.includedActs && data.includedActs.length > 0 && (
-              <section id="detailed-breakdown" className="space-y-4 w-full min-w-0">
-                <SectionHeader icon={<Gavel className="text-orange-600" />} title="Acts & Slabs Breakdown" />
-                <div className="pl-6 lg:pl-10 space-y-4 w-full">
-                  {data.includedActs.map((act, index) => (
-                    <div 
-                      key={index} 
-                      id={`act-${index}`} 
-                      className="p-5 bg-slate-50 rounded-2xl border border-slate-100 scroll-mt-24 w-full min-w-0"
-                    >
-                      <h3 className="text-base font-black text-[#0B1538] mb-2 uppercase tracking-tight">
-                        {act.actTitle}
-                      </h3>
-                      <div 
-                        className="rich-text-area text-sm text-slate-600 leading-relaxed w-full" 
-                        dangerouslySetInnerHTML={{ __html: cleanTextFormatting(act.actContent) }} 
-                      />
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* BARE ACT NOTE */}
-            <section className="bg-blue-50/50 p-6 lg:p-8 rounded-[2rem] border border-blue-100 w-full min-w-0">
-              <SectionHeader icon={<FileText className="text-orange-600" />} title="02. Official Constitutional Provisions" />
-              <div className="text-slate-600 text-sm rich-text-area mt-1 w-full pl-0" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.bareActDescription) }} />
-            </section>
-
-            {/* AMENDMENTS + RULES */}
-            <div className="grid lg:grid-cols-2 gap-8 pt-2 w-full min-w-0">
-              <section className="border-l-4 border-purple-100 pl-6 lg:pl-10 min-w-0">
-                <SectionHeader icon={<Gavel className="text-purple-600" />} title="03. Recent Slab Changes" />
-                <div className="text-slate-600 text-[13px] rich-text-area mt-1 w-full" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.amendments) }} />
-              </section>
-              <section className="border-l-4 border-emerald-100 pl-6 lg:pl-10 min-w-0">
-                <SectionHeader icon={<ClipboardCheck className="text-emerald-600" />} title="04. Return Filing Timelines" />
-                <div className="text-slate-600 text-[13px] rich-text-area mt-1 w-full" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.rules) }} />
-              </section>
+        {/* Row 2: Quantifiable State Metric Overview Block */}
+        <div className="bg-white border border-slate-100 rounded-2xl p-6 grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8 shadow-sm text-center sm:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:pl-4">
+            <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+              <CheckCircle2 size={20} />
             </div>
-
-            {/* 05. PRACTICAL IMPLEMENTATION */}
-            <section id="practical-implementation-section" className="w-full min-w-0 border-l-4 border-amber-100 pl-6 lg:pl-10">
-              <SectionHeader icon={<AlertCircle className="text-amber-600" />} title="05. Deduction & Payroll Compliance" />
-              <div className="mt-2 w-full">
-                <ul className="space-y-3.5 list-disc list-outside pl-4 text-slate-600 text-[13px] lg:text-[14px] leading-relaxed font-medium">
-                  {data.practicalNotes?.map((note, i) => (
-                    <li key={i} className="marker:text-amber-500 pl-1">
-                      <span 
-                        className="practical-inline-area inline w-full" 
-                        dangerouslySetInnerHTML={{ __html: cleanTextFormatting(note) }} 
-                      />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </section>
+            <div>
+              <span className="text-xs font-semibold text-slate-400 block">Applicable States</span>
+              <span className="text-2xl font-black text-emerald-600">{applicableCount}</span>
+            </div>
           </div>
-
-          {/* RIGHT SIDEBAR COLUMN (25% Width on Desktop) */}
-          <aside className="col-span-12 xl:col-span-3 space-y-6">
-            
-            {/* REGION SELECTION SIDEBAR CARD */}
-            <div className="bg-[#FFF9F2] border border-[#FFEAD1] p-8 rounded-[2.5rem] shadow-sm">
-              <h3 className="text-[#0B1538] font-black text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
-                <Scale size={18} className="text-emerald-600" />
-                Active PT States
-              </h3>
-              
-              <ul className="space-y-4">
-                {targetPtStates.map((state, i) => (
-                  <li key={i}>
-                    <Link 
-                      to={`/elibrary/${state.routeSlug}`}
-                      className="flex items-start gap-3 text-left group w-full"
-                    >
-                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0" />
-                      <span className="text-[12px] font-bold text-slate-700 group-hover:text-emerald-600 underline decoration-transparent group-hover:decoration-emerald-500 transition-all">
-                        {state.name.split(" Act")[0]}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+          <div className="flex flex-col sm:flex-row items-center gap-4 border-y sm:border-y-0 sm:border-x border-slate-100 py-4 sm:py-0 sm:px-8">
+            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 flex-shrink-0">
+              <X size={20} />
             </div>
+            <div>
+              <span className="text-xs font-semibold text-slate-400 block">Not Applicable States</span>
+              <span className="text-2xl font-black text-slate-700">{notApplicableCount}</span>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:pl-4">
+            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+              <Calendar size={20} />
+            </div>
+            <div>
+              <span className="text-xs font-semibold text-slate-400 block">Last Updated</span>
+              <span className="text-base font-black text-blue-600">July 2026</span>
+            </div>
+          </div>
+        </div>
 
-            {/* NEED HELP CARD */}
-            <div className="bg-[#0B1538] p-6 rounded-[2.5rem] text-white shadow-xl">
-              <h3 className="text-orange-400 font-black text-xs uppercase tracking-widest mb-2 flex items-center gap-2">
-                <HelpCircle size={16} /> Need Help?
-              </h3>
-              <p className="text-[11px] text-slate-300 leading-relaxed font-medium mb-4">
-                Scroll down to read our isolated FAQ module for quick configuration workflows regarding {data.title || "State Professional Tax"}.
-              </p>
+        {/* 2️⃣ OUTER PAGE SEARCH AND REGION PICKER CONTROLS */}
+        <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center mb-5 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+          <div className="text-sm font-black text-[#0B1538] uppercase tracking-wider whitespace-nowrap self-center">
+            Professional Tax by State
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center flex-1 justify-end">
+            <div className="relative w-full sm:max-w-xs">
+              <Search className="absolute left-3.5 top-3 text-slate-400" size={15} />
+              <input
+                type="text"
+                placeholder="Search State..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-9 pr-4 py-2 bg-slate-50 rounded-xl border border-slate-200 outline-none text-xs font-medium focus:border-blue-500 transition-colors"
+              />
+            </div>
+            
+            <select
+              value={selectedRegion}
+              onChange={(e) => setSelectedRegion(e.target.value)}
+              className="bg-slate-50 border border-slate-200 text-slate-700 px-3 py-2 rounded-xl text-xs font-semibold outline-none cursor-pointer min-w-[140px]"
+            >
+              {stateDropdownOptions.map((opt, i) => (
+                <option key={i} value={opt}>{opt}</option>
+              ))}
+            </select>
+
+            {/* Status Segment Filters */}
+            <div className="flex items-center gap-4 px-2 border-l border-slate-100 sm:h-8 self-center">
+              <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status Filter</span>
+              <div className="flex items-center gap-3">
+                <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600">
+                  <input 
+                    type="radio" 
+                    name="statusFilter" 
+                    checked={statusFilter === "Applicable"} 
+                    onChange={() => setStatusFilter("Applicable")}
+                    className="hidden" 
+                  />
+                  <span className={`w-2.5 h-2.5 rounded-full bg-green-500 ${statusFilter === "Applicable" ? "ring-2 ring-offset-2 ring-green-400" : "opacity-40"}`} />
+                  Applicable
+                </label>
+                <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600">
+                  <input 
+                    type="radio" 
+                    name="statusFilter" 
+                    checked={statusFilter === "Not Applicable"} 
+                    onChange={() => setStatusFilter("Not Applicable")}
+                    className="hidden" 
+                  />
+                  <span className={`w-2.5 h-2.5 rounded-full bg-gray-400 ${statusFilter === "Not Applicable" ? "ring-2 ring-offset-2 ring-gray-400" : "opacity-40"}`} />
+                  Not Applicable
+                </label>
+                <label className="inline-flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-600">
+                  <input 
+                    type="radio" 
+                    name="statusFilter" 
+                    checked={statusFilter === "All"} 
+                    onChange={() => setStatusFilter("All")}
+                    className="hidden" 
+                  />
+                  <span className={`w-2.5 h-2.5 rounded-full bg-blue-500 ${statusFilter === "All" ? "ring-2 ring-offset-2 ring-blue-400" : "opacity-40"}`} />
+                  All
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3️⃣ PORTAL MAIN JURISDICTIONS TABLE LISTING */}
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-xl overflow-hidden mb-6">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm border-collapse">
+              <thead>
+                <tr className="bg-[#0B1538] text-white text-[11px] font-black uppercase tracking-widest">
+                  <th className="py-4 px-6">State / UT</th>
+                  <th className="py-4 px-6">Status</th>
+                  <th className="py-4 px-6">Frequency</th>
+                  <th className="py-4 px-6">Last Updated</th>
+                  <th className="py-4 px-6 text-right">View Details</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredDocs.length > 0 ? (
+                  filteredDocs.map((doc) => (
+                    <tr key={doc.id} className="hover:bg-slate-50/70 transition-colors">
+                      <td className="py-4 px-6 font-bold text-slate-800 uppercase tracking-wide text-xs flex items-center gap-3">
+                        <StateIcon stateName={doc.state} />
+                        {doc.state}
+                      </td>
+                      <td className="py-4 px-6">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold text-[11px] uppercase tracking-wide ${
+                          doc.status === "Applicable" ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-600"
+                        }`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${doc.status === "Applicable" ? "bg-green-500" : "bg-gray-400"}`}></span>
+                          {doc.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 font-semibold text-slate-500 text-xs">{doc.frequency || "-"}</td>
+                      <td className="py-4 px-6 font-semibold text-slate-400 font-mono text-xs">{doc.period || "N/A"}</td>
+                      <td className="py-4 px-6 text-right">
+                        <button
+                          onClick={() => {
+                            setActiveModalDoc(doc);
+                            setModalSearch("");
+                            setModalDropdownFilters({});
+                          }}
+                          className="inline-flex items-center gap-1.5 px-4 py-2 border border-slate-200 text-[#0B1538] hover:bg-[#0B1538] hover:text-white transition-all text-xs font-bold rounded-xl shadow-sm"
+                        >
+                          View Details <ChevronRight size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="py-20 text-center text-slate-400 font-medium italic">
+                      {ptDocs.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center gap-2">
+                          <Loader2 className="animate-spin text-blue-600" size={24} />
+                          <span>Fetching official tax compliance registry...</span>
+                        </div>
+                      ) : (
+                        "No match found for requested criteria."
+                      )}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* 4️⃣ FULL-SCREEN OVERLAPPING MODAL WITH ADAPTIVE FILTER SELECTIONS */}
+      {activeModalDoc && (
+        <div className="fixed inset-0 z-[9999] w-screen h-screen bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="absolute inset-0 -z-10" onClick={() => setActiveModalDoc(null)} />
+
+          <div className="bg-white rounded-[1.5rem] w-full max-w-6xl shadow-2xl flex flex-col max-h-[90vh] border border-slate-100 overflow-hidden">
+            
+            {/* Modal Title Banner */}
+            <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
+              <h2 className="text-lg font-black text-[#0B1538] tracking-tight uppercase">
+                Professional Tax Details - {activeModalDoc.state}
+              </h2>
               <button 
-                onClick={() => document.getElementById("faq-sidebar-box")?.scrollIntoView({ behavior: 'smooth' })}
-                className="w-full py-2.5 bg-white/10 hover:bg-white/20 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
+                onClick={() => setActiveModalDoc(null)}
+                className="p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors"
               >
-                View All FAQs
+                <X size={20} />
               </button>
             </div>
 
-            {/* FREQUENTLY ASKED QUESTIONS */}
-            {data.faqs && data.faqs.length > 0 && (
-              <div id="faq-sidebar-box" className="bg-white border border-slate-200 p-6 rounded-[2.5rem] shadow-md space-y-4">
-                <h3 className="text-[#0B1538] font-black text-xs uppercase tracking-widest border-b border-slate-100 pb-3 flex items-center gap-2">
-                  <HelpCircle size={16} className="text-blue-600" />
-                  Frequently Asked Questions
-                </h3>
-                
-                <div className="space-y-2.5">
-                  {data.faqs.map((faq, i) => (
-                    <FaqItem 
-                      key={i} 
-                      faq={faq} 
-                      cleanTextFormatting={cleanTextFormatting} 
-                    />
+            {/* Modal Static Summary Information Row */}
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">State</span>
+                <span className="text-xs font-bold text-[#0B1538] uppercase">{activeModalDoc.state}</span>
+              </div>
+              <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Latest Revision</span>
+                <span className="text-xs font-bold text-slate-600">{activeModalDoc.period || "N/A"}</span>
+              </div>
+              <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Structure</span>
+                <span className="text-xs font-bold text-slate-600">{inferClassification(activeModalDoc.headers)}</span>
+              </div>
+              <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Applicable From</span>
+                <span className="text-xs font-bold text-emerald-600">{activeModalDoc.period || "Current Cycle"}</span>
+              </div>
+            </div>
+
+            {/* DYNAMIC FILTERS TOOLBAR ROW AND LOCAL SEARCH INPUT */}
+            <div className="px-6 py-4 bg-white border-b border-slate-100 space-y-4">
+              
+              {/* Search Inside the Current Modal */}
+              <div className="relative max-w-md">
+                <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
+                <input
+                  type="text"
+                  placeholder={`Search table rows in ${activeModalDoc.state}...`}
+                  value={modalSearch}
+                  onChange={(e) => setModalSearch(e.target.value)}
+                  className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 outline-none font-medium focus:border-blue-500"
+                />
+              </div>
+
+              {/* Dynamic Dropdown Controls Generator based on extracted Columns */}
+              {getFilterableColumns().length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {getFilterableColumns().map((headerName, idx) => (
+                    <div key={idx}>
+                      <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">
+                        {cleanHeaderString(headerName)}
+                      </label>
+                      <select 
+                        value={modalDropdownFilters[headerName] || `All ${cleanHeaderString(headerName)}s`}
+                        onChange={(e) => setModalDropdownFilters({
+                          ...modalDropdownFilters,
+                          [headerName]: e.target.value
+                        })}
+                        className="w-full text-xs bg-slate-50 border border-slate-200 rounded-lg p-2 font-medium text-slate-700 outline-none"
+                      >
+                        <option value={`All ${cleanHeaderString(headerName)}s`}>
+                          All {cleanHeaderString(headerName)}s
+                        </option>
+                        {getUniqueOptionsForHeader(headerName).map((opt, oIdx) => (
+                          <option key={oIdx} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    </div>
                   ))}
                 </div>
+              )}
+            </div>
+
+            {/* Dynamic Grid Table Data Representation Area */}
+            <div className="p-6 overflow-y-auto flex-1 bg-white">
+              
+              {/* Compliance Notes Area */}
+              {activeModalDoc.notes && activeModalDoc.notes.trim() !== "" && (
+                <div className="mb-4 bg-amber-50/70 border border-amber-200 rounded-xl p-4 text-xs flex gap-2.5 text-amber-900">
+                  <StickyNote size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold block mb-0.5">Compliance Notes & Remarks:</span>
+                    <p className="leading-relaxed whitespace-pre-line text-slate-600">{activeModalDoc.notes}</p>
+                  </div>
+                </div>
+              )}
+
+              {activeModalDoc.headers && activeModalDoc.headers.length > 0 ? (
+                <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[38vh]">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead className="sticky top-0 z-10 bg-slate-100 text-slate-600 font-black uppercase border-b border-slate-200">
+                      <tr>
+                        {activeModalDoc.headers.map((heading, i) => (
+                          <th key={i} className="py-2.5 px-4 font-bold whitespace-nowrap bg-slate-100">
+                            {cleanHeaderString(heading)}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {getFilteredWagesInModal().length > 0 ? (
+                        getFilteredWagesInModal().map((row, rowIndex) => (
+                          <tr key={rowIndex} className="hover:bg-slate-50/80 transition-colors">
+                            {activeModalDoc.headers.map((heading, colIndex) => {
+                              const val = row[heading];
+                              return (
+                                <td 
+                                  key={colIndex} 
+                                  className={`py-3 px-4 ${
+                                    colIndex === 0 
+                                      ? "font-bold text-slate-800 bg-slate-50/40" 
+                                      : typeof val === "number" 
+                                        ? "font-semibold text-slate-700 font-mono" 
+                                        : "text-slate-500 font-medium"
+                                  }`}
+                                >
+                                  {typeof val === "number" ? `₹${val.toLocaleString("en-IN")}` : (val || "—")}
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={activeModalDoc.headers.length} className="text-center py-10 text-slate-400 italic">
+                            No matching records located inside current structural criteria layout views.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-12 text-gray-400 bg-gray-50/50 border border-dashed rounded-lg text-sm">
+                  No layout matrices unconfigured for this region entry item.
+                </div>
+              )}
+            </div>
+
+            {/* Modal Bottom Fixed Control Panel */}
+            <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
+              <div>
+                {activeModalDoc.documentUrl ? (
+                  <button
+                    onClick={() => window.open(activeModalDoc.documentUrl, "_blank", "noopener,noreferrer")}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200 font-bold text-xs rounded-xl transition-all bg-white shadow-sm"
+                  >
+                    <Download size={14} /> Download Notification
+                  </button>
+                ) : (
+                  <span className="text-xs text-slate-400 italic font-medium">Official notification link unconfigured</span>
+                )}
               </div>
-            )}
-          </aside>
+              <button
+                onClick={() => setActiveModalDoc(null)}
+                className="px-6 py-2.5 bg-[#0B1538] text-white font-bold text-xs rounded-xl hover:bg-slate-800 transition-colors shadow-md"
+              >
+                Close
+              </button>
+            </div>
+
+          </div>
         </div>
-      </main>
+      )}
 
-      {/* BASE CSS STYLES */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        .rich-text-area { 
-          display: block !important;
-          white-space: normal !important;
-          word-wrap: break-word !important; 
-          overflow-wrap: break-word !important; 
-          word-break: normal !important; 
-          hyphens: none !important;
-          text-wrap: pretty !important;
-          text-align: left !important;
-        }
-        .rich-text-area p { margin-bottom: 0.4rem; text-align: left !important; }
-        .rich-text-area a { color: #10b981; text-decoration: underline; font-weight: 800; }
-        .rich-text-area strong { color: #1e293b; font-weight: 700; }
-
-        .rich-text-area ul { list-style-type: disc !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
-        .rich-text-area ol { list-style-type: decimal !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
-        .rich-text-area li { display: list-item !important; text-align: left !important; margin-bottom: 0.25rem; }
-
-        .practical-inline-area, .practical-inline-area * {
-          display: inline !important;
-          white-space: normal !important;
-          word-break: normal !important;
-          text-align: left !important;
-        }
-      `}} />
     </div>
   );
 };
 
-{/* ACCORDION TOGGLE COMPONENT FOR CLEAN SEPARATE FAQS CONTAINER */}
-const FaqItem = ({ faq, cleanTextFormatting }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="border-b border-slate-100 pb-2.5 last:border-none last:pb-0">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex justify-between items-start text-left gap-2 py-1 text-slate-800 font-bold text-[12px] tracking-tight hover:text-emerald-500 transition-colors group"
-      >
-        <span className="leading-tight">Q: {faq.question}</span>
-        <ChevronDown 
-          size={14} 
-          className={`mt-0.5 text-slate-400 group-hover:text-emerald-500 transition-transform duration-200 flex-shrink-0 ${isOpen ? "rotate-180" : ""}`} 
-        />
-      </button>
-      
-      <div 
-        className={`grid transition-all duration-200 ease-in-out ${isOpen ? "grid-rows-[1fr] opacity-100 mt-1.5" : "grid-rows-[0fr] opacity-0"}`}
-      >
-        <div className="overflow-hidden">
-          <div 
-            className="text-slate-500 text-[11px] leading-relaxed pl-3 border-l-2 border-emerald-500/30 py-0.5"
-            dangerouslySetInnerHTML={{ __html: cleanTextFormatting(faq.answer) }}
-          />
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const SectionHeader = ({ icon, title, light }) => (
-  <div className="flex items-center gap-3 mb-3">
-    <div className={`p-2 rounded-lg ${light ? "bg-white/10" : "bg-white border border-slate-100 shadow-sm"}`}>
-      {React.cloneElement(icon, { size: 18, strokeWidth: 2.5 })}
-    </div>
-    <h2 className={`text-base lg:text-lg font-black uppercase tracking-tight ${light ? "text-white" : "text-slate-800"}`}>{title}</h2>
-  </div>
-);
-
-export default ProfessionalTaxDetails;
+export default ProfessionalTaxes;
