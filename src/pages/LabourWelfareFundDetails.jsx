@@ -76,9 +76,15 @@ const LabourWelfareFunds = () => {
 
   const stateDropdownOptions = ["All States", ...new Set(lwfDocs.map(d => d.state))];
 
+// Cleans broken sheet encoding strings safely without squishing words together
   const cleanHeaderString = (str) => {
     if (!str) return "";
-    return String(str).replace(/Â/g, "").replace(/¹/g, "").trim();
+    return String(str)
+      .replace(/Â/g, "")
+      .replace(/¹/g, "")
+      .replace(/\s+/g, " ") // Replaces multiple spaces/tabs with a single clean space
+      .replace(/([A-Z])\(/g, "$1 (") // Adds a clean space before parentheses if missing (e.g., SALARY(₹) -> SALARY (₹))
+      .trim();
   };
 
   const getFilterableColumns = () => {

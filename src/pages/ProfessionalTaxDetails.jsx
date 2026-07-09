@@ -69,13 +69,14 @@ const ProfessionalTaxes = () => {
 
   const stateDropdownOptions = ["All States", ...new Set(ptDocs.map(d => d.state))];
 
-  // Cleans broken sheet encoding strings safely without parser crashes
+  // Cleans broken sheet encoding strings safely without squishing words together
   const cleanHeaderString = (str) => {
     if (!str) return "";
     return String(str)
       .replace(/Â/g, "")
-      .replace(/ /g, "")
       .replace(/¹/g, "")
+      .replace(/\s+/g, " ") 
+      .replace(/([A-Z])\(/g, "$1 (") 
       .trim();
   };
 
@@ -428,19 +429,9 @@ const ProfessionalTaxes = () => {
             </div>
 
             {/* Dynamic Grid Table Data Representation Area */}
-            <div className="p-5 overflow-y-auto flex-1 bg-white">
+            <div className="p-5 overflow-y-auto flex-1 bg-white space-y-5">
               
-              {/* Compliance Notes Area */}
-              {activeModalDoc.notes && activeModalDoc.notes.trim() !== "" && (
-                <div className="mb-3 bg-amber-50/70 border border-amber-200 rounded-xl p-3 text-xs flex gap-2.5 text-amber-900">
-                  <StickyNote size={15} className="text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <span className="font-bold block mb-0.5">Compliance Notes & Remarks:</span>
-                    <p className="leading-relaxed whitespace-pre-line text-slate-600">{activeModalDoc.notes}</p>
-                  </div>
-                </div>
-              )}
-
+              {/* Data Table */}
               {activeModalDoc.headers && activeModalDoc.headers.length > 0 ? (
                 <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[38vh]">
                   <table className="w-full text-left text-xs border-collapse">
@@ -489,6 +480,17 @@ const ProfessionalTaxes = () => {
               ) : (
                 <div className="text-center py-10 text-gray-400 bg-gray-50/50 border border-dashed rounded-lg text-sm">
                   No layout matrices unconfigured for this region entry item.
+                </div>
+              )}
+
+              {/* Static fully open Compliance Notes Area (Moved directly below the table) */}
+              {activeModalDoc.notes && activeModalDoc.notes.trim() !== "" && (
+                <div className="bg-amber-50/70 border border-amber-200 rounded-xl p-3.5 text-xs flex gap-2.5 text-amber-900 shadow-sm">
+                  <StickyNote size={15} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-bold block mb-1">Compliance Notes & Remarks:</span>
+                    <p className="leading-relaxed whitespace-pre-line text-slate-600">{activeModalDoc.notes}</p>
+                  </div>
                 </div>
               )}
             </div>
