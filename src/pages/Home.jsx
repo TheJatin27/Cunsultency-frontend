@@ -292,18 +292,18 @@ const Labourforge = () => {
           
           <div className="bg-[#0f2b3f] text-white rounded-2xl p-5 flex flex-wrap justify-around gap-4 items-center mt-6">
             <div className="text-center">
-              <span className="text-2xl font-bold">15+</span>
-              <div className="text-blue-200 text-xs">Years Experience</div>
+              <span className="text-xl font-bold">Reliable</span>
+              <div className="text-blue-200 text-xs">Accurate & Well-Researched Content</div>
             </div>
             <div className="w-px h-8 bg-slate-500 hidden md:block"></div>
             <div className="text-center">
-              <span className="text-2xl font-bold">3000+</span>
-              <div className="text-blue-200 text-xs">Employees Managed</div>
+              <span className="text-2xl font-bold">Practical</span>
+              <div className="text-blue-200 text-xs">Built for Everyday Compliance</div>
             </div>
             <div className="w-px h-8 bg-slate-500 hidden md:block"></div>
-            <div className="flex items-center gap-2">
-              <BarChart size={24} className="text-blue-300" />
-              <div className="text-left text-xs font-semibold">GM - Finance & Operations Leadership</div>
+             <div className="text-center">
+            <span className="text-2xl font-bold">Professional</span>
+              <div className="text-blue-200 text-xs">Designed for HR & Payroll Professionals</div>
             </div>
           </div>
         </div>
