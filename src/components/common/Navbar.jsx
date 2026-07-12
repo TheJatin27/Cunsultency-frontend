@@ -92,7 +92,7 @@ const Navbar = () => {
     }
   };
 
-  // Service links with correct paths matching your AppRoutes
+  // Service links with correct paths matching AppRoutes
   const serviceLinks = [
     { 
       name: "Payroll Structuring", 
@@ -129,13 +129,13 @@ const Navbar = () => {
   return (
     <>
       {/* Spacer div to prevent content from hiding behind fixed navbar */}
-      <div className="w-full" style={{ height: scrolled ? '70px' : '84px' }}></div>
+      <div className="w-full bg-[#f7ede2]" style={{ height: scrolled ? '70px' : '84px' }}></div>
       
       <nav
-        className={`fixed w-full z-[100] transition-all duration-500 px-6 lg:px-16 ${
+        className={`fixed w-full z-[100] transition-all duration-500 px-6 lg:px-16 border-b-2 ${
           scrolled 
-            ? "py-3 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-lg" 
-            : "py-4 bg-gradient-to-b from-black/60 via-black/20 to-transparent"
+            ? "py-3 bg-[#f7ede2]/95 backdrop-blur-md border-[#e9967a]/30 shadow-md" 
+            : "py-4 bg-[#f7ede2] border-transparent"
         }`}
         style={{ top: 0, left: 0, right: 0 }}
       >
@@ -147,14 +147,10 @@ const Navbar = () => {
             onClick={scrollToTop}
           >
             <div className="flex flex-col">
-              <span className={`font-black text-2xl md:text-3xl tracking-tighter leading-none transition-colors duration-500 uppercase italic ${
-                scrolled ? "text-slate-900" : "text-white"
-              }`}>
-                LABOUR<span className="text-blue-500">FORGE</span>
+              <span className="font-black text-2xl md:text-3xl tracking-tighter leading-none uppercase italic text-[#1f1916]">
+                LABOUR<span className="text-[#e9967a]">FORGE</span>
               </span>
-              <span className={`text-[10px] font-bold uppercase tracking-[0.4em] mt-1 transition-colors duration-500 ${
-                scrolled ? "text-slate-500" : "text-blue-300"
-              }`}>
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] mt-1 text-[#3d5a80]">
                 Advisors
               </span>
             </div>
@@ -162,36 +158,35 @@ const Navbar = () => {
 
           {/* DESKTOP NAVIGATION */}
           <div className="hidden lg:flex items-center gap-8">
-            <div className={`flex gap-8 text-[13px] font-black uppercase tracking-widest ${
-              scrolled ? "text-slate-700" : "text-white"
-            }`}>
-              {/* Home - scrolls to top */}
+            <div className="flex gap-8 text-[13px] font-black uppercase tracking-widest text-[#1f1916]/80">
+              
+              {/* Home */}
               <button 
                 onClick={scrollToTop}
-                className="hover:text-blue-500 transition-colors relative group"
+                className="hover:text-[#e9967a] transition-colors relative group py-2"
               >
                 Home
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#e9967a] transition-all group-hover:w-full"></span>
               </button>
               
-              {/* The Firm - scrolls to About section */}
+              {/* The Firm */}
               <button 
                 onClick={scrollToAbout}
-                className="hover:text-blue-500 transition-colors relative group"
+                className="hover:text-[#e9967a] transition-colors relative group py-2"
               >
                 The Firm
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#e9967a] transition-all group-hover:w-full"></span>
               </button>
 
               {/* ENTERPRISES Dropdown */}
               <div 
-                className="relative"
+                className="relative py-2 cursor-pointer"
                 onMouseEnter={() => setActiveDropdown("services")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <button 
-                  className={`flex items-center gap-2 transition-all hover:text-blue-500 relative group ${
-                    activeDropdown === "services" ? "text-blue-500" : ""
+                  className={`flex items-center gap-2 transition-all hover:text-[#e9967a] relative group ${
+                    activeDropdown === "services" ? "text-[#e9967a]" : ""
                   }`}
                 >
                   Enterprises 
@@ -199,7 +194,7 @@ const Navbar = () => {
                     size={14} 
                     className={`transition-transform duration-300 ${activeDropdown === "services" ? "rotate-180" : ""}`} 
                   />
-                  <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#e9967a] transition-all group-hover:w-full"></span>
                 </button>
                 
                 <AnimatePresence>
@@ -209,11 +204,11 @@ const Navbar = () => {
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 10 }}
                       transition={{ duration: 0.2 }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 w-[340px] bg-white border border-slate-100 rounded-2xl p-4 shadow-2xl mt-3"
+                      className="absolute top-full left-1/2 -translate-x-1/2 w-[340px] bg-white border-2 border-[#fbdad0] rounded-2xl p-4 shadow-xl mt-2"
                       style={{ zIndex: 105 }}
                     >
                       <div className="grid grid-cols-1 gap-1">
-                        <p className="text-[9px] text-blue-600 font-black uppercase tracking-wider mb-2 pb-2 border-b border-slate-100">
+                        <p className="text-[10px] text-[#e9967a] font-black uppercase tracking-wider mb-2 pb-2 border-b border-[#fbdad0]">
                           Practice Areas
                         </p>
                         {serviceLinks.map((service) => (
@@ -224,12 +219,12 @@ const Navbar = () => {
                               setIsOpen(false);
                               setActiveDropdown(null);
                             }}
-                            className="flex items-center gap-3 p-2.5 hover:bg-blue-50 rounded-lg transition-all group/item w-full text-left"
+                            className="flex items-center gap-3 p-2.5 hover:bg-[#fff5f2] rounded-xl transition-all group/item w-full text-left"
                           >
-                            <div className="text-slate-400 group-hover/item:text-blue-600 transition-colors">
+                            <div className="text-[#3d5a80]/70 group-hover/item:text-[#e9967a] transition-colors">
                               {service.icon}
                             </div>
-                            <span className="text-slate-800 text-xs font-semibold uppercase tracking-wide">
+                            <span className="text-[#1f1916] text-xs font-bold uppercase tracking-wide">
                               {service.name}
                             </span>
                           </Link>
@@ -240,32 +235,32 @@ const Navbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* E-LIBRARY Link - goes to separate page */}
+              {/* E-LIBRARY */}
               <Link 
                 to="/knowledge" 
-                className="hover:text-blue-500 transition-colors relative group"
+                className="hover:text-[#e9967a] transition-colors relative group py-2"
                 onClick={() => setIsOpen(false)}
               >
                 E-Library
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#e9967a] transition-all group-hover:w-full"></span>
               </Link>
 
-              {/* Contact - scrolls to Contact section */}
+              {/* Contact */}
               <button 
                 onClick={scrollToContact}
-                className="hover:text-blue-500 transition-colors relative group"
+                className="hover:text-[#e9967a] transition-colors relative group py-2"
               >
                 Contact
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-500 transition-all group-hover:w-full"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#e9967a] transition-all group-hover:w-full"></span>
               </button>
             </div>
 
-            {/* PARTNER PORTAL BUTTON - goes to login page */}
-            <div className={`flex items-center border-l pl-8 ${scrolled ? "border-slate-200" : "border-white/20"}`}>
+            {/* PARTNER PORTAL BUTTON */}
+            <div className="flex items-center border-l-2 border-[#e9967a]/30 pl-8">
               <Link
                 to="/login"
                 onClick={() => setIsOpen(false)}
-                className="group px-6 py-2.5 bg-blue-600 text-white text-[11px] font-black uppercase tracking-widest hover:bg-blue-700 transition-all duration-300 flex items-center gap-2 rounded-full shadow-lg shadow-blue-600/20"
+                className="group px-6 py-3 bg-[#1f1916] text-[#f7ede2] text-[11px] font-black uppercase tracking-widest hover:bg-[#d47f63] transition-all duration-300 flex items-center gap-2 rounded-full shadow-md"
               >
                 <UserCircle size={16} />
                 Partner Portal
@@ -275,12 +270,10 @@ const Navbar = () => {
 
           {/* MOBILE MENU BUTTON */}
           <button 
-            className={`lg:hidden p-2 rounded-lg transition-colors z-[102] ${
-              scrolled ? "text-slate-900 hover:bg-slate-100" : "text-white hover:bg-white/10"
-            }`}
+            className="lg:hidden p-2 rounded-xl transition-colors z-[102] text-[#1f1916] hover:bg-[#fff5f2] border border-transparent hover:border-[#fbdad0]"
             onClick={() => setIsOpen(!isOpen)}
           >
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
+            {isOpen ? <X size={26} /> : <Menu size={26} />}
           </button>
         </div>
       </nav>
@@ -293,80 +286,82 @@ const Navbar = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "tween", duration: 0.3 }}
-            className="lg:hidden fixed inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 z-[200] overflow-y-auto"
+            className="lg:hidden fixed inset-0 bg-[#f7ede2] z-[200] overflow-y-auto border-l-4 border-[#e9967a]"
             style={{ top: 0, left: 0, right: 0, bottom: 0 }}
           >
             <div className="min-h-screen flex flex-col justify-center px-8 py-20">
               <button 
                 onClick={() => setIsOpen(false)} 
-                className="absolute top-6 right-6 text-white/60 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
+                className="absolute top-6 right-6 text-[#1f1916]/60 hover:text-[#1f1916] p-2 rounded-full hover:bg-[#fff5f2] border border-[#fbdad0] transition-colors"
               >
-                <X size={28} />
+                <X size={26} />
               </button>
               
               <div className="space-y-6">
-                {/* Home - scrolls to top */}
+                {/* Home */}
                 <button 
                   onClick={() => {
                     setIsOpen(false);
                     scrollToTop();
                   }}
-                  className="block text-3xl font-black uppercase tracking-tighter text-white hover:text-blue-400 transition-colors w-full text-left py-2 border-b border-white/10"
+                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0]"
                 >
                   Home
                 </button>
                 
-                {/* The Firm - scrolls to About section */}
+                {/* The Firm */}
                 <button 
                   onClick={() => {
                     setIsOpen(false);
                     scrollToAbout();
                   }}
-                  className="block text-3xl font-black uppercase tracking-tighter text-white hover:text-blue-400 transition-colors w-full text-left py-2 border-b border-white/10"
+                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0]"
                 >
                   The Firm
                 </button>
                 
-                <div className="py-2 border-b border-white/10">
-                  <p className="text-blue-400 text-xs font-bold uppercase tracking-wider mb-3">Enterprises</p>
-                  {serviceLinks.map((service) => (
-                    <Link
-                      key={service.name}
-                      to={service.path}
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 text-white/80 hover:text-white hover:bg-white/10 rounded-lg p-3 w-full transition-colors"
-                    >
-                      <div className="text-blue-400">{service.icon}</div>
-                      <span className="text-sm font-semibold uppercase tracking-wide">{service.name}</span>
-                    </Link>
-                  ))}
+                <div className="py-2 border-b-2 border-[#fbdad0]">
+                  <p className="text-[#3d5a80] text-xs font-black uppercase tracking-wider mb-3">Enterprises</p>
+                  <div className="grid grid-cols-1 gap-1">
+                    {serviceLinks.map((service) => (
+                      <Link
+                        key={service.name}
+                        to={service.path}
+                        onClick={() => setIsOpen(false)}
+                        className="flex items-center gap-3 text-[#1f1916]/80 hover:text-[#1f1916] hover:bg-white rounded-xl p-3 w-full transition-all border border-transparent hover:border-[#fbdad0]"
+                      >
+                        <div className="text-[#e9967a]">{service.icon}</div>
+                        <span className="text-xs font-bold uppercase tracking-wide">{service.name}</span>
+                      </Link>
+                    ))}
+                  </div>
                 </div>
                 
-                {/* E-Library - goes to separate page */}
+                {/* E-Library */}
                 <Link 
                   to="/knowledge" 
                   onClick={() => setIsOpen(false)} 
-                  className="block text-3xl font-black uppercase tracking-tighter text-white hover:text-blue-400 transition-colors w-full text-left py-2 border-b border-white/10"
+                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0]"
                 >
                   E-Library
                 </Link>
 
-                {/* Contact - scrolls to Contact section */}
+                {/* Contact */}
                 <button 
                   onClick={() => {
                     setIsOpen(false);
                     scrollToContact();
                   }}
-                  className="block text-3xl font-black uppercase tracking-tighter text-white hover:text-blue-400 transition-colors w-full text-left py-2 border-b border-white/10"
+                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0]"
                 >
                   Contact
                 </button>
                 
-                <div className="pt-8">
+                <div className="pt-6">
                   <Link 
                     to="/login"
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-center gap-3 w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-xl font-black uppercase tracking-wider text-sm transition-all"
+                    className="flex items-center justify-center gap-3 w-full bg-[#1f1916] hover:bg-[#d47f63] text-[#f7ede2] px-6 py-4 rounded-xl font-black uppercase tracking-wider text-sm transition-all shadow-md"
                   >
                     <UserCircle size={20} /> Partner Portal
                   </Link>
