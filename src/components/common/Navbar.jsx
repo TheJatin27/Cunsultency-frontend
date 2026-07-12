@@ -23,113 +23,71 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Handle scroll to top of page
-  const scrollToTop = () => {
+  // Scrolls cleanly to a standard page ID anchor
+  const scrollToSection = (sectionId) => {
     setIsOpen(false);
     setActiveDropdown(null);
     
-    if (location.pathname !== "/") {
-      navigate("/");
-      setTimeout(() => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 100);
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-
-  // Handle scroll to About section (The Firm)
-  const scrollToAbout = () => {
-    setIsOpen(false);
-    setActiveDropdown(null);
-    
-    if (location.pathname !== "/") {
-      navigate("/");
-      setTimeout(() => {
-        const aboutSection = document.getElementById('about-section');
-        if (aboutSection) {
-          const navbarHeight = document.querySelector('nav')?.offsetHeight || 80;
-          const elementPosition = aboutSection.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }
-      }, 100);
-    } else {
-      const aboutSection = document.getElementById('about-section');
-      if (aboutSection) {
-        const navbarHeight = document.querySelector('nav')?.offsetHeight || 80;
-        const elementPosition = aboutSection.getBoundingClientRect().top;
+    const executeScroll = () => {
+      const targetElement = document.getElementById(sectionId);
+      if (targetElement) {
+        const navbarHeight = document.querySelector("nav")?.offsetHeight || 80;
+        const elementPosition = targetElement.getBoundingClientRect().top;
         const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20;
-        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+      } else if (sectionId === "home-section") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
       }
+    };
+
+    if (location.pathname !== "/") {
+      navigate("/");
+      setTimeout(executeScroll, 150);
+    } else {
+      executeScroll();
     }
   };
 
-  // Handle scroll to Contact section
-  const scrollToContact = () => {
+  // Navigates to the matrix dashboard, updates the specific tab state via an event, and scrolls down
+  const handleServiceClick = (path, matrixKey) => {
     setIsOpen(false);
     setActiveDropdown(null);
     
+    const executeScrollAndTab = () => {
+      if (matrixKey) {
+        window.dispatchEvent(new CustomEvent("changeMatrixTab", { detail: matrixKey }));
+      }
+      
+      const targetElement = document.getElementById("matrix-dashboard");
+      if (targetElement) {
+        const navbarHeight = document.querySelector("nav")?.offsetHeight || 80;
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20;
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+      }
+    };
+
     if (location.pathname !== "/") {
       navigate("/");
-      setTimeout(() => {
-        const contactSection = document.getElementById('contact-section');
-        if (contactSection) {
-          const navbarHeight = document.querySelector('nav')?.offsetHeight || 80;
-          const elementPosition = contactSection.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20;
-          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-        }
-      }, 100);
+      setTimeout(executeScrollAndTab, 250); 
     } else {
-      const contactSection = document.getElementById('contact-section');
-      if (contactSection) {
-        const navbarHeight = document.querySelector('nav')?.offsetHeight || 80;
-        const elementPosition = contactSection.getBoundingClientRect().top;
-        const offsetPosition = elementPosition + window.pageYOffset - navbarHeight - 20;
-        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-      }
+      executeScrollAndTab();
     }
   };
 
-  // Service links with correct paths matching AppRoutes
+  // Maps navigation items cleanly to dashboard state keys
   const serviceLinks = [
-    { 
-      name: "Payroll Structuring", 
-      path: "/PayrollStructuring",
-      icon: <Landmark size={18} /> 
-    },
-    { 
-      name: "PF & ESI Compliance", 
-      path: "/PFESICCompliance",
-      icon: <ShieldCheck size={18} /> 
-    },
-    { 
-      name: "Labour Law Advisory", 
-      path: "/LabourLawAdvisory",
-      icon: <Gavel size={18} /> 
-    },
-    { 
-      name: "Contract Labour (CLRA)", 
-      path: "/ContractLabourCompliance",
-      icon: <FileText size={18} /> 
-    },
-    { 
-      name: "Audit & Inspection", 
-      path: "/AuditInspectionReadiness",
-      icon: <ShieldCheck size={18} /> 
-    },
-    { 
-      name: "Labour Code Advisory", 
-      path: "/LabourCodeAdvisory",
-      icon: <Landmark size={18} /> 
-    },
+    { name: "Payroll Structuring", path: "/PayrollStructuring", icon: <Landmark size={18} />, matrixKey: "payroll" },
+    { name: "PF & ESI Compliance", path: "/PFESICCompliance", icon: <ShieldCheck size={18} />, matrixKey: "pfesic" },
+    { name: "Labour Law Advisory", path: "/LabourLawAdvisory", icon: <Gavel size={18} />, matrixKey: "labourLaw" },
+    { name: "Contract Labour (CLRA)", path: "/ContractLabourCompliance", icon: <FileText size={18} />, matrixKey: "contractLabour" },
+    { name: "Audit & Inspection", path: "/AuditInspectionReadiness", icon: <ShieldCheck size={18} />, matrixKey: "audit" },
+    { name: "Labour Code Advisory", path: "/LabourCodeAdvisory", icon: <Landmark size={18} />, matrixKey: "labourLaw" },
   ];
 
   return (
     <>
-      {/* Spacer div to prevent content from hiding behind fixed navbar */}
-      <div className="w-full bg-[#f7ede2]" style={{ height: scrolled ? '70px' : '84px' }}></div>
+      <div className="w-full bg-[#f7ede2]" style={{ height: scrolled ? "70px" : "84px" }}></div>
       
       <nav
         className={`fixed w-full z-[100] transition-all duration-500 px-6 lg:px-16 border-b-2 ${
@@ -144,7 +102,7 @@ const Navbar = () => {
           {/* BRAND IDENTITY */}
           <div 
             className="group flex items-center gap-3 cursor-pointer z-[102]" 
-            onClick={scrollToTop}
+            onClick={() => scrollToSection("home-section")}
           >
             <div className="flex flex-col">
               <span className="font-black text-2xl md:text-3xl tracking-tighter leading-none uppercase italic text-[#1f1916]">
@@ -160,36 +118,36 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center gap-8">
             <div className="flex gap-8 text-[13px] font-black uppercase tracking-widest text-[#1f1916]/80">
               
-              {/* Home */}
               <button 
-                onClick={scrollToTop}
-                className="hover:text-[#e9967a] transition-colors relative group py-2"
+                onClick={() => scrollToSection("home-section")}
+                className="hover:text-[#e9967a] transition-colors relative group py-2 bg-transparent border-none cursor-pointer font-black uppercase tracking-widest text-[13px]"
               >
                 Home
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#e9967a] transition-all group-hover:w-full"></span>
               </button>
               
-              {/* The Firm */}
               <button 
-                onClick={scrollToAbout}
-                className="hover:text-[#e9967a] transition-colors relative group py-2"
+                onClick={() => scrollToSection("modern-showcase")}
+                className="hover:text-[#e9967a] transition-colors relative group py-2 bg-transparent border-none cursor-pointer font-black uppercase tracking-widest text-[13px]"
               >
                 The Firm
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#e9967a] transition-all group-hover:w-full"></span>
               </button>
 
-              {/* ENTERPRISES Dropdown */}
+              {/* OUR FOCUS AREAS Dropdown */}
               <div 
-                className="relative py-2 cursor-pointer"
+                className="relative py-2"
                 onMouseEnter={() => setActiveDropdown("services")}
                 onMouseLeave={() => setActiveDropdown(null)}
               >
                 <button 
-                  className={`flex items-center gap-2 transition-all hover:text-[#e9967a] relative group ${
+                  type="button"
+                  onClick={() => setActiveDropdown(activeDropdown === "services" ? null : "services")}
+                  className={`flex items-center gap-2 transition-all hover:text-[#e9967a] relative group bg-transparent border-none cursor-pointer font-black uppercase tracking-widest text-[13px] ${
                     activeDropdown === "services" ? "text-[#e9967a]" : ""
                   }`}
                 >
-                  Enterprises 
+                  Our Focus Areas 
                   <ChevronDown 
                     size={14} 
                     className={`transition-transform duration-300 ${activeDropdown === "services" ? "rotate-180" : ""}`} 
@@ -212,14 +170,11 @@ const Navbar = () => {
                           Practice Areas
                         </p>
                         {serviceLinks.map((service) => (
-                          <Link
+                          <button
                             key={service.name}
-                            to={service.path}
-                            onClick={() => {
-                              setIsOpen(false);
-                              setActiveDropdown(null);
-                            }}
-                            className="flex items-center gap-3 p-2.5 hover:bg-[#fff5f2] rounded-xl transition-all group/item w-full text-left"
+                            type="button"
+                            onClick={() => handleServiceClick(service.path, service.matrixKey)}
+                            className="flex items-center gap-3 p-2.5 hover:bg-[#fff5f2] rounded-xl transition-all group/item w-full text-left bg-transparent border-0 cursor-pointer"
                           >
                             <div className="text-[#3d5a80]/70 group-hover/item:text-[#e9967a] transition-colors">
                               {service.icon}
@@ -227,7 +182,7 @@ const Navbar = () => {
                             <span className="text-[#1f1916] text-xs font-bold uppercase tracking-wide">
                               {service.name}
                             </span>
-                          </Link>
+                          </button>
                         ))}
                       </div>
                     </motion.div>
@@ -235,31 +190,27 @@ const Navbar = () => {
                 </AnimatePresence>
               </div>
 
-              {/* E-LIBRARY */}
+              {/* E-Learning Link */}
               <Link 
                 to="/knowledge" 
                 className="hover:text-[#e9967a] transition-colors relative group py-2"
-                onClick={() => setIsOpen(false)}
               >
                 E-Library
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#e9967a] transition-all group-hover:w-full"></span>
               </Link>
 
-              {/* Contact */}
               <button 
-                onClick={scrollToContact}
-                className="hover:text-[#e9967a] transition-colors relative group py-2"
+                onClick={() => scrollToSection("contact-section")}
+                className="hover:text-[#e9967a] transition-colors relative group py-2 bg-transparent border-none cursor-pointer font-black uppercase tracking-widest text-[13px]"
               >
                 Contact
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#e9967a] transition-all group-hover:w-full"></span>
               </button>
             </div>
 
-            {/* PARTNER PORTAL BUTTON */}
             <div className="flex items-center border-l-2 border-[#e9967a]/30 pl-8">
               <Link
                 to="/login"
-                onClick={() => setIsOpen(false)}
                 className="group px-6 py-3 bg-[#1f1916] text-[#f7ede2] text-[11px] font-black uppercase tracking-widest hover:bg-[#d47f63] transition-all duration-300 flex items-center gap-2 rounded-full shadow-md"
               >
                 <UserCircle size={16} />
@@ -270,7 +221,7 @@ const Navbar = () => {
 
           {/* MOBILE MENU BUTTON */}
           <button 
-            className="lg:hidden p-2 rounded-xl transition-colors z-[102] text-[#1f1916] hover:bg-[#fff5f2] border border-transparent hover:border-[#fbdad0]"
+            className="lg:hidden p-2 rounded-xl transition-colors z-[102] text-[#1f1916] hover:bg-[#fff5f2] border border-transparent hover:border-[#fbdad0] bg-transparent cursor-pointer"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X size={26} /> : <Menu size={26} />}
@@ -292,67 +243,53 @@ const Navbar = () => {
             <div className="min-h-screen flex flex-col justify-center px-8 py-20">
               <button 
                 onClick={() => setIsOpen(false)} 
-                className="absolute top-6 right-6 text-[#1f1916]/60 hover:text-[#1f1916] p-2 rounded-full hover:bg-[#fff5f2] border border-[#fbdad0] transition-colors"
+                className="absolute top-6 right-6 text-[#1f1916]/60 hover:text-[#1f1916] p-2 rounded-full hover:bg-[#fff5f2] border border-[#fbdad0] transition-colors bg-transparent cursor-pointer"
               >
                 <X size={26} />
               </button>
               
               <div className="space-y-6">
-                {/* Home */}
                 <button 
-                  onClick={() => {
-                    setIsOpen(false);
-                    scrollToTop();
-                  }}
-                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0]"
+                  onClick={() => scrollToSection("home-section")}
+                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0] bg-transparent"
                 >
                   Home
                 </button>
                 
-                {/* The Firm */}
                 <button 
-                  onClick={() => {
-                    setIsOpen(false);
-                    scrollToAbout();
-                  }}
-                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0]"
+                  onClick={() => scrollToSection("modern-showcase")}
+                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0] bg-transparent"
                 >
                   The Firm
                 </button>
                 
                 <div className="py-2 border-b-2 border-[#fbdad0]">
-                  <p className="text-[#3d5a80] text-xs font-black uppercase tracking-wider mb-3">Enterprises</p>
+                  <p className="text-[#3d5a80] text-xs font-black uppercase tracking-wider mb-3">Our Focus Areas</p>
                   <div className="grid grid-cols-1 gap-1">
                     {serviceLinks.map((service) => (
-                      <Link
+                      <button
                         key={service.name}
-                        to={service.path}
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center gap-3 text-[#1f1916]/80 hover:text-[#1f1916] hover:bg-white rounded-xl p-3 w-full transition-all border border-transparent hover:border-[#fbdad0]"
+                        onClick={() => handleServiceClick(service.path, service.matrixKey)}
+                        className="flex items-center gap-3 text-[#1f1916]/80 hover:text-[#1f1916] hover:bg-white rounded-xl p-3 w-full transition-all border border-transparent hover:border-[#fbdad0] bg-transparent text-left cursor-pointer"
                       >
                         <div className="text-[#e9967a]">{service.icon}</div>
                         <span className="text-xs font-bold uppercase tracking-wide">{service.name}</span>
-                      </Link>
+                      </button>
                     ))}
                   </div>
                 </div>
                 
-                {/* E-Library */}
                 <Link 
                   to="/knowledge" 
                   onClick={() => setIsOpen(false)} 
                   className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0]"
                 >
-                  E-Library
+                  E-Learning
                 </Link>
 
-                {/* Contact */}
                 <button 
-                  onClick={() => {
-                    setIsOpen(false);
-                    scrollToContact();
-                  }}
-                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0]"
+                  onClick={() => scrollToSection("contact-section")}
+                  className="block text-3xl font-black uppercase tracking-tighter text-[#1f1916] hover:text-[#e9967a] transition-colors w-full text-left py-2 border-b-2 border-[#fbdad0] bg-transparent"
                 >
                   Contact
                 </button>

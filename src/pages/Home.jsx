@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../firebase'; // Adjusted path to match standard project layouts
+import { db } from '../firebase'; 
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { 
   Calendar, ChartLine, Shield, Users, Search, 
@@ -8,7 +8,6 @@ import {
   TrendingUp, Calculator, AlertTriangle, Cpu, ArrowRight
 } from 'lucide-react';
 
-// Reusable Premium Button with Heavy Dynamic Contrast
 const DynamicButton = ({ children, onClick, variant = 'primary', className = '' }) => {
   return (
     <button
@@ -24,7 +23,6 @@ const DynamicButton = ({ children, onClick, variant = 'primary', className = '' 
   );
 };
 
-// Reusable Architectural Glass Panel Card
 const StructuralCard = ({ children, className = '', accentColor = 'border-l-[#e9967a]' }) => {
   return (
     <div
@@ -39,8 +37,6 @@ const StructuralCard = ({ children, className = '', accentColor = 'border-l-[#e9
 const LabourforgeCinematic = () => {
   const navigate = useNavigate();
   const [activeMatrixTab, setActiveMatrixTab] = useState('payroll');
-  
-  // --- Dynamic Live News Feed State Engine ---
   const [newsFeed, setNewsFeed] = useState([
     {
       title: "Designing Compliant Payroll Structures for a Changing Labour Law Landscape",
@@ -51,67 +47,6 @@ const LabourforgeCinematic = () => {
   ]);
   const [currentNewsIndex, setCurrentNewsIndex] = useState(0);
   const [fadeStatus, setFadeStatus] = useState(true);
-
-  // Real-time Firestore Sync Engine + CDN Asset Injections
-  useEffect(() => {
-    // 1. Dynamic injection of Quill Layout structures from CDN (Fixes the local import-analysis crash)
-    const quillCdnId = "quill-snow-cdn";
-    if (!document.getElementById(quillCdnId)) {
-      const link = document.createElement("link");
-      link.id = quillCdnId;
-      link.rel = "stylesheet";
-      link.href = "https://cdn.jsdelivr.net/npm/react-quill-new@3.3.3/dist/quill.snow.css";
-      document.head.appendChild(link);
-    }
-
-    // 2. Dynamic injection of Custom Typography definitions 
-    const fontCdnId = "google-fonts-home";
-    if (!document.getElementById(fontCdnId)) {
-      const fontLink = document.createElement("link");
-      fontLink.id = fontCdnId;
-      fontLink.rel = "stylesheet";
-      fontLink.href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap";
-      document.head.appendChild(fontLink);
-    }
-
-    // 3. Connect Real-time Firestore stream
-    const newsRef = collection(db, "news");
-    const q = query(newsRef, orderBy("createdAt", "desc"));
-    
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const articles = [];
-      snapshot.forEach((doc) => {
-        articles.push({ id: doc.id, ...doc.data() });
-      });
-      if (articles.length > 0) {
-        setNewsFeed(articles);
-      }
-    }, (error) => {
-      console.error("Error fetching dynamic live news streams: ", error);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  // Continuous 8-Second Rotation Engine with Cross-fade State Hooks
-  useEffect(() => {
-    if (newsFeed.length <= 1) return;
-
-    const rotationInterval = setInterval(() => {
-      setFadeStatus(false);
-      setTimeout(() => {
-        setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % newsFeed.length);
-        setFadeStatus(true);
-      }, 300); 
-    }, 8000);
-
-    return () => clearInterval(rotationInterval);
-  }, [newsFeed]);
-
-  const handleServiceClick = (servicePath) => {
-    navigate(servicePath);
-    window.scrollTo(0, 0);
-  };
 
   const serviceRoutes = {
     payroll: '/PayrollStructuring',
@@ -190,21 +125,99 @@ const LabourforgeCinematic = () => {
     }
   };
 
+  useEffect(() => {
+    const quillCdnId = "quill-snow-cdn";
+    if (!document.getElementById(quillCdnId)) {
+      const link = document.createElement("link");
+      link.id = quillCdnId;
+      link.rel = "stylesheet";
+      link.href = "https://cdn.jsdelivr.net/npm/react-quill-new@3.3.3/dist/quill.snow.css";
+      document.head.appendChild(link);
+    }
+
+    const fontCdnId = "google-fonts-home";
+    if (!document.getElementById(fontCdnId)) {
+      const fontLink = document.createElement("link");
+      fontLink.id = fontCdnId;
+      fontLink.rel = "stylesheet";
+      fontLink.href = "https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Poppins:wght@400;600;700&family=Roboto:wght@400;500;700&display=swap";
+      document.head.appendChild(fontLink);
+    }
+
+    const newsRef = collection(db, "news");
+    const q = query(newsRef, orderBy("createdAt", "desc"));
+    
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const articles = [];
+      snapshot.forEach((doc) => {
+        articles.push({ id: doc.id, ...doc.data() });
+      });
+      if (articles.length > 0) {
+        setNewsFeed(articles);
+      }
+    }, (error) => {
+      console.error("Error fetching dynamic live news streams: ", error);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (newsFeed.length <= 1) return;
+
+    const rotationInterval = setInterval(() => {
+      setFadeStatus(false);
+      setTimeout(() => {
+        setCurrentNewsIndex((prevIndex) => (prevIndex + 1) % newsFeed.length);
+        setFadeStatus(true);
+      }, 300); 
+    }, 8000);
+
+    return () => clearInterval(rotationInterval);
+  }, [newsFeed]);
+
+  // Listens to global navbar synchronization custom events
+  useEffect(() => {
+    const handleTabSync = (event) => {
+      const targetedKey = event.detail;
+      if (targetedKey && coreMatrixData[targetedKey]) {
+        setActiveMatrixTab(targetedKey);
+      }
+    };
+
+    window.addEventListener("changeMatrixTab", handleTabSync);
+    return () => {
+      window.removeEventListener("changeMatrixTab", handleTabSync);
+    };
+  }, []);
+
+  const handleServiceClick = (servicePath) => {
+    navigate(servicePath);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  const localScrollTo = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const navbarHeight = document.querySelector("nav")?.offsetHeight || 80;
+      const offset = element.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
+      window.scrollTo({ top: offset, behavior: "smooth" });
+    }
+  };
+
   const activeNewsItem = newsFeed[currentNewsIndex];
 
   return (
     <div className="min-h-screen bg-[#f7ede2] text-[#1f1916] font-sans antialiased overflow-x-hidden relative selection:bg-[#ffcad4] selection:text-[#1f1916]">
       
-      {/* High-End Ambient Mesh Overlays */}
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[65vw] h-[65vw] bg-gradient-to-br from-[#e9967a]/35 to-[#ffdac1]/40 blur-[130px] rounded-full" />
         <div className="absolute bottom-[-15%] left-[-10%] w-[60vw] h-[60vw] bg-gradient-to-tr from-[#3d5a80]/15 to-[#e9967a]/25 blur-[150px] rounded-full" />
         <div className="absolute top-[35%] left-[25%] w-[40vw] h-[40vw] bg-[#ffdac1]/50 blur-[110px] rounded-full" />
       </div>
 
-      {/* Premium Minimal Navigation Header */}
       <nav className="fixed top-0 inset-x-0 h-20 bg-[#f7ede2]/80 backdrop-blur-xl border-b-2 border-[#e9967a]/20 z-50 flex items-center justify-between px-6 md:px-12">
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => handleServiceClick('/')}>
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => localScrollTo('home-section')}>
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#1f1916] to-[#e9967a] flex items-center justify-center font-bold text-[#f7ede2] text-xs tracking-tighter shadow-md">
             LF
           </div>
@@ -213,10 +226,10 @@ const LabourforgeCinematic = () => {
           </span>
         </div>
         <div className="hidden md:flex items-center gap-8 text-xs font-bold tracking-wider text-[#1f1916]/70">
-          <a href="#home-section" className="hover:text-[#e9967a] transition-colors">Home</a>
-          <a href="#risk-vectors" className="hover:text-[#e9967a] transition-colors">Risk Analysis</a>
-          <a href="#modern-showcase" className="hover:text-[#e9967a] transition-colors">Capabilities</a>
-          <a href="#matrix-dashboard" className="hover:text-[#e9967a] transition-colors">Compliance Engine</a>
+          <button onClick={() => localScrollTo('home-section')} className="hover:text-[#e9967a] transition-colors bg-transparent border-none font-bold text-xs tracking-wider cursor-pointer text-[#1f1916]/70">Home</button>
+          <button onClick={() => localScrollTo('risk-vectors')} className="hover:text-[#e9967a] transition-colors bg-transparent border-none font-bold text-xs tracking-wider cursor-pointer text-[#1f1916]/70">Risk Analysis</button>
+          <button onClick={() => localScrollTo('modern-showcase')} className="hover:text-[#e9967a] transition-colors bg-transparent border-none font-bold text-xs tracking-wider cursor-pointer text-[#1f1916]/70">Capabilities</button>
+          <button onClick={() => localScrollTo('matrix-dashboard')} className="hover:text-[#e9967a] transition-colors bg-transparent border-none font-bold text-xs tracking-wider cursor-pointer text-[#1f1916]/70">Compliance Engine</button>
         </div>
         <DynamicButton variant="secondary" className="!px-5 !py-2 !text-xs !shadow-none !border" onClick={() => handleServiceClick('/book-consultation')}>
           Initialize Briefing
@@ -227,7 +240,7 @@ const LabourforgeCinematic = () => {
       <section id="home-section" className="relative min-h-screen flex flex-col justify-center items-center text-center px-6 z-10 pt-24 overflow-hidden">
         <div className="max-w-5xl space-y-8">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border-2 border-[#e9967a] text-xs tracking-widest text-[#1f1916] uppercase font-black shadow-sm mx-auto">
-            <Cpu size={12} className="text-[#e9967a]" /> Compliance Architecture Protocol
+            <Cpu size={12} className="text-[#e9967a]" /> PAYROLL COMPLIANCE SOLUTIONS
           </div>
           
           <h1 className="text-4xl md:text-7xl lg:text-8xl font-black text-[#1f1916] tracking-tight leading-[0.95]">
@@ -238,20 +251,20 @@ const LabourforgeCinematic = () => {
           </h1>
 
           <p className="text-[#1f1916]/80 text-base md:text-xl max-w-2xl mx-auto font-normal leading-relaxed tracking-wide">
-            Supporting organizations in systematically aligning corporate payroll landscapes, contractor pools, and structural policies against shifting sovereign labor frameworks.
+            Helping organizations design payroll structures that balance statutory compliance, business objectives, employee benefits, and long-term payroll efficiency.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
             <DynamicButton onClick={() => handleServiceClick('/book-consultation')}>
               <Calendar size={16} /> Book a Consultation <ArrowRight size={16} className="ml-1" />
             </DynamicButton>
-            <DynamicButton variant="secondary" onClick={() => handleServiceClick('/services')}>
+            <DynamicButton variant="secondary" onClick={() => localScrollTo('matrix-dashboard')}>
               Explore Focus Areas
             </DynamicButton>
           </div>
         </div>
 
-        {/* Dynamic Typography Terminal Display Panel (Rotator Box) */}
+        {/* Dynamic Typography Terminal Display Panel */}
         <div className="w-full max-w-4xl mt-16 px-4 relative z-20">
           <div className="bg-white/80 backdrop-blur-md border-2 border-[#e9967a]/30 rounded-3xl p-8 md:p-12 text-left shadow-[0_30px_60px_rgba(31,25,22,0.05)] min-h-[220px]">
             <div className={`transition-opacity duration-300 ${fadeStatus ? 'opacity-100' : 'opacity-0'}`}>
@@ -265,7 +278,6 @@ const LabourforgeCinematic = () => {
                 {activeNewsItem.title}
               </h3>
               
-              {/* Output Content Area matching your ReactQuill schema styles securely */}
               <div 
                 className="prose ql-editor !p-0 font-normal text-sm md:text-base max-w-2xl leading-relaxed select-text"
                 dangerouslySetInnerHTML={{ __html: activeNewsItem.shortDescription }}
@@ -298,14 +310,14 @@ const LabourforgeCinematic = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5">
-              <span className="text-xs font-bold tracking-widest text-[#e9967a] uppercase block mb-3">Core Structural Axiom</span>
+              <span className="text-xs font-bold tracking-widest text-[#e9967a] uppercase block mb-3">LABOUR FORGE PHILOSOPHY</span>
               <h2 className="text-3xl md:text-5xl font-black tracking-tight text-[#1f1916] leading-tight">
-                Faulty Layouts,<br/>Not Deviant Intent.
+                Design First,<br/>Comply Always.
               </h2>
             </div>
             <div className="lg:col-span-7 border-l-4 border-[#1f1916] lg:pl-12 py-2">
               <p className="text-[#1f1916]/90 text-lg md:text-2xl font-normal leading-relaxed italic">
-                “Most compliance issues don't arise from intent; they arise systematically from incorrect structuring.”
+                “Effective compliance is the outcome of thoughtful payroll design, robust documentation, and disciplined execution.”
               </p>
             </div>
           </div>
@@ -315,9 +327,9 @@ const LabourforgeCinematic = () => {
       {/* ================= 3. RISK VECTOR IDENTIFICATION ================= */}
       <section id="risk-vectors" className="relative z-20 py-32 px-6 md:px-12 max-w-7xl mx-auto">
         <div className="text-center space-y-4 mb-20">
-          <span className="text-xs font-bold tracking-widest text-[#3d5a80] uppercase block">Sovereign Friction Factors</span>
+          <span className="text-xs font-bold tracking-widest text-[#3d5a80] uppercase block">COMPLIANCE CHALLENGES</span>
           <h2 className="text-3xl md:text-6xl font-black tracking-tight text-[#1f1916]">Where Organizations Struggle</h2>
-          <p className="text-[#1f1916]/70 max-w-xl mx-auto text-sm md:text-base font-normal">Strategic operations vectors exposing modern firms to systemic structural vulnerability.</p>
+          <p className="text-[#1f1916]/70 max-w-xl mx-auto text-sm md:text-base font-normal">Common payroll and labour compliance challenges that expose organizations to operational and regulatory risks.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -445,7 +457,6 @@ const LabourforgeCinematic = () => {
       <section id="matrix-dashboard" className="relative z-20 bg-[#efe3d6] py-32 px-6 md:px-12 border-b-2 border-[#e9967a]/20">
         <div className="max-w-7xl mx-auto">
           
-          {/* Typographic Hero Panel */}
           <div className="w-full bg-[#1f1916] rounded-3xl p-8 md:p-12 mb-16 flex flex-col md:flex-row justify-between items-center text-white shadow-2xl relative overflow-hidden border-4 border-white">
             <div className="relative z-10 text-center md:text-left space-y-3">
               <span className="text-xs font-bold text-[#e9967a] tracking-widest uppercase block">Strategic Imperative</span>
@@ -462,7 +473,6 @@ const LabourforgeCinematic = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
             
-            {/* Dynamic Interactive Controls */}
             <div className="lg:col-span-4 space-y-2.5">
               <span className="text-xs font-bold tracking-widest text-[#3d5a80] uppercase block mb-1">Functional Matrix</span>
               <h3 className="text-2xl md:text-4xl font-black tracking-tight text-[#1f1916]">Compliance Solutions</h3>
@@ -474,7 +484,7 @@ const LabourforgeCinematic = () => {
                 <button
                   key={key}
                   onClick={() => setActiveMatrixTab(key)}
-                  className={`w-full text-left px-5 py-4 rounded-xl text-xs font-bold tracking-wider capitalize transition-all duration-300 border-2 flex items-center justify-between group ${
+                  className={`w-full text-left px-5 py-4 rounded-xl text-xs font-bold tracking-wider capitalize transition-all duration-300 border-2 flex items-center justify-between group cursor-pointer ${
                     activeMatrixTab === key 
                       ? 'bg-white text-[#1f1916] border-[#e9967a] shadow-md' 
                       : 'bg-white/40 text-neutral-500 border-transparent hover:bg-white/80 hover:text-[#1f1916]'
@@ -486,7 +496,6 @@ const LabourforgeCinematic = () => {
               ))}
             </div>
 
-            {/* Simulated Live Processing Terminal */}
             <div className="lg:col-span-8 w-full">
               <div className="w-full bg-white border-2 border-[#e9967a]/30 rounded-3xl p-6 md:p-8 shadow-[0_20px_45px_rgba(31,25,22,0.06)] relative">
                 
@@ -543,7 +552,7 @@ const LabourforgeCinematic = () => {
       {/* ================= 7. WHY CHOOSE LABOURFORGE ================= */}
       <section className="relative z-20 py-32 px-6 max-w-7xl mx-auto text-center space-y-16">
         <div className="space-y-4">
-          <span className="text-l font-bold tracking-widest text-neutral-400 uppercase block">The Pillar</span>
+          <span className="text-lg font-bold tracking-widest text-neutral-400 uppercase block">The Pillar</span>
           <h2 className="text-3xl md:text-6xl font-black tracking-tight text-[#1f1916]">Your Partner in Payroll & Labour Compliance</h2>
         </div>
 
@@ -599,7 +608,6 @@ const LabourforgeCinematic = () => {
         </div>
       </footer>
 
-      {/* --- CSS Dynamic Rules Engine for Rendering Rich Text Custom Fonts & Sizes --- */}
       <style>{`
         .prose.ql-editor p { margin-bottom: 0.5rem; color: #4b5563; line-height: 1.625; }
         .prose.ql-editor .ql-font-inter { font-family: 'Inter', sans-serif; }
