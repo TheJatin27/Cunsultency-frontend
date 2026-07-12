@@ -125,6 +125,39 @@ const LabourforgeCinematic = () => {
     }
   };
 
+  const dynamicRiskVectors = [
+    { 
+      title: "Incorrect Salary Structuring", 
+      color: "border-l-[#e9967a]", 
+      desc: "Poorly designed salary structures may lead to statutory non-compliance, increased payroll costs, and reduced employee take-home pay.",
+      label: "Payroll Compliance Risk"
+    },
+    { 
+      title: "PF & ESIC Compliance Gaps", 
+      color: "border-l-[#3d5a80]", 
+      desc: "Incorrect employee coverage, wage classification, or contribution calculations can result in statutory liabilities and inspection observations.",
+      label: "Social Security Compliance"
+    },
+    { 
+      title: "Weak Documentation & Records", 
+      color: "border-l-[#d47f63]", 
+      desc: "Missing registers, incomplete employee records, and inadequate documentation can create challenges during audits and labour inspections.",
+      label: "Documentation Risk"
+    },
+    { 
+      title: "Labour Law Compliance Challenges", 
+      color: "border-l-[#3d5a80]", 
+      desc: "Keeping pace with Central and State labour law changes can be difficult without a structured compliance framework and periodic reviews.",
+      label: "Regulatory Compliance"
+    },
+    { 
+      title: "Contractor Compliance Gaps", 
+      color: "border-l-[#1f1916]", 
+      desc: "Inadequate monitoring of contractor obligations may expose organizations to legal, financial, and Principal Employer liabilities.",
+      label: "Vendor Compliance Risk"
+    }
+  ];
+
   useEffect(() => {
     const quillCdnId = "quill-snow-cdn";
     if (!document.getElementById(quillCdnId)) {
@@ -176,7 +209,6 @@ const LabourforgeCinematic = () => {
     return () => clearInterval(rotationInterval);
   }, [newsFeed]);
 
-  // Listens to global navbar synchronization custom events
   useEffect(() => {
     const handleTabSync = (event) => {
       const targetedKey = event.detail;
@@ -333,13 +365,7 @@ const LabourforgeCinematic = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {[
-            { title: "Incorrect Salary Structuring", color: "border-l-[#e9967a]", desc: "Incorrect salary structuring leading to compliance risk structural hazards." },
-            { title: "PF/ESIC Exposure Boundaries", color: "border-l-[#3d5a80]", desc: "PF/ESIC exposure due to incorrect classification rules driving strategic liability." },
-            { title: "Weak Forensic Documentation", color: "border-l-[#d47f63]", desc: "Weak documentation during inspections and unexpected operational audit reviews." },
-            { title: "Labour Code Implementation Inertia", color: "border-l-[#3d5a80]", desc: "Confusion around labour code implementation transforms ahead of new state parameters." },
-            { title: "Contractor Compliance Gaps", color: "border-l-[#1f1916]", desc: "Contractor compliance gaps lingering within external vendor pools transferring directly to the firm." }
-          ].map((item, index) => (
+          {dynamicRiskVectors.map((item, index) => (
             <StructuralCard key={index} accentColor={item.color} className={index === 3 ? "md:col-span-2" : ""}>
               <div className="flex flex-col justify-between h-full space-y-6">
                 <div className="space-y-4">
@@ -350,7 +376,7 @@ const LabourforgeCinematic = () => {
                   <p className="text-sm text-[#1f1916]/80 font-normal leading-relaxed">{item.desc}</p>
                 </div>
                 <div className="flex items-center gap-2 text-xs font-bold text-[#d47f63] tracking-wider uppercase pt-4 border-t border-[#fbdad0]/60">
-                  <AlertTriangle size={14} /> Critical Inspection Friction Item
+                  <AlertTriangle size={14} /> {item.label}
                 </div>
               </div>
             </StructuralCard>
@@ -598,7 +624,7 @@ const LabourforgeCinematic = () => {
             </div>
           </div>
 
-          <div className="pt-12 border-t border-neutral-200 flex flex-col sm:flex-row justify-between items-center gap-6 text-[11px] font-bold text-[#1f1916]/40 tracking-widest uppercase">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-6 text-[11px] font-bold text-[#1f1916]/40 tracking-widest uppercase pt-12 border-t border-neutral-200">
             <div>© Labourforge · Structuring Compliance, Protecting Value</div>
             <div className="flex gap-6">
               <span className="hover:text-[#3d5a80] transition-colors cursor-pointer">Security Sandbox</span>

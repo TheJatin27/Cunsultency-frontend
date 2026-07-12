@@ -36,7 +36,7 @@ const Knowledge = () => {
   const [loading, setLoading] = useState(true);
   const [wageUpdates, setWageUpdates] = useState([]);
   const [libraryPages, setLibraryPages] = useState([]);
-  const [shopPages, setShopPages] = useState([]); // Isolated state configuration for custom collections
+  const [shopPages, setShopPages] = useState([]);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -75,7 +75,6 @@ const Knowledge = () => {
 
     const fetchShopPages = async () => {
       try {
-        // Querying strictly from your isolated shop-and-establishment parameters setup
         const snap = await getDocs(collection(db, "shop-and-establishment"));
         const data = snap.docs.map((doc) => ({
           id: doc.id,
@@ -93,6 +92,37 @@ const Knowledge = () => {
     fetchWages();
     fetchShopPages();
   }, []);
+
+  // Helper function to sort pages strictly by your required order
+  const getSortedLibraryPages = () => {
+    return [...libraryPages].sort((a, b) => {
+      const getOrderIndex = (title = "") => {
+        const t = title.toLowerCase();
+        if (t.includes("wage")) return 0;
+        if (t.includes("social")) return 1;
+        if (t.includes("safety") || t.includes("occupational")) return 2;
+        if (t.includes("industrial") || t.includes("relation")) return 3;
+        return 4;
+      };
+      return getOrderIndex(a.title) - getOrderIndex(b.title);
+    });
+  };
+
+  // Helper to maintain the design theme styling with the new card positions
+  const getCardThemeProps = (title = "") => {
+    const t = title.toLowerCase();
+    if (t.includes("wage")) {
+      return { color: "blue", icon: <HardHat size={22} /> };
+    } else if (t.includes("social")) {
+      return { color: "green", icon: <ShieldCheck size={22} /> };
+    } else if (t.includes("safety") || t.includes("occupational")) {
+      return { color: "red", icon: <Users size={22} /> };
+    } else {
+      return { color: "orange", icon: <Scale size={22} /> };
+    }
+  };
+
+  const orderedLibraryPages = getSortedLibraryPages();
 
   return (
     <div className="flex h-[calc(100vh-80px)] w-full bg-[#FFFFFF] overflow-hidden font-sans text-[#1E293B]">
@@ -118,16 +148,25 @@ const Knowledge = () => {
 
             <SidebarHeader label="Labour Codes (Central Laws)" />
             
-            {/* DYNAMIC SIDEBAR ITEMS FROM CENTRAL LAWS */}
-            {libraryPages.map((page) => (
+            {/* SORTED SIDEBAR ITEMS FROM CENTRAL LAWS */}
+            {orderedLibraryPages.map((page) => (
                <NavItem 
                 key={page.id}
                 label={page.title} 
-                icon={<Scale size={18}/>} 
+                icon={getCardThemeProps(page.title).icon} 
                 onClick={() => navigate(`/library/${page.slug}`)}
                 hasChevron 
                />
             ))}
+
+            {/* INCOME TAX SECTION */}
+            <SidebarHeader label="Income Tax" />
+            <NavItem 
+              label="Income Tax Compliance" 
+              icon={<Percent size={18}/>} 
+              disabled 
+              status="Coming Soon" 
+            />
 
             {/* STATE COMPLIANCE NAVIGATION */}
             <SidebarHeader label="State Compliance (State Laws)" />
@@ -235,17 +274,20 @@ const Knowledge = () => {
                 
                 <ContentHeader label="Labour Codes (Central Laws)" />
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                  {libraryPages.map((item, index) => (
-                    <LawCard
-                      key={item.id}
-                      color={["orange", "green", "blue", "red"][index % 4]}
-                      icon={index % 4 === 0 ? <Scale size={22} /> : index % 4 === 1 ? <ShieldCheck size={22} /> : index % 4 === 2 ? <HardHat size={22} /> : <Users size={22} />}
-                      title={item.title}
-                      subtitle={item.shortDescription}
-                      includedActs={item.includedActs}
-                      onClick={() => navigate(`/library/${item.slug}`)}
-                    />
-                  ))}
+                  {orderedLibraryPages.map((item) => {
+                    const themeProps = getCardThemeProps(item.title);
+                    return (
+                      <LawCard
+                        key={item.id}
+                        color={themeProps.color}
+                        icon={themeProps.icon}
+                        title={item.title}
+                        subtitle={item.shortDescription}
+                        includedActs={item.includedActs}
+                        onClick={() => navigate(`/library/${item.slug}`)}
+                      />
+                    );
+                  })}
                 </div>
 
                 <ContentHeader label="State Compliance (State Laws)" />

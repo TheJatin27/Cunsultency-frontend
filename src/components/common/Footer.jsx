@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   Phone, Mail, MapPin, Linkedin, 
@@ -10,6 +9,27 @@ import {
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+
+  // Unified global page scroll coordinator matching core component navbar heights
+  const handleInternalScroll = (targetId, fallbackTabKey = null) => {
+    const element = document.getElementById(targetId);
+    
+    // Proactively synchronize functional tabs if specific target matrix tabs are called
+    if (fallbackTabKey) {
+      const syncEvent = new CustomEvent("changeMatrixTab", { detail: fallbackTabKey });
+      window.dispatchEvent(syncEvent);
+    }
+
+    if (element) {
+      const navbarHeight = document.querySelector("nav")?.offsetHeight || 80;
+      const calculatedOffset = element.getBoundingClientRect().top + window.pageYOffset - navbarHeight - 20;
+      
+      window.scrollTo({
+        top: calculatedOffset,
+        behavior: "smooth"
+      });
+    }
+  };
 
   return (
     <footer className="bg-[#f7ede2] border-t-2 border-[#e9967a]/30 pt-24 pb-12 px-6 relative overflow-hidden font-sans">
@@ -49,7 +69,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-20">
           {/* FIRM IDENTITY */}
           <div className="space-y-6">
-            <div className="flex flex-col">
+            <div className="flex flex-col cursor-pointer" onClick={() => handleInternalScroll('home-section')}>
               <span className="text-[#1f1916] font-black text-2xl tracking-tighter leading-none uppercase italic">LabourFORGE</span>
               <span className="text-[#e9967a] text-[9px] font-black uppercase tracking-[0.5em] mt-1.5">Advisors</span>
             </div>
@@ -74,21 +94,57 @@ const Footer = () => {
           <div>
             <h4 className="text-[#1f1916] font-black uppercase tracking-[0.3em] text-[10px] mb-8 border-l-2 border-[#e9967a] pl-4">The Firm</h4>
             <ul className="space-y-3 text-[11px] font-bold uppercase tracking-widest text-neutral-500">
-              <li><Link to="/about" className="hover:text-[#3d5a80] transition-colors duration-200">Philosophy</Link></li>
-              <li><Link to="/services" className="hover:text-[#3d5a80] transition-colors duration-200">Service Verticals</Link></li>
-              <li><Link to="/knowledge" className="hover:text-[#3d5a80] transition-colors duration-200">E-Library</Link></li>
-              <li><Link to="/contact" className="hover:text-[#3d5a80] transition-colors duration-200">Advisory Board</Link></li>
+              <li>
+                <button onClick={() => handleInternalScroll('home-section')} className="hover:text-[#3d5a80] transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer font-bold text-[11px] uppercase tracking-widest text-neutral-500">
+                  Philosophy
+                </button>
+              </li>
+              <li>
+                <button onClick={() => handleInternalScroll('matrix-dashboard')} className="hover:text-[#3d5a80] transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer font-bold text-[11px] uppercase tracking-widest text-neutral-500">
+                  Service Verticals
+                </button>
+              </li>
+              <li>
+                <button onClick={() => handleInternalScroll('home-section')} className="hover:text-[#3d5a80] transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer font-bold text-[11px] uppercase tracking-widest text-neutral-500">
+                  E-Library
+                </button>
+              </li>
+              <li>
+                <button onClick={() => handleInternalScroll('modern-showcase')} className="hover:text-[#3d5a80] transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer font-bold text-[11px] uppercase tracking-widest text-neutral-500">
+                  Advisory Board
+                </button>
+              </li>
             </ul>
           </div>
 
-          {/* KEY COMPLIANCE AREAS */}
+          {/* KEY COMPLIANCE AREAS WITH ROUTED MAP PIPELINES */}
           <div>
             <h4 className="text-[#1f1916] font-black uppercase tracking-[0.3em] text-[10px] mb-8 border-l-2 border-[#e9967a] pl-4">Expertise</h4>
             <ul className="space-y-3 text-[11px] font-bold uppercase tracking-widest text-neutral-500">
-              <li className="flex items-center gap-2 hover:text-[#3d5a80] transition-colors cursor-pointer"><ShieldCheck size={12} className="text-[#e9967a]/70" /> Statutory Audits</li>
-              <li className="flex items-center gap-2 hover:text-[#3d5a80] transition-colors cursor-pointer"><Scale size={12} className="text-[#e9967a]/70" /> Wage Structuring</li>
-              <li className="flex items-center gap-2 hover:text-[#3d5a80] transition-colors cursor-pointer"><ArrowUpRight size={12} className="text-[#e9967a]/70" /> CLRA Licensing</li>
-              <li className="flex items-center gap-2 hover:text-[#3d5a80] transition-colors cursor-pointer"><ShieldCheck size={12} className="text-[#e9967a]/70" /> EPF/ESI Advisory</li>
+              <li 
+                onClick={() => handleInternalScroll('matrix-dashboard', 'audit')}
+                className="flex items-center gap-2 hover:text-[#3d5a80] transition-colors cursor-pointer"
+              >
+                <ShieldCheck size={12} className="text-[#e9967a]/70" /> Statutory Audits
+              </li>
+              <li 
+                onClick={() => handleInternalScroll('matrix-dashboard', 'payroll')}
+                className="flex items-center gap-2 hover:text-[#3d5a80] transition-colors cursor-pointer"
+              >
+                <Scale size={12} className="text-[#e9967a]/70" /> Wage Structuring
+              </li>
+              <li 
+                onClick={() => handleInternalScroll('matrix-dashboard', 'contractLabour')}
+                className="flex items-center gap-2 hover:text-[#3d5a80] transition-colors cursor-pointer"
+              >
+                <ArrowUpRight size={12} className="text-[#e9967a]/70" /> CLRA Licensing
+              </li>
+              <li 
+                onClick={() => handleInternalScroll('matrix-dashboard', 'pfesic')}
+                className="flex items-center gap-2 hover:text-[#3d5a80] transition-colors cursor-pointer"
+              >
+                <ShieldCheck size={12} className="text-[#e9967a]/70" /> EPF/ESI Advisory
+              </li>
             </ul>
           </div>
 
