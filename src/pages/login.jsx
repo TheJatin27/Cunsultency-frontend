@@ -19,45 +19,47 @@ const Login = () => {
     setInfoMessage("");
 
     if (!email || !password) {
-      setError("Please fill in all security parameter fields.");
+      setError("Please fill in both email and password fields.");
       return;
     }
 
     try {
       setLoading(true);
-      // Authenticating directly against Firebase Auth
       await signInWithEmailAndPassword(auth, email, password);
-      
-      // Navigate to the dashboard ecosystem upon resolution
-      navigate("/shops-establishments");
+      navigate("/");
     } catch (err) {
       console.error(err);
-      if (err.code === "auth/user-not-found" || err.code === "auth/wrong-password" || err.code === "auth/invalid-credential") {
-        setError("Invalid credentials or unauthorized login registration.");
+      if (
+        err.code === "auth/user-not-found" || 
+        err.code === "auth/wrong-password" || 
+        err.code === "auth/invalid-credential"
+      ) {
+        setError("Invalid email or password. Please check your credentials.");
       } else {
-        setError("Authentication engine failed. Please try again.");
+        setError("Authentication failed. Please try again.");
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleForgotPassword = async () => {
+  const handleForgotPassword = async (e) => {
+    if (e) e.preventDefault();
     setError("");
     setInfoMessage("");
     
     if (!email) {
-      setError("Please provide your email identity window first to initialize reset.");
+      setError("Please enter your email address first to reset your password.");
       return;
     }
 
     try {
       setLoading(true);
       await sendPasswordResetEmail(auth, email);
-      setInfoMessage("A secure password modification link has been dispatched to your email.");
+      setInfoMessage("A secure password reset link has been sent to your email.");
     } catch (err) {
       console.error(err);
-      setError("Could not process reset sequence. Confirm email context schema.");
+      setError("Could not process password reset. Please verify your email address.");
     } finally {
       setLoading(false);
     }
@@ -65,7 +67,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-[#f7ede2] flex items-center justify-center px-6 py-20 relative overflow-hidden font-sans selection:bg-[#ffcad4]">
-      {/* Background Cinematic Glow Elements */}
       <div className="absolute top-[-10%] right-[-5%] w-[50vw] h-[50vw] bg-gradient-to-br from-[#e9967a]/20 to-[#ffdac1]/30 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-15%] left-[-10%] w-[50vw] h-[50vw] bg-gradient-to-tr from-[#3d5a80]/10 to-[#e9967a]/15 blur-[130px] rounded-full pointer-events-none" />
 

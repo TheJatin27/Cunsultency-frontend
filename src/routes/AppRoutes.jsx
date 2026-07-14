@@ -1,7 +1,13 @@
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
-import Login from "../pages/login";
+import ProtectedRoute from "./ProtectedRoute";
+
+// Public Pages
 import Home from "../pages/Home";
+import Login from "../pages/login";
+import Register from "../pages/Register";
+
+// Protected Vault Content Pages
 import About from "../pages/About";
 import Services from "../pages/Services";
 import GstQuotation from "../pages/GstQuotation";
@@ -25,48 +31,53 @@ import ShopsEstablishmentsDetails from "../pages/ShopsEstablishmentsDetails";
 import ProfessionalTaxCompliance from "../pages/ProfessionalTaxDetails";
 import LabourWelfareFundCompliance from "../pages/LabourWelfareFundDetails";
 import StateComplianceTable from "../pages/StateComplianceTable";
-import Register from "../pages/Register";
 
 const AppRoutes = () => {
   return (
     <Router>
       <Routes>
         <Route element={<MainLayout />}>
+          
+          {/* ================= PUBLIC PATHS ================= */}
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/gst-quotation" element={<GstQuotation />} />
-          <Route path="/knowledge" element={<Knowledge />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/minimum-wages" element={<MinimumWages />} />
-          <Route path="/ComplianceRetainership" element={<ComplianceRetainership />} />
-          <Route path="/StrategicAdvisory" element={<StrategicAdvisory />} />
-          <Route path="/ComplianceAudit" element={<ComplianceAudit />} />
-          <Route path="/EstablishmentSetup" element={<EstablishmentSetup />} />
-          <Route path="/LabourCodeTransition" element={<LabourCodeTransition />} />
-          <Route path="/PayrollStructuring" element={<PayrollStructuring />} />
-          <Route path="/LabourLawAdvisory" element={<LabourLawAdvisory />} />
-          <Route path="/PFESICCompliance" element={<PFESICCompliance />} />
-          <Route path="/ContractLabourCompliance" element={<ContractLabourCompliance />} />
-          <Route path="/AuditInspectionReadiness" element={<AuditInspectionReadiness />} />
-          <Route path="/LabourCodeAdvisory" element={<LabourCodeAdvisory />} />
-          <Route path="/MinimumWagesLookup" element={<MinimumWagesLookup />} />
           
-          {/* CENTRAL LAWS */}
-          <Route path="/library/:slug" element={<WageCodeDetails />} />
-          
-          {/* MAIN SHOPS & ESTABLISHMENTS CONTENT PAGE */}
-          <Route path="/ShopsEstablishmentsDetails/:slug" element={<ShopsEstablishmentsDetails />} />
-          <Route path="/elibrary/:slug" element={<ShopsEstablishmentsDetails />} />
-          
-          {/* TAX & WELFARE */}
-          <Route path="/ProfessionalTaxCompliance" element={<ProfessionalTaxCompliance />} />
-          <Route path="/LabourWelfareFundCompliance" element={<LabourWelfareFundCompliance />} />
-          
-          {/* STATE SPECIFIC EXCEL-STYLE COMPLIANCE GRIDS (UNIFIED UNIQUE PATH) */}
-          <Route path="/compliance/state/:slug" element={<StateComplianceTable />} />
+          {/* ================= SECURE PATHS (REQUIRES LOGIN) ================= */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/about" element={<About />} />
+            <Route path="/services" element={<Services />} />
+            <Route path="/gst-quotation" element={<GstQuotation />} />
+            <Route path="/knowledge" element={<Knowledge />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/minimum-wages" element={<MinimumWages />} />
+            <Route path="/ComplianceRetainership" element={<ComplianceRetainership />} />
+            <Route path="/StrategicAdvisory" element={<StrategicAdvisory />} />
+            <Route path="/ComplianceAudit" element={<ComplianceAudit />} />
+            <Route path="/EstablishmentSetup" element={<EstablishmentSetup />} />
+            <Route path="/LabourCodeTransition" element={<LabourCodeTransition />} />
+            <Route path="/PayrollStructuring" element={<PayrollStructuring />} />
+            <Route path="/LabourLawAdvisory" element={<LabourLawAdvisory />} />
+            <Route path="/PFESICCompliance" element={<PFESICCompliance />} />
+            <Route path="/ContractLabourCompliance" element={<ContractLabourCompliance />} />
+            <Route path="/AuditInspectionReadiness" element={<AuditInspectionReadiness />} />
+            <Route path="/LabourCodeAdvisory" element={<LabourCodeAdvisory />} />
+            <Route path="/MinimumWagesLookup" element={<MinimumWagesLookup />} />
+            
+            {/* CENTRAL LAWS */}
+            <Route path="/library/:slug" element={<WageCodeDetails />} />
+            
+            {/* MAIN SHOPS & ESTABLISHMENTS CONTENT PAGE */}
+            <Route path="/ShopsEstablishmentsDetails/:slug" element={<ShopsEstablishmentsDetails />} />
+            <Route path="/elibrary/:slug" element={<ShopsEstablishmentsDetails />} />
+            
+            {/* TAX & WELFARE */}
+            <Route path="/ProfessionalTaxCompliance" element={<ProfessionalTaxCompliance />} />
+            <Route path="/LabourWelfareFundCompliance" element={<LabourWelfareFundCompliance />} />
+            
+            {/* STATE SPECIFIC EXCEL-STYLE COMPLIANCE GRIDS */}
+            <Route path="/compliance/state/:slug" element={<StateComplianceTable />} />
+          </Route>
 
         </Route>
       </Routes>
