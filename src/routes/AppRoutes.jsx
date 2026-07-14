@@ -25,6 +25,7 @@ import ShopsEstablishmentsDetails from "../pages/ShopsEstablishmentsDetails";
 import ProfessionalTaxCompliance from "../pages/ProfessionalTaxDetails";
 import LabourWelfareFundCompliance from "../pages/LabourWelfareFundDetails";
 import StateComplianceTable from "../pages/StateComplianceTable";
+import Register from "../pages/Register";
 
 const AppRoutes = () => {
   return (
@@ -38,6 +39,7 @@ const AppRoutes = () => {
           <Route path="/knowledge" element={<Knowledge />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/minimum-wages" element={<MinimumWages />} />
           <Route path="/ComplianceRetainership" element={<ComplianceRetainership />} />
           <Route path="/StrategicAdvisory" element={<StrategicAdvisory />} />
