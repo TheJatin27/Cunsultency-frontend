@@ -1,0 +1,20 @@
+{
+  "name": "LabourForge",
+  "short_name": "LabourForge",
+  "start_url": "/",
+  "display": "standalone",
+  "email":"info@labourforge.co.in",
+  "background_color": "#ffffff",
+  "theme_color": "#0F172A",
+  "sameAs":[
+  "https://www.linkedin.com/company/labourforge",
+  "https://www.facebook.com/labourforge"
+],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

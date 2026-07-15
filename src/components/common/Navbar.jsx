@@ -134,14 +134,22 @@ const Navbar = () => {
       >
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           
-          <div className="group flex items-center gap-3 cursor-pointer z-[102]" onClick={() => scrollToSection("home-section")}>
-            <div className="flex flex-col">
-              <span className="font-black text-2xl md:text-3xl tracking-tighter leading-none uppercase italic text-[#1f1916]">
-                LABOUR<span className="text-[#e9967a]">FORGE</span>
+          {/* UPDATED LOGO START */}
+          <div className="group flex items-start cursor-pointer z-[102] select-none" onClick={() => scrollToSection("home-section")}>
+            <span className="font-black text-2xl md:text-3xl tracking-tighter leading-none uppercase italic text-[#1f1916]">
+              LABOUR
+            </span>
+            <div className="flex flex-col ml-[2px]">
+              <span className="font-black text-2xl md:text-3xl tracking-tighter leading-none uppercase italic text-[#e9967a]">
+                FORGE
               </span>
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] mt-1 text-[#3d5a80]">Advisors</span>
+              <div className="w-full h-[2.5px] md:h-[3px] bg-[#e9967a] my-[3px]"></div>
+              <div className="flex justify-between w-full text-[8px] md:text-[9.5px] font-black uppercase text-[#2c4c7c] leading-none">
+                <span>A</span><span>D</span><span>V</span><span>I</span><span>S</span><span>O</span><span>R</span><span>S</span>
+              </div>
             </div>
           </div>
+          {/* UPDATED LOGO END */}
 
           <div className="hidden lg:flex items-center gap-8">
             <div className="flex gap-8 text-[13px] font-black uppercase tracking-widest text-[#1f1916]/80">
