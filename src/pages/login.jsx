@@ -25,8 +25,28 @@ const Login = () => {
 
     try {
       setLoading(true);
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/");
+      const userCredential = await signInWithEmailAndPassword(
+    auth,
+    email,
+    password
+);
+
+const user = userCredential.user;
+
+await user.reload();
+
+if (!user.emailVerified) {
+
+    await auth.signOut();
+
+    setError(
+        "Please verify your email before signing in."
+    );
+
+    return;
+}
+
+navigate("/");
     } catch (err) {
       console.error(err);
       if (

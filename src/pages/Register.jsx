@@ -57,6 +57,7 @@ const Register = () => {
 
       // 3. Dispatch validation link to user's email inbox
       await sendEmailVerification(user);
+      await auth.signOut();
 
       setIsVerificationSent(true);
       setSuccessMessage("Account established! A validation link has been sent to your inbox.");

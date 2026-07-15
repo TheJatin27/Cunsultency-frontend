@@ -1,20 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import { Loader2 } from "lucide-react";
 
 const ProtectedRoute = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [authState, setAuthState] = useState(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAuthenticated(!!user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        setAuthState(false);
+        return;
+      }
+
+      try {
+        // Refresh user data
+        await user.reload();
+
+        if (!user.emailVerified) {
+          await signOut(auth);
+          setAuthState(false);
+          return;
+        }
+
+        setAuthState(true);
+      } catch (error) {
+        console.error(error);
+        setAuthState(false);
+      }
     });
+
     return () => unsubscribe();
   }, []);
 
-  if (isAuthenticated === null) {
+  if (authState === null) {
     return (
       <div className="min-h-screen bg-[#f7ede2] flex flex-col items-center justify-center gap-3">
         <Loader2 className="animate-spin text-[#e9967a]" size={32} />
@@ -25,7 +45,7 @@ const ProtectedRoute = () => {
     );
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
+  return authState ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 export default ProtectedRoute;
