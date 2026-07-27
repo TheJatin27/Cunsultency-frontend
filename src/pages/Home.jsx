@@ -177,9 +177,8 @@ const LabourforgeCinematic = () => {
       if (displayedText !== currentFullText) {
         timer = setTimeout(() => {
           setDisplayedText(currentFullText.slice(0, displayedText.length + 1));
-        }, 50); // Speed of typing
+        }, 50);
       } else {
-        // Wait 5 seconds before beginning deletion cycle
         timer = setTimeout(() => {
           setIsDeleting(true);
         }, 5000);
@@ -188,7 +187,7 @@ const LabourforgeCinematic = () => {
       if (displayedText !== '') {
         timer = setTimeout(() => {
           setDisplayedText(currentFullText.slice(0, displayedText.length - 1));
-        }, 30); // Speed of deleting
+        }, 30);
       } else {
         setIsDeleting(false);
         setPhraseIndex((prev) => (prev + 1) % phrases.length);
@@ -280,13 +279,22 @@ const LabourforgeCinematic = () => {
   return (
     <div className="min-h-screen bg-[#f7ede2] text-[#1f1916] font-sans antialiased overflow-x-hidden relative selection:bg-[#ffcad4] selection:text-[#1f1916]">
       
+      {/* Top Construction Notice Alert Banner */}
+      <div className="bg-[#1f1916] text-[#f7ede2] border-b border-[#e9967a]/40 text-center py-2 px-4 text-xs font-semibold flex items-center justify-center gap-2 relative z-[60]">
+        <AlertTriangle size={14} className="text-[#e9967a] shrink-0" />
+        <span>
+          <strong>Site Under Construction:</strong> A few State Minimum Wages are currently being updated and will be available soon. Thank you for your patience.
+        </span>
+      </div>
+
       <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-[-10%] right-[-5%] w-[65vw] h-[65vw] bg-gradient-to-br from-[#e9967a]/35 to-[#ffdac1]/40 blur-[130px] rounded-full" />
         <div className="absolute bottom-[-15%] left-[-10%] w-[60vw] h-[60vw] bg-gradient-to-tr from-[#3d5a80]/15 to-[#e9967a]/25 blur-[150px] rounded-full" />
         <div className="absolute top-[35%] left-[25%] w-[40vw] h-[40vw] bg-[#ffdac1]/50 blur-[110px] rounded-full" />
       </div>
 
-      <nav className="fixed top-0 inset-x-0 h-16 bg-[#f7ede2]/80 backdrop-blur-xl border-b-2 border-[#e9967a]/20 z-50 flex items-center justify-between px-6 md:px-12">
+      {/* Adjusted top offset so the banner doesn't cover the navbar */}
+      <nav className="fixed top-9 inset-x-0 h-16 bg-[#f7ede2]/80 backdrop-blur-xl border-b-2 border-[#e9967a]/20 z-50 flex items-center justify-between px-6 md:px-12">
         <div className="flex items-center gap-3 cursor-pointer" onClick={() => localScrollTo('home-section')}>
           <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#1f1916] to-[#e9967a] flex items-center justify-center font-bold text-[#f7ede2] text-[10px] tracking-tighter shadow-md">
             LF
@@ -307,7 +315,7 @@ const LabourforgeCinematic = () => {
       </nav>
 
       {/* ================= 1. THE HERO SECTOR ================= */}
-      <section id="home-section" className="relative flex flex-col justify-center items-center text-center px-6 z-10 pt-24 pb-4 overflow-hidden">
+      <section id="home-section" className="relative flex flex-col justify-center items-center text-center px-6 z-10 pt-32 pb-4 overflow-hidden">
         
         {/* Animated Glittering & Sparkling Canvas */}
         <div className="absolute inset-0 z-0 pointer-events-none layer-glitter-starfield" />
@@ -690,7 +698,7 @@ const LabourforgeCinematic = () => {
         .prose.ql-editor .ql-size-10px { font-size: 10px; }
         .prose.ql-editor .ql-size-12px { font-size: 12px; }
         .prose.ql-editor .ql-size-14px { font-size: 14px; }
-        .prose.ql-editor .ql-size-16px { font-size: 16px; }
+        .prose.ql-editor .ql-size-[#16px] { font-size: 16px; }
         .prose.ql-editor .ql-size-18px { font-size: 18px; }
         .prose.ql-editor .ql-size-20px { font-size: 20px; }
         .prose.ql-editor .ql-size-24px { font-size: 24px; }
