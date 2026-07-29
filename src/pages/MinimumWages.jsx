@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 import { 
@@ -31,14 +31,19 @@ const MinimumWages = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("All States");
   
+  // Selected year per state record ID: { [stateName]: selectedYear }
+  const [selectedStateYears, setSelectedStateYears] = useState({});
+
   // State Modal Controls
-  const [activeModalDoc, setActiveModalDoc] = useState(null);
+  const [activeStateGroup, setActiveStateGroup] = useState(null); // Holds grouped state data
+  const [modalSelectedYear, setModalSelectedYear] = useState("");
   const [modalSearch, setModalSearch] = useState("");
   const [modalDropdownFilters, setModalDropdownFilters] = useState({});
 
   // District Modal Controls
-  const [activeDistrictDoc, setActiveDistrictDoc] = useState(null);
-  const [selectedDistrictIdx, setSelectedDistrictIdx] = useState(0);
+  const [activeDistrictGroup, setActiveDistrictGroup] = useState(null);
+  const [selectedDistrictName, setSelectedDistrictName] = useState("");
+  const [selectedDistrictScheduleIdx, setSelectedDistrictScheduleIdx] = useState(0);
   const [districtSearch, setDistrictSearch] = useState("");
 
   useEffect(() => {
@@ -57,13 +62,35 @@ const MinimumWages = () => {
     fetchAllWages();
   }, []);
 
-  const filteredDocs = wageDocs.filter(doc => {
-    const matchesSearch = doc.state.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRegion = selectedRegion === "All States" || doc.state === selectedRegion;
+  // Grouping documents by state name to prevent duplicate state entries
+  const groupedStates = useMemo(() => {
+    const map = {};
+    wageDocs.forEach((doc) => {
+      const stateKey = (doc.state || "Unknown State").trim();
+      if (!map[stateKey]) {
+        map[stateKey] = {
+          stateName: stateKey,
+          records: [],
+        };
+      }
+      map[stateKey].records.push(doc);
+    });
+
+    // Sort records inside each state by year (newest first)
+    Object.keys(map).forEach((st) => {
+      map[st].records.sort((a, b) => String(b.year || b.period || "").localeCompare(String(a.year || a.period || "")));
+    });
+
+    return Object.values(map);
+  }, [wageDocs]);
+
+  const filteredGroups = groupedStates.filter(group => {
+    const matchesSearch = group.stateName.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesRegion = selectedRegion === "All States" || group.stateName === selectedRegion;
     return matchesSearch && matchesRegion;
   });
 
-  const stateDropdownOptions = ["All States", ...new Set(wageDocs.map(d => d.state))];
+  const stateDropdownOptions = ["All States", ...groupedStates.map(g => g.stateName)];
 
   // Cleans broken encoding strings safely
   const cleanHeaderString = (str) => {
@@ -84,6 +111,14 @@ const MinimumWages = () => {
     if (joined.includes("area")) return "Area + Skill";
     return "Skill-wise";
   };
+
+  // Get active record for state modal based on selected year
+  const getActiveModalRecord = () => {
+    if (!activeStateGroup) return null;
+    return activeStateGroup.records.find(r => (r.year || r.period) === modalSelectedYear) || activeStateGroup.records[0];
+  };
+
+  const activeModalDoc = getActiveModalRecord();
 
   // Detect Filterable Columns for Modal
   const getFilterableColumns = () => {
@@ -122,13 +157,43 @@ const MinimumWages = () => {
     });
   };
 
+  // Extract and group district schedules from all records of a state
+  const getConsolidatedDistricts = (group) => {
+    if (!group) return [];
+    const districtMap = {};
+
+    group.records.forEach((rec) => {
+      if (rec.districts && Array.isArray(rec.districts)) {
+        rec.districts.forEach((dist) => {
+          const dName = dist.districtName || "General District";
+          if (!districtMap[dName]) {
+            districtMap[dName] = [];
+          }
+          districtMap[dName].push({
+            ...dist,
+            parentYear: rec.year || rec.period,
+            parentDocUrl: rec.documentUrl
+          });
+        });
+      }
+    });
+
+    return districtMap;
+  };
+
+  const consolidatedDistricts = useMemo(() => {
+    return getConsolidatedDistricts(activeDistrictGroup);
+  }, [activeDistrictGroup]);
+
+  // Selected district active schedule object
+  const activeDistrictSchedules = consolidatedDistricts[selectedDistrictName] || [];
+  const currentDistrictSchedule = activeDistrictSchedules[selectedDistrictScheduleIdx] || activeDistrictSchedules[0];
+
   // Filter Selected District Modal Rows
   const getFilteredDistrictWages = () => {
-    if (!activeDistrictDoc || !activeDistrictDoc.districts || !activeDistrictDoc.districts[selectedDistrictIdx]) return [];
-    const targetDistrict = activeDistrictDoc.districts[selectedDistrictIdx];
-    if (!targetDistrict.wages) return [];
+    if (!currentDistrictSchedule || !currentDistrictSchedule.wages) return [];
 
-    return targetDistrict.wages.filter(row => 
+    return currentDistrictSchedule.wages.filter(row => 
       Object.values(row).some(val => 
         String(val).toLowerCase().includes(districtSearch.toLowerCase())
       )
@@ -211,42 +276,77 @@ const MinimumWages = () => {
               <thead>
                 <tr className="bg-[#0B1538] text-white text-[11px] font-black uppercase tracking-widest">
                   <th className="py-4 px-6">State</th>
-                  <th className="py-4 px-6">Latest Revision</th>
+                  <th className="py-4 px-6">Select Year</th>
                   <th className="py-4 px-6">Structure / Classification</th>
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {filteredDocs.length > 0 ? (
-                  filteredDocs.map((doc) => {
-                    const hasDistricts = doc.districts && doc.districts.length > 0;
-                    const hasMasterData = doc.wages && doc.wages.length > 0;
+                {filteredGroups.length > 0 ? (
+                  filteredGroups.map((group) => {
+                    const selectedYear = selectedStateYears[group.stateName] || (group.records[0]?.year || group.records[0]?.period || "");
+                    const currentDoc = group.records.find(r => (r.year || r.period) === selectedYear) || group.records[0];
+
+                    // Total districts across all year records for this state
+                    const totalDistricts = group.records.reduce((acc, curr) => acc + (curr.districts ? curr.districts.length : 0), 0);
+                    const hasMasterData = currentDoc && currentDoc.wages && currentDoc.wages.length > 0;
 
                     return (
-                      <tr key={doc.id} className="hover:bg-slate-50/70 transition-colors">
+                      <tr key={group.stateName} className="hover:bg-slate-50/70 transition-colors">
                         <td className="py-4 px-6 font-bold text-slate-800 uppercase tracking-wide text-xs flex items-center gap-3">
-                          <StateIcon stateName={doc.state} />
-                          {doc.state}
+                          <StateIcon stateName={group.stateName} />
+                          {group.stateName}
                         </td>
-                        <td className="py-4 px-6 font-semibold text-slate-500 text-xs">{doc.period || "N/A"}</td>
+                        
+                        {/* Year Selector Dropdown */}
+                        <td className="py-4 px-6 font-semibold text-slate-500 text-xs">
+                          {group.records.length > 1 ? (
+                            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 w-fit">
+                              <Calendar size={14} className="text-blue-600" />
+                              <select
+                                value={selectedYear}
+                                onChange={(e) => setSelectedStateYears({
+                                  ...selectedStateYears,
+                                  [group.stateName]: e.target.value
+                                })}
+                                className="bg-transparent font-bold text-slate-700 outline-none cursor-pointer text-xs"
+                              >
+                                {group.records.map((rec) => {
+                                  const yr = rec.year || rec.period || "N/A";
+                                  return <option key={rec.id} value={yr}>{yr}</option>;
+                                })}
+                              </select>
+                            </div>
+                          ) : (
+                            <span className="flex items-center gap-1 font-bold text-slate-700">
+                              <Calendar size={13} className="text-slate-400" />
+                              {currentDoc?.year || currentDoc?.period || "N/A"}
+                            </span>
+                          )}
+                        </td>
+
                         <td className="py-4 px-6">
                           <span className="px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full font-bold text-[11px] tracking-wide">
-                            {inferClassification(doc.headers)}
+                            {inferClassification(currentDoc?.headers)}
                           </span>
                         </td>
-                        <td className="py-4 px-6 text-right flex justify-end gap-2">
+
+                        <td className="py-4 px-6 text-right flex justify-end items-center gap-2">
                           
                           {/* District Schedules Button */}
-                          {hasDistricts && (
+                          {totalDistricts > 0 && (
                             <button
                               onClick={() => {
-                                setActiveDistrictDoc(doc);
-                                setSelectedDistrictIdx(0);
+                                setActiveDistrictGroup(group);
+                                const dists = getConsolidatedDistricts(group);
+                                const firstDistName = Object.keys(dists)[0] || "";
+                                setSelectedDistrictName(firstDistName);
+                                setSelectedDistrictScheduleIdx(0);
                                 setDistrictSearch("");
                               }}
                               className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200 transition-all text-xs font-bold rounded-xl shadow-sm"
                             >
-                              <Building2 size={14} /> District Schedules ({doc.districts.length})
+                              <Building2 size={14} /> District Schedules ({totalDistricts})
                             </button>
                           )}
 
@@ -254,7 +354,8 @@ const MinimumWages = () => {
                           {hasMasterData ? (
                             <button
                               onClick={() => {
-                                setActiveModalDoc(doc);
+                                setActiveStateGroup(group);
+                                setModalSelectedYear(selectedYear);
                                 setModalSearch("");
                                 setModalDropdownFilters({});
                               }}
@@ -262,7 +363,7 @@ const MinimumWages = () => {
                             >
                               View Details <ChevronRight size={14} />
                             </button>
-                          ) : !hasDistricts && (
+                          ) : totalDistricts === 0 && (
                             <span className="text-xs text-slate-400 italic py-2">No tables uploaded</span>
                           )}
                         </td>
@@ -290,19 +391,39 @@ const MinimumWages = () => {
       </div>
 
       {/* 4️⃣ MASTER STATE DETAILS MODAL */}
-      {activeModalDoc && (
+      {activeStateGroup && activeModalDoc && (
         <div className="fixed inset-0 z-[9999] w-screen h-screen bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="absolute inset-0 -z-10" onClick={() => setActiveModalDoc(null)} />
+          <div className="absolute inset-0 -z-10" onClick={() => setActiveStateGroup(null)} />
 
           <div className="bg-white rounded-[1.5rem] w-full max-w-6xl shadow-2xl flex flex-col max-h-[90vh] border border-slate-100 overflow-hidden">
             
             {/* Modal Title Banner */}
             <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
-              <h2 className="text-lg font-black text-[#0B1538] tracking-tight uppercase">
-                Minimum Wage Details - {activeModalDoc.state}
-              </h2>
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-black text-[#0B1538] tracking-tight uppercase">
+                  Minimum Wage Details - {activeStateGroup.stateName}
+                </h2>
+                {activeStateGroup.records.length > 1 && (
+                  <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-2.5 py-1">
+                    <span className="text-xs font-bold text-blue-900">Year:</span>
+                    <select
+                      value={modalSelectedYear}
+                      onChange={(e) => {
+                        setModalSelectedYear(e.target.value);
+                        setModalDropdownFilters({});
+                      }}
+                      className="bg-transparent font-extrabold text-blue-700 outline-none text-xs cursor-pointer"
+                    >
+                      {activeStateGroup.records.map((rec) => {
+                        const yr = rec.year || rec.period || "N/A";
+                        return <option key={rec.id} value={yr}>{yr}</option>;
+                      })}
+                    </select>
+                  </div>
+                )}
+              </div>
               <button 
-                onClick={() => setActiveModalDoc(null)}
+                onClick={() => setActiveStateGroup(null)}
                 className="p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors"
               >
                 <X size={20} />
@@ -313,19 +434,19 @@ const MinimumWages = () => {
             <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
                 <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">State</span>
-                <span className="text-xs font-bold text-[#0B1538] uppercase">{activeModalDoc.state}</span>
+                <span className="text-xs font-bold text-[#0B1538] uppercase">{activeStateGroup.stateName}</span>
               </div>
               <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Latest Revision</span>
-                <span className="text-xs font-bold text-slate-600">{activeModalDoc.period || "N/A"}</span>
+                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Selected Year</span>
+                <span className="text-xs font-bold text-blue-600">{activeModalDoc.year || activeModalDoc.period || "N/A"}</span>
               </div>
               <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
                 <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Structure</span>
                 <span className="text-xs font-bold text-slate-600">{inferClassification(activeModalDoc.headers)}</span>
               </div>
               <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Applicable From</span>
-                <span className="text-xs font-bold text-emerald-600">{activeModalDoc.period || "Current Cycle"}</span>
+                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Applicable Cycle</span>
+                <span className="text-xs font-bold text-emerald-600">{activeModalDoc.year || activeModalDoc.period || "Current Cycle"}</span>
               </div>
             </div>
 
@@ -335,7 +456,7 @@ const MinimumWages = () => {
                 <Search className="absolute left-3 top-2.5 text-slate-400" size={14} />
                 <input
                   type="text"
-                  placeholder={`Search table rows in ${String(activeModalDoc.state).toLowerCase()}...`}
+                  placeholder={`Search table rows in ${activeStateGroup.stateName.toLowerCase()}...`}
                   value={modalSearch}
                   onChange={(e) => setModalSearch(e.target.value)}
                   className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 rounded-lg border border-slate-200 outline-none font-medium focus:border-blue-500"
@@ -440,14 +561,14 @@ const MinimumWages = () => {
                     onClick={() => window.open(activeModalDoc.documentUrl, "_blank", "noopener,noreferrer")}
                     className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200 font-bold text-xs rounded-xl transition-all bg-white shadow-sm"
                   >
-                    <Download size={14} /> Download Notification
+                    <Download size={14} /> Download Notification ({activeModalDoc.year || activeModalDoc.period})
                   </button>
                 ) : (
                   <span className="text-xs text-slate-400 italic font-medium">Official notification link unconfigured</span>
                 )}
               </div>
               <button
-                onClick={() => setActiveModalDoc(null)}
+                onClick={() => setActiveStateGroup(null)}
                 className="px-6 py-2.5 bg-[#0B1538] text-white font-bold text-xs rounded-xl hover:bg-slate-800 transition-colors shadow-md"
               >
                 Close
@@ -459,9 +580,9 @@ const MinimumWages = () => {
       )}
 
       {/* 5️⃣ DEDICATED DISTRICT SCHEDULES MODAL */}
-      {activeDistrictDoc && (
+      {activeDistrictGroup && (
         <div className="fixed inset-0 z-[9999] w-screen h-screen bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="absolute inset-0 -z-10" onClick={() => setActiveDistrictDoc(null)} />
+          <div className="absolute inset-0 -z-10" onClick={() => setActiveDistrictGroup(null)} />
 
           <div className="bg-white rounded-[1.5rem] w-full max-w-6xl shadow-2xl flex flex-col max-h-[90vh] border border-slate-100 overflow-hidden">
             
@@ -470,11 +591,11 @@ const MinimumWages = () => {
               <div className="flex items-center gap-2">
                 <Building2 className="text-emerald-600" size={22} />
                 <h2 className="text-lg font-black text-[#0B1538] tracking-tight uppercase">
-                  District Wage Schedules - {activeDistrictDoc.state}
+                  District Wage Schedules - {activeDistrictGroup.stateName}
                 </h2>
               </div>
               <button 
-                onClick={() => setActiveDistrictDoc(null)}
+                onClick={() => setActiveDistrictGroup(null)}
                 className="p-1.5 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-600 transition-colors"
               >
                 <X size={20} />
@@ -483,35 +604,59 @@ const MinimumWages = () => {
 
             {/* District Tab Navigation */}
             <div className="px-6 py-3 bg-slate-50 border-b border-slate-200 flex gap-2 overflow-x-auto">
-              {activeDistrictDoc.districts.map((dist, idx) => (
+              {Object.keys(consolidatedDistricts).map((dName) => (
                 <button
-                  key={idx}
+                  key={dName}
                   onClick={() => {
-                    setSelectedDistrictIdx(idx);
+                    setSelectedDistrictName(dName);
+                    setSelectedDistrictScheduleIdx(0);
                     setDistrictSearch("");
                   }}
                   className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap flex items-center gap-2 ${
-                    selectedDistrictIdx === idx
+                    selectedDistrictName === dName
                       ? "bg-emerald-600 text-white shadow-md"
                       : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-100"
                   }`}
                 >
                   <Building2 size={14} />
-                  {dist.districtName}
+                  {dName}
                 </button>
               ))}
             </div>
 
-            {/* Selected District Info Banner */}
-            {activeDistrictDoc.districts[selectedDistrictIdx] && (
-              <div className="px-6 py-3 bg-emerald-50/60 border-b border-emerald-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
-                <div>
+            {/* Selected District Info Banner & Year/Month Revision Switcher */}
+            {currentDistrictSchedule && (
+              <div className="px-6 py-3 bg-emerald-50/60 border-b border-emerald-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <h3 className="text-sm font-extrabold text-emerald-950">
-                    District: {activeDistrictDoc.districts[selectedDistrictIdx].districtName}
+                    District: {selectedDistrictName}
                   </h3>
-                  <p className="text-xs text-emerald-700 flex items-center gap-1.5 mt-0.5">
-                    <Calendar size={13} /> Valid / Effective From: <span className="font-bold">{activeDistrictDoc.districts[selectedDistrictIdx].validFrom || "N/A"}</span>
-                  </p>
+                  
+                  {/* Select Month/Year Version if multiple records exist for this district */}
+                  {activeDistrictSchedules.length > 1 ? (
+                    <div className="flex items-center gap-1.5 bg-white border border-emerald-300 rounded-lg px-2.5 py-1">
+                      <Calendar size={13} className="text-emerald-700" />
+                      <span className="text-xs font-bold text-emerald-900">Period:</span>
+                      <select
+                        value={selectedDistrictScheduleIdx}
+                        onChange={(e) => setSelectedDistrictScheduleIdx(Number(e.target.value))}
+                        className="bg-transparent font-extrabold text-emerald-800 outline-none text-xs cursor-pointer"
+                      >
+                        {activeDistrictSchedules.map((sch, sIdx) => (
+                          <option key={sIdx} value={sIdx}>
+                            {sch.month ? `${sch.month} ` : ""}{sch.year || sch.parentYear || "N/A"}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-emerald-700 flex items-center gap-1.5">
+                      <Calendar size={13} /> Applicable: <span className="font-bold">
+                        {currentDistrictSchedule.month ? `${currentDistrictSchedule.month} ` : ""}
+                        {currentDistrictSchedule.year || currentDistrictSchedule.parentYear || "N/A"}
+                      </span>
+                    </p>
+                  )}
                 </div>
                 
                 {/* Search inside selected district */}
@@ -519,7 +664,7 @@ const MinimumWages = () => {
                   <Search className="absolute left-3 top-2 text-slate-400" size={14} />
                   <input
                     type="text"
-                    placeholder={`Search in ${activeDistrictDoc.districts[selectedDistrictIdx].districtName}...`}
+                    placeholder={`Search in ${selectedDistrictName}...`}
                     value={districtSearch}
                     onChange={(e) => setDistrictSearch(e.target.value)}
                     className="w-full pl-9 pr-3 py-1.5 text-xs bg-white rounded-lg border border-emerald-200 outline-none font-medium focus:ring-1 focus:ring-emerald-500"
@@ -530,13 +675,13 @@ const MinimumWages = () => {
 
             {/* District Table Content */}
             <div className="p-6 overflow-y-auto flex-1 bg-white space-y-4">
-              {activeDistrictDoc.districts[selectedDistrictIdx] && (
+              {currentDistrictSchedule ? (
                 <div className="overflow-x-auto rounded-xl border border-slate-200 max-h-[42vh]">
                   <table className="w-full text-left text-xs border-collapse">
                     <thead className="sticky top-0 z-10 bg-slate-100 text-slate-600 font-black uppercase border-b border-slate-200">
                       <tr>
-                        {activeDistrictDoc.districts[selectedDistrictIdx].headers &&
-                          activeDistrictDoc.districts[selectedDistrictIdx].headers.map((heading, i) => (
+                        {currentDistrictSchedule.headers &&
+                          currentDistrictSchedule.headers.map((heading, i) => (
                             <th key={i} className="py-2.5 px-4 font-bold whitespace-nowrap bg-slate-100">
                               {cleanHeaderString(heading)}
                             </th>
@@ -547,7 +692,7 @@ const MinimumWages = () => {
                       {getFilteredDistrictWages().length > 0 ? (
                         getFilteredDistrictWages().map((row, rowIndex) => (
                           <tr key={rowIndex} className="hover:bg-slate-50/80 transition-colors">
-                            {activeDistrictDoc.districts[selectedDistrictIdx].headers.map((heading, colIndex) => {
+                            {currentDistrictSchedule.headers.map((heading, colIndex) => {
                               const val = row[heading];
                               return (
                                 <td 
@@ -569,25 +714,27 @@ const MinimumWages = () => {
                       ) : (
                         <tr>
                           <td 
-                            colSpan={activeDistrictDoc.districts[selectedDistrictIdx].headers ? activeDistrictDoc.districts[selectedDistrictIdx].headers.length : 1} 
+                            colSpan={currentDistrictSchedule.headers ? currentDistrictSchedule.headers.length : 1} 
                             className="text-center py-12 text-slate-400 italic"
                           >
-                            No matching records found in {activeDistrictDoc.districts[selectedDistrictIdx].districtName}.
+                            No matching records found in {selectedDistrictName}.
                           </td>
                         </tr>
                       )}
                     </tbody>
                   </table>
                 </div>
+              ) : (
+                <div className="text-center py-12 text-slate-400 italic">No district data configured.</div>
               )}
             </div>
 
             {/* Modal Bottom Fixed Control Panel */}
             <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center">
               <div>
-                {activeDistrictDoc.documentUrl ? (
+                {currentDistrictSchedule?.parentDocUrl ? (
                   <button
-                    onClick={() => window.open(activeDistrictDoc.documentUrl, "_blank", "noopener,noreferrer")}
+                    onClick={() => window.open(currentDistrictSchedule.parentDocUrl, "_blank", "noopener,noreferrer")}
                     className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200 font-bold text-xs rounded-xl transition-all bg-white shadow-sm"
                   >
                     <Download size={14} /> Download Gazette Notification
@@ -597,7 +744,7 @@ const MinimumWages = () => {
                 )}
               </div>
               <button
-                onClick={() => setActiveDistrictDoc(null)}
+                onClick={() => setActiveDistrictGroup(null)}
                 className="px-6 py-2.5 bg-[#0B1538] text-white font-bold text-xs rounded-xl hover:bg-slate-800 transition-colors shadow-md"
               >
                 Close
