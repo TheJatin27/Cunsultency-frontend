@@ -20,10 +20,18 @@ const StateIcon = ({ stateName }) => {
   const normalized = String(stateName).toLowerCase();
   if (normalized.includes("delhi")) return <span className="text-blue-500 font-bold bg-blue-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-blue-100">DL</span>;
   if (normalized.includes("haryana")) return <span className="text-emerald-500 font-bold bg-emerald-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-emerald-100">HR</span>;
-  if (normalized.includes("kerala")) return <span className="text-purple-500 font-bold bg-purple-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-purple-100">KL</span>;
+  if (normalized.includes("kerala") || normalized.includes("kerela")) return <span className="text-purple-500 font-bold bg-purple-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-purple-100">KL</span>;
   if (normalized.includes("karnataka")) return <span className="text-orange-500 font-bold bg-orange-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-orange-100">KA</span>;
   if (normalized.includes("maharashtra")) return <span className="text-teal-500 font-bold bg-teal-50 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-teal-100">MH</span>;
   return <span className="text-slate-500 font-bold bg-slate-100 w-6 h-6 rounded-md flex items-center justify-center text-[11px] border border-slate-200">IN</span>;
+};
+
+// Helper for human-readable period tags
+const getPeriodLabel = (doc) => {
+  if (!doc) return "N/A";
+  const year = doc.year || doc.period || "";
+  const month = doc.month || "";
+  return [month, year].filter(Boolean).join(" ") || "N/A";
 };
 
 const MinimumWages = () => {
@@ -31,12 +39,12 @@ const MinimumWages = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("All States");
   
-  // Selected year per state record ID: { [stateName]: selectedYear }
-  const [selectedStateYears, setSelectedStateYears] = useState({});
+  // Selected record ID per normalized state name: { [stateName]: selectedRecordId }
+  const [selectedStateRecords, setSelectedStateRecords] = useState({});
 
   // State Modal Controls
-  const [activeStateGroup, setActiveStateGroup] = useState(null); // Holds grouped state data
-  const [modalSelectedYear, setModalSelectedYear] = useState("");
+  const [activeStateGroup, setActiveStateGroup] = useState(null);
+  const [modalSelectedRecordId, setModalSelectedRecordId] = useState("");
   const [modalSearch, setModalSearch] = useState("");
   const [modalDropdownFilters, setModalDropdownFilters] = useState({});
 
@@ -62,37 +70,49 @@ const MinimumWages = () => {
     fetchAllWages();
   }, []);
 
-  // Grouping documents by state name to prevent duplicate state entries
+  // Grouping documents by normalized uppercase state name to prevent duplicate rows
   const groupedStates = useMemo(() => {
     const map = {};
+
     wageDocs.forEach((doc) => {
-      const stateKey = (doc.state || "Unknown State").trim();
-      if (!map[stateKey]) {
-        map[stateKey] = {
-          stateName: stateKey,
+      const rawState = (doc.state || "Unknown State").trim();
+      const normalizedKey = rawState.toUpperCase();
+
+      if (!map[normalizedKey]) {
+        map[normalizedKey] = {
+          stateName: normalizedKey,
           records: [],
         };
       }
-      map[stateKey].records.push(doc);
+      map[normalizedKey].records.push(doc);
     });
 
-    // Sort records inside each state by year (newest first)
-    Object.keys(map).forEach((st) => {
-      map[st].records.sort((a, b) => String(b.year || b.period || "").localeCompare(String(a.year || a.period || "")));
+    // Sort records within each state group: newest period/creation first
+    Object.keys(map).forEach((stKey) => {
+      map[stKey].records.sort((a, b) => {
+        const timeB = b.createdAt?.seconds || 0;
+        const timeA = a.createdAt?.seconds || 0;
+        if (timeB !== timeA) return timeB - timeA;
+
+        const periodB = `${b.year || b.period || ""} ${b.month || ""}`;
+        const periodA = `${a.year || a.period || ""} ${a.month || ""}`;
+        return periodB.localeCompare(periodA);
+      });
     });
 
     return Object.values(map);
   }, [wageDocs]);
 
   const filteredGroups = groupedStates.filter(group => {
-    const matchesSearch = group.stateName.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRegion = selectedRegion === "All States" || group.stateName === selectedRegion;
+    const query = searchTerm.toLowerCase();
+    const matchesSearch = group.stateName.toLowerCase().includes(query) ||
+      group.records.some(r => getPeriodLabel(r).toLowerCase().includes(query));
+    const matchesRegion = selectedRegion === "All States" || group.stateName === selectedRegion.toUpperCase();
     return matchesSearch && matchesRegion;
   });
 
   const stateDropdownOptions = ["All States", ...groupedStates.map(g => g.stateName)];
 
-  // Cleans broken encoding strings safely
   const cleanHeaderString = (str) => {
     if (!str) return "";
     return String(str)
@@ -112,10 +132,10 @@ const MinimumWages = () => {
     return "Skill-wise";
   };
 
-  // Get active record for state modal based on selected year
+  // Get active record for state modal based on selected doc ID
   const getActiveModalRecord = () => {
     if (!activeStateGroup) return null;
-    return activeStateGroup.records.find(r => (r.year || r.period) === modalSelectedYear) || activeStateGroup.records[0];
+    return activeStateGroup.records.find(r => r.id === modalSelectedRecordId) || activeStateGroup.records[0];
   };
 
   const activeModalDoc = getActiveModalRecord();
@@ -159,7 +179,7 @@ const MinimumWages = () => {
 
   // Extract and group district schedules from all records of a state
   const getConsolidatedDistricts = (group) => {
-    if (!group) return [];
+    if (!group) return {};
     const districtMap = {};
 
     group.records.forEach((rec) => {
@@ -171,6 +191,7 @@ const MinimumWages = () => {
           }
           districtMap[dName].push({
             ...dist,
+            parentMonth: rec.month,
             parentYear: rec.year || rec.period,
             parentDocUrl: rec.documentUrl
           });
@@ -252,7 +273,7 @@ const MinimumWages = () => {
             <Search className="absolute left-3.5 top-3.5 text-slate-400" size={16} />
             <input
               type="text"
-              placeholder="Search State..."
+              placeholder="Search State or Applicable Period..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 bg-slate-50 rounded-xl border border-slate-200 outline-none text-sm font-medium focus:border-blue-500 transition-colors"
@@ -276,7 +297,7 @@ const MinimumWages = () => {
               <thead>
                 <tr className="bg-[#0B1538] text-white text-[11px] font-black uppercase tracking-widest">
                   <th className="py-4 px-6">State</th>
-                  <th className="py-4 px-6">Select Year</th>
+                  <th className="py-4 px-6">Select Applicable Period</th>
                   <th className="py-4 px-6">Structure / Classification</th>
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
@@ -284,10 +305,9 @@ const MinimumWages = () => {
               <tbody className="divide-y divide-slate-100">
                 {filteredGroups.length > 0 ? (
                   filteredGroups.map((group) => {
-                    const selectedYear = selectedStateYears[group.stateName] || (group.records[0]?.year || group.records[0]?.period || "");
-                    const currentDoc = group.records.find(r => (r.year || r.period) === selectedYear) || group.records[0];
+                    const selectedRecId = selectedStateRecords[group.stateName] || group.records[0]?.id;
+                    const currentDoc = group.records.find(r => r.id === selectedRecId) || group.records[0];
 
-                    // Total districts across all year records for this state
                     const totalDistricts = group.records.reduce((acc, curr) => acc + (curr.districts ? curr.districts.length : 0), 0);
                     const hasMasterData = currentDoc && currentDoc.wages && currentDoc.wages.length > 0;
 
@@ -298,29 +318,30 @@ const MinimumWages = () => {
                           {group.stateName}
                         </td>
                         
-                        {/* Year Selector Dropdown */}
+                        {/* Month + Year Selector Dropdown */}
                         <td className="py-4 px-6 font-semibold text-slate-500 text-xs">
                           {group.records.length > 1 ? (
                             <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 w-fit">
                               <Calendar size={14} className="text-blue-600" />
                               <select
-                                value={selectedYear}
-                                onChange={(e) => setSelectedStateYears({
-                                  ...selectedStateYears,
+                                value={currentDoc?.id}
+                                onChange={(e) => setSelectedStateRecords(prev => ({
+                                  ...prev,
                                   [group.stateName]: e.target.value
-                                })}
+                                }))}
                                 className="bg-transparent font-bold text-slate-700 outline-none cursor-pointer text-xs"
                               >
-                                {group.records.map((rec) => {
-                                  const yr = rec.year || rec.period || "N/A";
-                                  return <option key={rec.id} value={yr}>{yr}</option>;
-                                })}
+                                {group.records.map((rec) => (
+                                  <option key={rec.id} value={rec.id}>
+                                    {getPeriodLabel(rec)}
+                                  </option>
+                                ))}
                               </select>
                             </div>
                           ) : (
                             <span className="flex items-center gap-1 font-bold text-slate-700">
                               <Calendar size={13} className="text-slate-400" />
-                              {currentDoc?.year || currentDoc?.period || "N/A"}
+                              {getPeriodLabel(currentDoc)}
                             </span>
                           )}
                         </td>
@@ -355,7 +376,7 @@ const MinimumWages = () => {
                             <button
                               onClick={() => {
                                 setActiveStateGroup(group);
-                                setModalSelectedYear(selectedYear);
+                                setModalSelectedRecordId(currentDoc?.id || group.records[0]?.id);
                                 setModalSearch("");
                                 setModalDropdownFilters({});
                               }}
@@ -405,19 +426,21 @@ const MinimumWages = () => {
                 </h2>
                 {activeStateGroup.records.length > 1 && (
                   <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-2.5 py-1">
-                    <span className="text-xs font-bold text-blue-900">Year:</span>
+                    <Calendar size={13} className="text-blue-700" />
+                    <span className="text-xs font-bold text-blue-900">Period:</span>
                     <select
-                      value={modalSelectedYear}
+                      value={activeModalDoc.id}
                       onChange={(e) => {
-                        setModalSelectedYear(e.target.value);
+                        setModalSelectedRecordId(e.target.value);
                         setModalDropdownFilters({});
                       }}
                       className="bg-transparent font-extrabold text-blue-700 outline-none text-xs cursor-pointer"
                     >
-                      {activeStateGroup.records.map((rec) => {
-                        const yr = rec.year || rec.period || "N/A";
-                        return <option key={rec.id} value={yr}>{yr}</option>;
-                      })}
+                      {activeStateGroup.records.map((rec) => (
+                        <option key={rec.id} value={rec.id}>
+                          {getPeriodLabel(rec)}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 )}
@@ -437,16 +460,16 @@ const MinimumWages = () => {
                 <span className="text-xs font-bold text-[#0B1538] uppercase">{activeStateGroup.stateName}</span>
               </div>
               <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Selected Year</span>
+                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Applicable Month</span>
+                <span className="text-xs font-bold text-blue-600">{activeModalDoc.month || "General Revision"}</span>
+              </div>
+              <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
+                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Applicable Year</span>
                 <span className="text-xs font-bold text-blue-600">{activeModalDoc.year || activeModalDoc.period || "N/A"}</span>
               </div>
               <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
                 <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Structure</span>
                 <span className="text-xs font-bold text-slate-600">{inferClassification(activeModalDoc.headers)}</span>
-              </div>
-              <div className="bg-white p-2 rounded-xl border border-slate-200 shadow-sm">
-                <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider block">Applicable Cycle</span>
-                <span className="text-xs font-bold text-emerald-600">{activeModalDoc.year || activeModalDoc.period || "Current Cycle"}</span>
               </div>
             </div>
 
@@ -561,7 +584,7 @@ const MinimumWages = () => {
                     onClick={() => window.open(activeModalDoc.documentUrl, "_blank", "noopener,noreferrer")}
                     className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-200 text-slate-600 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-200 font-bold text-xs rounded-xl transition-all bg-white shadow-sm"
                   >
-                    <Download size={14} /> Download Notification ({activeModalDoc.year || activeModalDoc.period})
+                    <Download size={14} /> Download Notification ({getPeriodLabel(activeModalDoc)})
                   </button>
                 ) : (
                   <span className="text-xs text-slate-400 italic font-medium">Official notification link unconfigured</span>
@@ -624,7 +647,7 @@ const MinimumWages = () => {
               ))}
             </div>
 
-            {/* Selected District Info Banner & Year/Month Revision Switcher */}
+            {/* Selected District Info Banner & Period Switcher */}
             {currentDistrictSchedule && (
               <div className="px-6 py-3 bg-emerald-50/60 border-b border-emerald-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div className="flex flex-wrap items-center gap-3">
@@ -632,7 +655,7 @@ const MinimumWages = () => {
                     District: {selectedDistrictName}
                   </h3>
                   
-                  {/* Select Month/Year Version if multiple records exist for this district */}
+                  {/* Select Month/Year Version if multiple records exist */}
                   {activeDistrictSchedules.length > 1 ? (
                     <div className="flex items-center gap-1.5 bg-white border border-emerald-300 rounded-lg px-2.5 py-1">
                       <Calendar size={13} className="text-emerald-700" />
@@ -642,18 +665,20 @@ const MinimumWages = () => {
                         onChange={(e) => setSelectedDistrictScheduleIdx(Number(e.target.value))}
                         className="bg-transparent font-extrabold text-emerald-800 outline-none text-xs cursor-pointer"
                       >
-                        {activeDistrictSchedules.map((sch, sIdx) => (
-                          <option key={sIdx} value={sIdx}>
-                            {sch.month ? `${sch.month} ` : ""}{sch.year || sch.parentYear || "N/A"}
-                          </option>
-                        ))}
+                        {activeDistrictSchedules.map((sch, sIdx) => {
+                          const period = [sch.month || sch.parentMonth, sch.year || sch.parentYear].filter(Boolean).join(" ") || "N/A";
+                          return (
+                            <option key={sIdx} value={sIdx}>
+                              {period}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                   ) : (
                     <p className="text-xs text-emerald-700 flex items-center gap-1.5">
                       <Calendar size={13} /> Applicable: <span className="font-bold">
-                        {currentDistrictSchedule.month ? `${currentDistrictSchedule.month} ` : ""}
-                        {currentDistrictSchedule.year || currentDistrictSchedule.parentYear || "N/A"}
+                        {[currentDistrictSchedule.month || currentDistrictSchedule.parentMonth, currentDistrictSchedule.year || currentDistrictSchedule.parentYear].filter(Boolean).join(" ") || "N/A"}
                       </span>
                     </p>
                   )}
