@@ -17,6 +17,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { db } from "../firebase";
 import { collection, getDocs } from "firebase/firestore";
 
+// Import Quill theme styles for user-facing class rendering (.ql-*)
+import "react-quill-new/dist/quill.snow.css";
+
 const WageCodeDetails = () => {
   const navigate = useNavigate();
   const { slug } = useParams();
@@ -24,11 +27,23 @@ const WageCodeDetails = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Sanitizes hidden layout characters, replaces regex broken words, and strips line carriage errors
+  // Load Google Fonts dynamically for user view
+  useEffect(() => {
+    const linkId = "google-fonts-quill-user";
+    if (!document.getElementById(linkId)) {
+      const link = document.createElement("link");
+      link.id = linkId;
+      link.rel = "stylesheet";
+      link.href =
+        "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Open+Sans:wght@300;400;600;700&family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400;500;700&display=swap";
+      document.head.appendChild(link);
+    }
+  }, []);
+
+  // Sanitizes hidden layout characters & replaces regex broken words
   const cleanTextFormatting = (htmlString) => {
     if (!htmlString) return "";
     return htmlString
-      .replace(/\r?\n|\r/g, " ") // Convert arbitrary system linebreaks to clean inline spaces
       .replace(/Paym\s+ent/gi, "Payment")
       .replace(/Payme\s*-\s*nt/gi, "Payment")
       .replace(/princi\s+ple/gi, "principle")
@@ -70,7 +85,7 @@ const WageCodeDetails = () => {
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900 pb-20 overflow-x-hidden">
       
-      {/* HEADER SECTION - FULL WIDTH WITH COMPRESSED MARGINS/PADDING */}
+      {/* HEADER SECTION */}
       <header className="bg-[#0B1538] text-white pt-6 pb-10 px-6 lg:px-12 relative">
         <div className="w-full">
           <button
@@ -114,17 +129,19 @@ const WageCodeDetails = () => {
       <main className="w-full px-4 lg:px-8 -mt-4 relative z-20">
         <div className="grid grid-cols-12 gap-6 lg:gap-10">
           
-          {/* LEFT CONTENT COLUMN (75% Width on Desktop) */}
+          {/* LEFT CONTENT COLUMN */}
           <div className="col-span-12 xl:col-span-9 bg-white rounded-[2rem] lg:rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100 p-6 lg:p-10 space-y-8 min-w-0">
             
             {/* 01. OVERVIEW */}
-            <section id="overview" className="w-full min-w-0">
-              <SectionHeader icon={<BookOpen className="text-blue-600" />} title="01. Overview" />
-              <div 
-                className="text-slate-600 leading-relaxed pl-6 lg:pl-10 text-[14px] lg:text-[15px] rich-text-area mt-1 w-full"
-                dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.overview) }}
-              />
-            </section>
+            {data.overview && (
+              <section id="overview" className="w-full min-w-0">
+                <SectionHeader icon={<BookOpen className="text-blue-600" />} title="01. Overview" />
+                <div 
+                  className="text-slate-600 leading-relaxed pl-6 lg:pl-10 text-[14px] lg:text-[15px] rich-text-area mt-1 w-full"
+                  dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.overview) }}
+                />
+              </section>
+            )}
 
             {/* DETAILED ACTS BREAKDOWN */}
             {data.includedActs && data.includedActs.length > 0 && (
@@ -151,67 +168,77 @@ const WageCodeDetails = () => {
             )}
 
             {/* BARE ACT NOTE */}
-            <section className="bg-blue-50/50 p-6 lg:p-8 rounded-[2rem] border border-blue-100 w-full min-w-0">
-              <SectionHeader icon={<FileText className="text-orange-600" />} title="02. Official Bare Act Note" />
-              <div className="text-slate-600 text-sm rich-text-area mt-1 w-full pl-0" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.bareActDescription) }} />
-            </section>
+            {data.bareActDescription && (
+              <section className="bg-blue-50/50 p-6 lg:p-8 rounded-[2rem] border border-blue-100 w-full min-w-0">
+                <SectionHeader icon={<FileText className="text-orange-600" />} title="02. Official Bare Act Note" />
+                <div className="text-slate-600 text-sm rich-text-area mt-1 w-full pl-0" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.bareActDescription) }} />
+              </section>
+            )}
 
             {/* AMENDMENTS + RULES */}
             <div className="grid lg:grid-cols-2 gap-8 pt-2 w-full min-w-0">
-              <section className="border-l-4 border-purple-100 pl-6 lg:pl-10 min-w-0">
-                <SectionHeader icon={<Gavel className="text-purple-600" />} title="03. Amendments" />
-                <div className="text-slate-600 text-[13px] rich-text-area mt-1 w-full" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.amendments) }} />
-              </section>
-              <section className="border-l-4 border-emerald-100 pl-6 lg:pl-10 min-w-0">
-                <SectionHeader icon={<ClipboardCheck className="text-emerald-600" />} title="04. Statutory Rules" />
-                <div className="text-slate-600 text-[13px] rich-text-area mt-1 w-full" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.rules) }} />
-              </section>
+              {data.amendments && (
+                <section className="border-l-4 border-purple-100 pl-6 lg:pl-10 min-w-0">
+                  <SectionHeader icon={<Gavel className="text-purple-600" />} title="03. Amendments" />
+                  <div className="text-slate-600 text-[13px] rich-text-area mt-1 w-full" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.amendments) }} />
+                </section>
+              )}
+              {data.rules && (
+                <section className="border-l-4 border-emerald-100 pl-6 lg:pl-10 min-w-0">
+                  <SectionHeader icon={<ClipboardCheck className="text-emerald-600" />} title="04. Statutory Rules" />
+                  <div className="text-slate-600 text-[13px] rich-text-area mt-1 w-full" dangerouslySetInnerHTML={{ __html: cleanTextFormatting(data.rules) }} />
+                </section>
+              )}
             </div>
 
             {/* 05. PRACTICAL IMPLEMENTATION */}
-            <section id="practical-implementation-section" className="w-full min-w-0 border-l-4 border-amber-100 pl-6 lg:pl-10">
-              <SectionHeader icon={<AlertCircle className="text-amber-600" />} title="05. Practical Implementation" />
-              <div className="mt-2 w-full">
-                <ul className="space-y-3.5 list-disc list-outside pl-4 text-slate-600 text-[13px] lg:text-[14px] leading-relaxed font-medium">
-                  {data.practicalNotes?.map((note, i) => (
-                    <li key={i} className="marker:text-amber-500 pl-1">
-                      <span 
-                        className="practical-inline-area inline w-full" 
-                        dangerouslySetInnerHTML={{ __html: cleanTextFormatting(note) }} 
-                      />
+            {data.practicalNotes && data.practicalNotes.length > 0 && (
+              <section id="practical-implementation-section" className="w-full min-w-0 border-l-4 border-amber-100 pl-6 lg:pl-10">
+                <SectionHeader icon={<AlertCircle className="text-amber-600" />} title="05. Practical Implementation" />
+                <div className="mt-2 w-full">
+                  <ul className="space-y-3.5 list-disc list-outside pl-4 text-slate-600 text-[13px] lg:text-[14px] leading-relaxed font-medium">
+                    {data.practicalNotes.map((note, i) => (
+                      <li key={i} className="marker:text-amber-500 pl-1">
+                        <span 
+                          className="practical-inline-area inline w-full" 
+                          dangerouslySetInnerHTML={{ __html: cleanTextFormatting(note) }} 
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </section>
+            )}
+          </div>
+
+          {/* RIGHT SIDEBAR COLUMN */}
+          <aside className="col-span-12 xl:col-span-3 space-y-6">
+            
+            {/* ACTS COVERED CARD */}
+            {data.includedActs && data.includedActs.length > 0 && (
+              <div className="bg-[#FFF9F2] border border-[#FFEAD1] p-8 rounded-[2.5rem] shadow-sm">
+                <h3 className="text-[#0B1538] font-black text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
+                  <Scale size={18} className="text-orange-500" />
+                  Acts Covered
+                </h3>
+                
+                <ul className="space-y-4">
+                  {data.includedActs.map((act, i) => (
+                    <li key={i}>
+                      <button 
+                        onClick={() => document.getElementById(`act-${i}`)?.scrollIntoView({ behavior: 'smooth' })}
+                        className="flex items-start gap-3 text-left group w-full"
+                      >
+                        <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-1.5 flex-shrink-0" />
+                        <span className="text-[12px] font-bold text-slate-700 group-hover:text-orange-600 underline decoration-transparent group-hover:decoration-orange-500 transition-all">
+                          {act.actTitle}
+                        </span>
+                      </button>
                     </li>
                   ))}
                 </ul>
               </div>
-            </section>
-          </div>
-
-          {/* RIGHT SIDEBAR COLUMN (25% Width on Desktop) */}
-          <aside className="col-span-12 xl:col-span-3 space-y-6">
-            
-            {/* ACTS COVERED CARD */}
-            <div className="bg-[#FFF9F2] border border-[#FFEAD1] p-8 rounded-[2.5rem] shadow-sm">
-              <h3 className="text-[#0B1538] font-black text-sm uppercase tracking-widest mb-6 flex items-center gap-2">
-                <Scale size={18} className="text-orange-500" />
-                Acts Covered
-              </h3>
-              
-              <ul className="space-y-4">
-                {data.includedActs?.map((act, i) => (
-                  <li key={i}>
-                    <button 
-                      onClick={() => document.getElementById(`act-${i}`)?.scrollIntoView({ behavior: 'smooth' })}
-                      className="flex items-start gap-3 text-left group w-full"
-                    >
-                      <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-1.5 flex-shrink-0" />
-                      <span className="text-[12px] font-bold text-slate-700 group-hover:text-orange-600 underline decoration-transparent group-hover:decoration-orange-500 transition-all">
-                        {act.actTitle}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            )}
 
             {/* NEED HELP CARD */}
             <div className="bg-[#0B1538] p-6 rounded-[2.5rem] text-white shadow-xl">
@@ -229,7 +256,7 @@ const WageCodeDetails = () => {
               </button>
             </div>
 
-            {/* SEPARATE SEPARATE FAQ BOX MODULE */}
+            {/* FAQ MODULE */}
             {data.faqs && data.faqs.length > 0 && (
               <div id="faq-sidebar-box" className="bg-white border border-slate-200 p-6 rounded-[2.5rem] shadow-md space-y-4">
                 <h3 className="text-[#0B1538] font-black text-xs uppercase tracking-widest border-b border-slate-100 pb-3 flex items-center gap-2">
@@ -252,40 +279,109 @@ const WageCodeDetails = () => {
         </div>
       </main>
 
-     {/* BASE CSS STYLES */}
-<style dangerouslySetInnerHTML={{ __html: `
-  .rich-text-area { 
-    display: block !important;
-    white-space: normal !important;
-    word-wrap: break-word !important; 
-    overflow-wrap: break-word !important; 
-    word-break: normal !important; 
-    hyphens: none !important;
-    text-wrap: pretty !important;
-    text-align: left !important;
-  }
-  .rich-text-area p { margin-bottom: 0.6rem; text-align: left !important; }
-  .rich-text-area a { color: #f97316; text-decoration: underline; font-weight: 800; }
-  
-  /* --- HEADINGS STYLING (Overrides Tailwind Preflight) --- */
-  .rich-text-area h1 { font-size: 1.5rem !important; font-weight: 900 !important; color: #0B1538 !important; margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; display: block !important; }
-  .rich-text-area h2 { font-size: 1.25rem !important; font-weight: 800 !important; color: #0B1538 !important; margin-top: 1.25rem !important; margin-bottom: 0.5rem !important; display: block !important; }
-  .rich-text-area h3 { font-size: 1.1rem !important; font-weight: 700 !important; color: #0B1538 !important; margin-top: 1rem !important; margin-bottom: 0.5rem !important; display: block !important; }
-  
-  /* --- BOLD STYLING (Targets both strong and b tags) --- */
-  .rich-text-area strong, .rich-text-area b { color: #0B1538 !important; font-weight: 800 !important; }
+      {/* BASE & ENHANCED RICH TEXT STYLES */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .rich-text-area { 
+          display: block !important;
+          white-space: normal !important;
+          word-wrap: break-word !important; 
+          overflow-wrap: break-word !important; 
+          word-break: normal !important; 
+          hyphens: none !important;
+          text-wrap: pretty !important;
+          text-align: left !important;
+        }
 
-  .rich-text-area ul { list-style-type: disc !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
-  .rich-text-area ol { list-style-type: decimal !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
-  .rich-text-area li { display: list-item !important; text-align: left !important; margin-bottom: 0.25rem; }
+        .rich-text-area p { margin-bottom: 0.6rem; text-align: left !important; }
+        .rich-text-area a { color: #f97316; text-decoration: underline; font-weight: 800; }
+        
+        /* Ensure Inline Text Colors & Background Highlights Render Explicitly */
+        .rich-text-area span[style*="color"] {
+          color: attr(style) !important;
+        }
+        .rich-text-area span[style*="background-color"] {
+          background-color: attr(style) !important;
+        }
+        
+        /* Inline Formatting Overrides */
+        .rich-text-area strong, .rich-text-area b { font-weight: 800 !important; }
+        .rich-text-area em, .rich-text-area i { font-style: italic !important; }
+        .rich-text-area u { text-decoration: underline !important; }
+        .rich-text-area s { text-decoration: line-through !important; }
 
-  .practical-inline-area, .practical-inline-area * {
-    display: inline !important;
-    white-space: normal !important;
-    word-break: normal !important;
-    text-align: left !important;
-  }
-`}} />
+        /* Headings Styling */
+        .rich-text-area h1 { font-size: 1.5rem !important; font-weight: 900 !important; color: #0B1538 !important; margin-top: 1.5rem !important; margin-bottom: 0.75rem !important; display: block !important; }
+        .rich-text-area h2 { font-size: 1.25rem !important; font-weight: 800 !important; color: #0B1538 !important; margin-top: 1.25rem !important; margin-bottom: 0.5rem !important; display: block !important; }
+        .rich-text-area h3 { font-size: 1.1rem !important; font-weight: 700 !important; color: #0B1538 !important; margin-top: 1rem !important; margin-bottom: 0.5rem !important; display: block !important; }
+        
+        /* Lists */
+        .rich-text-area ul { list-style-type: disc !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
+        .rich-text-area ol { list-style-type: decimal !important; padding-left: 1.25rem !important; margin: 0.5rem 0 !important; display: block !important; }
+        .rich-text-area li { display: list-item !important; text-align: left !important; margin-bottom: 0.25rem; }
+
+        /* Full Table Styling for Quill Content */
+        .rich-text-area table {
+          width: 100% !important;
+          border-collapse: collapse !important;
+          margin: 1.25rem 0 !important;
+          background-color: #ffffff;
+          border-radius: 0.75rem;
+          overflow: hidden;
+          border: 1px solid #cbd5e1 !important;
+        }
+
+        .rich-text-area th,
+        .rich-text-area td {
+          padding: 0.75rem 1rem !important;
+          border: 1px solid #cbd5e1 !important;
+          text-align: left;
+          font-size: 0.875rem;
+        }
+
+        .rich-text-area th {
+          background-color: #f1f5f9 !important;
+          font-weight: 700 !important;
+          color: #0b1538 !important;
+        }
+
+        .rich-text-area tr:nth-child(even) {
+          background-color: #f8fafc;
+        }
+
+        /* Font Sizes Mapping */
+        .rich-text-area .ql-size-10px { font-size: 10px !important; }
+        .rich-text-area .ql-size-12px { font-size: 12px !important; }
+        .rich-text-area .ql-size-14px { font-size: 14px !important; }
+        .rich-text-area .ql-size-16px { font-size: 16px !important; }
+        .rich-text-area .ql-size-18px { font-size: 18px !important; }
+        .rich-text-area .ql-size-20px { font-size: 20px !important; }
+        .rich-text-area .ql-size-24px { font-size: 24px !important; }
+        .rich-text-area .ql-size-32px { font-size: 32px !important; }
+
+        /* Font Families Mapping */
+        .rich-text-area .ql-font-inter { font-family: 'Inter', sans-serif !important; }
+        .rich-text-area .ql-font-poppins { font-family: 'Poppins', sans-serif !important; }
+        .rich-text-area .ql-font-roboto { font-family: 'Roboto', sans-serif !important; }
+        .rich-text-area .ql-font-open-sans { font-family: 'Open Sans', sans-serif !important; }
+        .rich-text-area .ql-font-arial { font-family: Arial, sans-serif !important; }
+        .rich-text-area .ql-font-arial-black { font-family: "Arial Black", Gadget, sans-serif !important; }
+        .rich-text-area .ql-font-comic-sans { font-family: "Comic Sans MS", cursive, sans-serif !important; }
+        .rich-text-area .ql-font-courier-new { font-family: "Courier New", Courier, monospace !important; }
+        .rich-text-area .ql-font-georgia { font-family: Georgia, serif !important; }
+        .rich-text-area .ql-font-impact { font-family: Impact, Charcoal, sans-serif !important; }
+        .rich-text-area .ql-font-lucida-sans { font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif !important; }
+        .rich-text-area .ql-font-tahoma { font-family: Tahoma, Geneva, sans-serif !important; }
+        .rich-text-area .ql-font-times-new-roman { font-family: "Times New Roman", Times, serif !important; }
+        .rich-text-area .ql-font-trebuchet { font-family: "Trebuchet MS", Helvetica, sans-serif !important; }
+        .rich-text-area .ql-font-verdana { font-family: Verdana, Geneva, sans-serif !important; }
+
+        .practical-inline-area, .practical-inline-area * {
+          display: inline !important;
+          white-space: normal !important;
+          word-break: normal !important;
+          text-align: left !important;
+        }
+      ` }} />
     </div>
   );
 };
@@ -313,7 +409,7 @@ const FaqItem = ({ faq, cleanTextFormatting }) => {
       >
         <div className="overflow-hidden">
           <div 
-            className="text-slate-500 text-[11px] leading-relaxed pl-3 border-l-2 border-orange-500/30 py-0.5"
+            className="text-slate-500 text-[11px] leading-relaxed pl-3 border-l-2 border-orange-500/30 py-0.5 rich-text-area"
             dangerouslySetInnerHTML={{ __html: cleanTextFormatting(faq.answer) }}
           />
         </div>
